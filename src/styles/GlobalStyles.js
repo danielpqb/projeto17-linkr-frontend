@@ -71,6 +71,7 @@ const GlobalStyle = createGlobalStyle`
   :root {
     --background-grey: #333333;
     --box-grey: #171717;
+    --topbar-grey: #151515;
     --text-general: #B7B7B7;
     --text-emphasis: #ffffff;
   }
