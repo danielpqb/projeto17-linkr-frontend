@@ -24,7 +24,7 @@ export default function App() {
           <BrowserRouter>
             <Routes>
 
-              <Route path="/" element={<Feed />}></Route>
+              <Route path="/" element={<Feed title={'timeline'}/>}></Route>
               <Route path="*" element={<Navigate to="/" />}></Route>
 
             </Routes>
