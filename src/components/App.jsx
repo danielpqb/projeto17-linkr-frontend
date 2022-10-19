@@ -6,6 +6,8 @@ import styled from "styled-components";
 import GlobalStyle from "../styles/GlobalStyles";
 import UserContext from "../contexts/userContext";
 
+import Feed from "./Feed";
+
 export default function App() {
   const [userData, setUserData] = useState({});
 
@@ -22,7 +24,7 @@ export default function App() {
           <BrowserRouter>
             <Routes>
 
-              <Route path="/" element={<>A</>}></Route>
+              <Route path="/" element={<Feed title={'timeline'}/>}></Route>
               <Route path="*" element={<Navigate to="/" />}></Route>
 
             </Routes>

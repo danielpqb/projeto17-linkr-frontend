@@ -58,19 +58,11 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
-  /* Hide scrollbar */
-  body::-webkit-scrollbar {
-    display: none; /* Chrome, Safari and Opera */
-  }
-  body {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
-
   /* CUSTOM */
   :root {
     --background-grey: #333333;
     --box-grey: #171717;
+    --topbar-grey: #151515;
     --text-general: #B7B7B7;
     --text-emphasis: #ffffff;
   }
