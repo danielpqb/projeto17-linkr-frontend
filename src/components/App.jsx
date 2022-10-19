@@ -18,7 +18,6 @@ export default function App() {
   return (
     <>
       <GlobalStyle />
-      {alert.show && <Alert />}
       <UserContext.Provider
         value={{
           userData,
@@ -28,6 +27,7 @@ export default function App() {
         }}
       >
         <Container>
+          {alert.show && <Alert />}
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Feed title={"timeline"} />}></Route>

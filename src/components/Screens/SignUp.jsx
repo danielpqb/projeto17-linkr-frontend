@@ -2,11 +2,11 @@ import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import UserContext from "../../contexts/userContext";
 import InputBox from "../Common/InputBox";
 import LoginHeader from "../Common/LoginHeader";
 import SubmitButton from "../Common/SubmitButton";
 import { postSignUp } from "../../services/linkrAPI";
+import UserContext from "../../contexts/userContext";
 
 export default function SignUp() {
   const [form, setForm] = useState({
@@ -16,19 +16,64 @@ export default function SignUp() {
     imageUrl: "",
   });
 
-  const { setAlert } = useContext(UserContext);
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
+
+  const { alert, setAlert } = useContext(UserContext);
 
   const navigate = useNavigate();
+
+  function createMessage(error) {
+    const code = error.response.status;
+    const body = error.response.data.message;
+
+    let message = `Error ${code}\n\n
+    ${body}`;
+
+    //If Joi patterns not safitisfied
+    if (code === 422) {
+      const { name, email, password, imageUrl } = form;
+
+      //Validate fields
+    }
+
+    return message;
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
 
+    if (isSubmitDisabled) {
+      return;
+    }
+    setIsSubmitDisabled(true);
+
     try {
       await postSignUp(form);
+      setAlert({
+        ...alert,
+        show: true,
+        message: "Usuário criado com sucesso!",
+        type: 0,
+        doThis: () => {},
+        color: undefined,
+        icon: undefined,
+      });
+      setIsSubmitDisabled(false);
     } catch (error) {
-      console.log(error.response);
-      setAlert({ show: true, message: "Usuário cadastrado com sucesso" });
-      // setAlert({ show: true, message: `Erro ${error.response.status}` });
+      console.log(error);
+
+      const message = createMessage(error);
+
+      setAlert({
+        ...alert,
+        show: true,
+        message: message,
+        type: 0,
+        doThis: () => {},
+        color: "rgba(200,0,0)",
+        icon: "alert-circle",
+      });
+      setIsSubmitDisabled(false);
       return;
     }
 
@@ -80,7 +125,7 @@ export default function SignUp() {
           required
         />
 
-        <SubmitButton>Sign Up</SubmitButton>
+        <SubmitButton disabled={isSubmitDisabled}>Sign Up</SubmitButton>
       </RegisterForm>
 
       <RedirectTo>
@@ -118,29 +163,6 @@ const RegisterForm = styled.form`
     text-align: center;
 
     margin-top: 200px;
-  }
-`;
-
-const ValidationBox = styled.div`
-  margin: 10px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  h2 {
-    cursor: pointer;
-    font-weight: 400;
-    font-size: 14px;
-    margin-top: 5px;
-    text-decoration: underline;
-    &:hover {
-      filter: brightness(0.6);
-    }
-  }
-  h3 {
-    font-weight: 400;
-    font-size: 14px;
-    margin-top: 5px;
   }
 `;
 
