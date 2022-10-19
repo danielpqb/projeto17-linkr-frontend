@@ -1,47 +1,41 @@
+import React from "react";
+import { useState } from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import styled from "styled-components";
-import { GlobalStyle } from "../GlobalStyles";
-import UserContext from "../Context/UserContext";
 
-import { useEffect, useState } from "react";
-import { getUserByToken } from "../services/linkrAPI";
+import GlobalStyle from "../styles/GlobalStyles";
+import UserContext from "../contexts/userContext";
 
 export default function App() {
   const [userData, setUserData] = useState({});
 
-  useEffect(() => {
-    const localToken = localStorage.getItem("userToken");
-
-    if (localToken) {
-      getUserByToken(localToken).then((res) => {
-        setUserData(res.data);
-      });
-    }
-  }, [setUserData]);
-
   return (
-    <Container>
-      <BrowserRouter>
-        <UserContext.Provider
-          value={{
+    <>
+      <GlobalStyle />
+
+      <UserContext.Provider value={{
             userData,
             setUserData,
-          }}
-        >
-          <GlobalStyle />
-          <Routes>
-            <Route path="/" element={<></>}></Route>
-            <Route path="*" element={<Navigate to="/" />}></Route>
-          </Routes>
-        </UserContext.Provider>
-      </BrowserRouter>
-    </Container>
+      }}>
+
+        <Container>
+          <BrowserRouter>
+            <Routes>
+
+              <Route path="/" element={<>A</>}></Route>
+              <Route path="*" element={<Navigate to="/" />}></Route>
+
+            </Routes>
+          </BrowserRouter>
+        </Container>
+      </UserContext.Provider>
+    </>
   );
 }
 
 const Container = styled.div`
-  & {
-    background-color: var(--azul-base);
-    flex-direction: column;
-  }
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
