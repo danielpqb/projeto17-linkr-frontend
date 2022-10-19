@@ -22,6 +22,15 @@ const Container = styled.div`
     height: 190px;
 
     flex-direction: column;
+
+    @media (min-width: 800px) {
+      top: 0;
+      bottom: 0;
+      left: 0;
+
+      width: 60%;
+      height: 100vh;
+    }
   }
 `;
 

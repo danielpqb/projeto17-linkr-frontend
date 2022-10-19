@@ -60,8 +60,6 @@ export default function SignUp() {
       });
       setIsSubmitDisabled(false);
     } catch (error) {
-      console.log(error);
-
       const message = createMessage(error);
 
       setAlert({
@@ -153,6 +151,14 @@ const Container = styled.div`
   h1 {
     margin: 30px 0px;
   }
+
+  @media (min-width: 800px) {
+    & {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
 `;
 
 const RegisterForm = styled.form`
@@ -163,6 +169,16 @@ const RegisterForm = styled.form`
     text-align: center;
 
     margin-top: 200px;
+  }
+
+  @media (min-width: 800px) {
+    & {
+      width: calc(40% - 20px);
+      text-align: center;
+
+      margin-top: 0px;
+      margin-left: calc(60% + 22px);
+    }
   }
 `;
 
@@ -178,5 +194,11 @@ const RedirectTo = styled.div`
     font-size: 17px;
     line-height: 20px;
     text-decoration-line: underline;
+  }
+
+  @media (min-width: 800px) {
+    & {
+      margin-left: calc(60% + 22px);
+    }
   }
 `;
