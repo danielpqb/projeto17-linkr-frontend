@@ -10,6 +10,7 @@ import Feed from "./Feed";
 
 import Alert from "./Common/Alert";
 import SignUp from "./Screens/SignUp";
+import SignIn from "./Screens/SignIn";
 
 export default function App() {
   const [userData, setUserData] = useState({});
@@ -31,10 +32,11 @@ export default function App() {
           <BrowserRouter>
             <Routes>
 
-              <Route path="/" element={<Feed type={'timeline'}/>}></Route>
+              <Route path="/" element={<SignIn />}></Route>
+              <Route path="/sign-up" element={<SignUp />}></Route>
+              <Route path="/feed" element={<Feed type={'timeline'}/>}></Route>
               <Route path="/hashtag/:hashtag" element={<Feed type={'hashtag'}/>}></Route>
               <Route path="/users/:id" element={<Feed type={'user'} />}></Route>
-              <Route path="/sign-up" element={<SignUp />}></Route>
               <Route path="*" element={<Navigate to="/" />}></Route>
               
             </Routes>
