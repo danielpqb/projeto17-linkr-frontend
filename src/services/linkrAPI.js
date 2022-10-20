@@ -42,6 +42,10 @@ function getPosts() {
   return axios.get(`${BASE_URL}/posts`);
 }
 
+function getAllPosts() {
+  return axios.get(`${BASE_URL}/all-posts`);
+}
+
 function getHashtags() {
   return axios.get(`${BASE_URL}/hashtags`);
 }
@@ -54,6 +58,7 @@ export {
   createHashtag,
   createPostsHashtags,
   getPosts,
+  getAllPosts,
   getHashtags, 
   getTimelinePosts
 };

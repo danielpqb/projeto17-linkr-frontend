@@ -4,7 +4,7 @@ import {
   createPost,
   createHashtag,
   createPostsHashtags,
-  getPosts,
+  getAllPosts,
   getHashtags,
 } from "../../services/linkrAPI";
 import { Container, LeftDiv, Form, Input, Button, RightDiv } from "./style";
@@ -70,7 +70,7 @@ export default function Publish() {
       Swal.fire("Posted!", "", "success");
       setForm({ userId: 1, link: "", text: "" });
 
-      const postsPromise = getPosts();
+      const postsPromise = getAllPosts();
 
       let postId;
       postsPromise.catch((res) => {
