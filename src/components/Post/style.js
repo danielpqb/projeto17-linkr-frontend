@@ -6,16 +6,155 @@ const Container = styled.div`
     background-color: var(--box-grey);
     border-radius: 16px;
     margin-bottom: 16px;
+    box-sizing: border-box;
+    padding: 20px;
     
     display: flex;
-    align-items: center;
-    justify-content: center;
+
+    img{
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 18px;
+    }
+    svg:hover, img:hover{
+        cursor: pointer;
+        filter: brightness(0.6);
+    }
 
     @media (max-width: 620px) {
         border-radius: 0;
+        height: 232px;
+        img{
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+    }
+`
+
+const PostUserName = styled.div`
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 23px;
+    color: #FFFFFF;
+    margin-bottom: 10px;
+
+    @media (max-width: 620px) {
+        font-size: 17px;
+        line-height: 20px;
+    }
+`
+
+const PostText = styled.div`
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 20px;
+    color: #B7B7B7;
+    margin-bottom: 15px;
+
+    @media (max-width: 620px) {
+        font-size: 15px;
+        line-height: 18px;
+    }
+`
+
+const MetadataDiv = styled.div`
+    width: 503px;
+    min-height: 155px;
+    border: 1px solid #4D4D4D;
+    border-radius: 11px;
+    display: flex;
+
+    img{
+            width: 153px;
+            height: 155px;
+            object-fit: cover;
+            margin-right: 0px;
+            border-top-right-radius: 11px;
+            border-bottom-right-radius: 11px;
+        }
+
+    @media (max-width: 620px) {
+        width: 74%;
+        min-height: 115px;
+        img{
+            width: 34%;
+            height: 115px;
+            object-fit: cover;
+        }
+    }
+`
+
+const MetadataContent = styled.div`
+    width: 350px;
+    min-height: 155px;
+    box-sizing: border-box;
+    padding: 22px;
+
+    @media (max-width: 620px) {
+        width: 66%;
+        min-height: 115px;
+    }
+`
+
+const MetadataTitle = styled.div`
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    color: #CECECE;
+    margin-bottom: 5px;
+
+    @media (max-width: 620px) {
+        font-size: 11px;
+        line-height: 13px;
+    }
+`
+
+const MetadataText = styled.div`
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 13px;
+    color: #9B9595;
+    margin-bottom: 13px;
+
+    @media (max-width: 620px) {
+        font-size: 9px;
+        line-height: 11px;
+    }
+`
+
+const MetadataLink = styled.div`
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 13px;
+    color: #CECECE;
+
+    @media (max-width: 620px) {
+        font-size: 9px;
+        line-height: 11px;
     }
 `
 
 export {
-    Container
+    Container,
+    PostUserName,
+    PostText,
+    MetadataDiv,
+    MetadataContent,
+    MetadataTitle,
+    MetadataLink,
+    MetadataText
 }

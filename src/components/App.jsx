@@ -24,7 +24,9 @@ export default function App() {
           <BrowserRouter>
             <Routes>
 
-              <Route path="/" element={<Feed title={'timeline'}/>}></Route>
+              <Route path="/" element={<Feed type={'timeline'}/>}></Route>
+              <Route path="/hashtag/:hashtag" element={<Feed type={'hashtag'}/>}></Route>
+              <Route path="/user/:id" element={<Feed type={'profile'}/>}></Route>
               <Route path="*" element={<Navigate to="/" />}></Route>
 
             </Routes>
