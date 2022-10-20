@@ -8,26 +8,34 @@ import UserContext from "../contexts/userContext";
 
 import Feed from "./Feed";
 
+import Alert from "./Common/Alert";
+import SignUp from "./Screens/SignUp";
+
 export default function App() {
   const [userData, setUserData] = useState({});
+  const [alert, setAlert] = useState({});
 
   return (
     <>
       <GlobalStyle />
-
-      <UserContext.Provider value={{
-            userData,
-            setUserData,
-      }}>
-
+      <UserContext.Provider
+        value={{
+          userData,
+          setUserData,
+          alert,
+          setAlert,
+        }}
+      >
         <Container>
+          {alert.show && <Alert />}
           <BrowserRouter>
             <Routes>
 
               <Route path="/" element={<Feed title={'timeline'}/>}></Route>
               <Route path="/users/:id" element={<Feed title={'user'} />}></Route>
+              <Route path="/sign-up" element={<SignUp />}></Route>
               <Route path="*" element={<Navigate to="/" />}></Route>
-
+              
             </Routes>
           </BrowserRouter>
         </Container>
