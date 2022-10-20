@@ -10,4 +10,36 @@ function postSignIn(user) {
   return axios.post(`${BASE_URL}/`, user);
 }
 
-export { postSignUp, postSignIn };
+function createPost({ userId, text, link }) {
+  if (!text) {
+    return axios.post(`${BASE_URL}/create-post`, { userId, link });
+  }
+
+  return axios.post(`${BASE_URL}/create-post`, { userId, text, link });
+}
+
+function createHashtag({title}) {
+  return axios.post(`${BASE_URL}/create-hashtag`, {title});
+}
+
+function createPostsHashtags(body) {
+  return axios.post(`${BASE_URL}/create-posts-hashtags`, body);
+}
+
+function getPosts() {
+  return axios.get(`${BASE_URL}/posts`);
+}
+
+function getHashtags() {
+  return axios.get(`${BASE_URL}/hashtags`);
+}
+
+export {
+  postSignUp,
+  postSignIn,
+  createPost,
+  createHashtag,
+  createPostsHashtags,
+  getPosts,
+  getHashtags,
+};
