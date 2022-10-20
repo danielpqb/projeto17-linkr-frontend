@@ -2,6 +2,14 @@ import axios from "axios";
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
+const headerCreator = (token) => {
+  return {headers: {Authorization: `Bearer ${token}`}}
+};
+
+function getTimelinePosts(token){
+  return axios.get(`${BASE_URL}/posts`, headerCreator(token));
+}
+
 function postSignUp(user) {
   return axios.post(`http://localhost:4000/signup`, user);
 }
@@ -46,5 +54,6 @@ export {
   createHashtag,
   createPostsHashtags,
   getPosts,
-  getHashtags,
+  getHashtags, 
+  getTimelinePosts
 };
