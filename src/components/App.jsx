@@ -25,6 +25,7 @@ export default function App() {
             <Routes>
 
               <Route path="/" element={<Feed title={'timeline'}/>}></Route>
+              <Route path="/users/:id" element={<Feed title={'user'} />}></Route>
               <Route path="*" element={<Navigate to="/" />}></Route>
 
             </Routes>

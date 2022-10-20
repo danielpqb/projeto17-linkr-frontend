@@ -10,4 +10,8 @@ function postSignIn(user) {
   return axios.post(`${BASE_URL}/`, user);
 }
 
-export { postSignUp, postSignIn };
+function getSearchUsers(filter) {
+  return axios.get(`${BASE_URL}/searchUsers`, {headers: filter});
+}
+
+export { postSignUp, postSignIn, getSearchUsers };
