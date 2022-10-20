@@ -71,6 +71,7 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Lato', sans-serif;
     background-color: var(--background-grey);
     color: var(--text-general);
+    word-wrap: break-word;
   }
   button{
     font-family: 'Lato', sans-serif;

@@ -33,7 +33,7 @@ export default function Feed({type}) {
         if(type === 'hashtag'){
           
         }
-        if(type === 'profile'){
+        if(type === 'user'){
            
         }
     }, []);
