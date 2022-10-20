@@ -10,6 +10,10 @@ function postSignIn(user) {
   return axios.post(`${BASE_URL}/`, user);
 }
 
+function getSearchUsers(filter) {
+  return axios.get(`${BASE_URL}/searchUsers`, {headers: filter});
+}
+
 function createPost({ userId, text, link }) {
   if (!text) {
     return axios.post(`${BASE_URL}/create-post`, { userId, link });
@@ -37,6 +41,7 @@ function getHashtags() {
 export {
   postSignUp,
   postSignIn,
+  getSearchUsers,
   createPost,
   createHashtag,
   createPostsHashtags,
