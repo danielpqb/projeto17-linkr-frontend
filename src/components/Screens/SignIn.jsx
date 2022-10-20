@@ -6,11 +6,9 @@ import UserContext from "../../contexts/userContext";
 import InputBox from "../Common/InputBox";
 import LoginHeader from "../Common/LoginHeader";
 import SubmitButton from "../Common/SubmitButton";
-import { postSignIn } from "../../services/superwallAPI";
+import { postSignIn } from "../../services/linkrAPI";
 
 export default function SignIn() {
-  const { userData, setUserData } = useContext(UserContext);
-
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -19,26 +17,66 @@ export default function SignIn() {
   const navigate = useNavigate();
 
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
 
-  function handleSubmit(e) {
+  const { alert, setAlert } = useContext(UserContext);
+
+  function createMessage(error) {
+    const code = error.response.status;
+    const body = error.response.data.message;
+
+    let message = `Error ${code}\n\n
+    ${body}`;
+
+    //If Joi patterns not safitisfied
+    if (code === 422) {
+      // const { name, email, password, imageUrl } = form;
+      //Validate fields
+    }
+
+    return message;
+  }
+
+  async function handleSubmit(e) {
     e.preventDefault();
 
+    if (isSubmitDisabled) {
+      return;
+    }
     setIsSubmitDisabled(true);
 
-    postSignIn(form)
+    const promise = postSignIn(form);
+    promise
       .then((res) => {
-        setUserData({
-          ...userData,
-          ...res.data,
-        });
         localStorage.setItem("userToken", res.data.token);
-        navigate("/");
+
+        setAlert({
+          ...alert,
+          show: true,
+          message: "You have loged in!",
+          type: 0,
+          doThis: () => {},
+          color: undefined,
+          icon: undefined,
+        });
+
+        setIsSubmitDisabled(false);
+
+        navigate("/timeline");
       })
       .catch((res) => {
+        const message = createMessage(res);
+
+        setAlert({
+          ...alert,
+          show: true,
+          message: message,
+          type: 0,
+          doThis: () => {},
+          color: "rgba(200,0,0)",
+          icon: "alert-circle",
+        });
         setIsSubmitDisabled(false);
-        alert(`Erro ${res.response.status}: ${res.response.data.message}`);
-        throw res;
+        return;
       });
   }
 
@@ -49,7 +87,7 @@ export default function SignIn() {
       <RegisterForm action="" onSubmit={handleSubmit}>
         <InputBox
           name="email"
-          placeholder="Email"
+          placeholder="e-mail"
           onChange={(e) => {
             setForm({ ...form, email: e.target.value });
           }}
@@ -57,24 +95,20 @@ export default function SignIn() {
         />
         <InputBox
           name="password"
-          type={showPassword ? "text" : "password"}
-          placeholder="Senha"
+          type="password"
+          placeholder="password"
           onChange={(e) => {
             setForm({ ...form, password: e.target.value });
           }}
           value={form.password}
         />
 
-        {showPassword ? (
-          <h2 onClick={() => setShowPassword(false)}>Ocultar senha</h2>
-        ) : (
-          <h2 onClick={() => setShowPassword(true)}>Exibir senha</h2>
-        )}
-
-        <SubmitButton disabled={isSubmitDisabled}>Entrar</SubmitButton>
+        <SubmitButton disabled={isSubmitDisabled}>Log In</SubmitButton>
       </RegisterForm>
 
-      <Link to={"/account/register"}>Primeira vez? Cadastre-se!</Link>
+      <RedirectTo>
+        <Link to={"/sign-up"}>First time? Create an account!</Link>
+      </RedirectTo>
     </Container>
   );
 }
@@ -87,6 +121,23 @@ const Container = styled.div`
     padding: 20px;
     font-weight: 700;
     font-size: 15px;
+    color: #ffffff;
+  }
+  div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  h1 {
+    margin: 30px 0px;
+  }
+
+  @media (min-width: 800px) {
+    & {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
 `;
 
@@ -96,15 +147,38 @@ const RegisterForm = styled.form`
     width: 100%;
     height: 50%;
     text-align: center;
+
+    margin-top: 200px;
   }
-  h2 {
-    cursor: pointer;
+
+  @media (min-width: 800px) {
+    & {
+      width: calc(40% - 20px);
+      text-align: center;
+
+      margin-top: 0px;
+      margin-left: calc(60% + 22px);
+    }
+  }
+`;
+
+const RedirectTo = styled.div`
+  & {
+    margin: 20px;
+  }
+
+  a {
+    font-family: "Lato";
+    font-style: normal;
     font-weight: 400;
-    font-size: 14px;
-    margin: 10px;
-    text-decoration: underline;
-    &:hover {
-      filter: brightness(0.6);
+    font-size: 17px;
+    line-height: 20px;
+    text-decoration-line: underline;
+  }
+
+  @media (min-width: 800px) {
+    & {
+      margin-left: calc(60% + 22px);
     }
   }
 `;
