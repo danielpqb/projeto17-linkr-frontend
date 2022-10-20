@@ -22,7 +22,7 @@ export default function Feed({type}) {
             getTimelinePosts(1).then((answer) => {
                 setArrPosts(answer.data);
                 setIsLoading(false);
-                if(arrPosts.length === 0){
+                if(answer.data.length === 0){
                     setIsEmpty(true);
                 }
             }).catch((error) => {
