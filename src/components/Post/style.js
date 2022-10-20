@@ -72,6 +72,10 @@ const MetadataDiv = styled.div`
     border-radius: 11px;
     display: flex;
 
+    :hover{
+        cursor: pointer;
+    }
+
     img{
             width: 153px;
             height: 155px;

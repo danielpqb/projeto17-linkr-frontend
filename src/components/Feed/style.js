@@ -24,6 +24,30 @@ const Container = styled.div`
     }
 `
 
+const Loading = styled.div`
+    width: 100%;
+    min-height: 100px;
+    background-color: var(--box-grey);
+    border-radius: 16px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+    padding: 20px;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg:hover, img:hover{
+        filter: brightness(0.6);
+    }
+
+    @media (max-width: 620px) {
+        border-radius: 0;
+        height: 232px;
+    }
+`
+
 export {
-    Container
+    Container,
+    Loading
 }
