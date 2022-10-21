@@ -18,6 +18,14 @@ function postSignIn(user) {
   return axios.post(`${BASE_URL}/signin`, user);
 }
 
+function getUserDataByToken(token) {
+  const _token = "Bearer " + token;
+
+  return axios.get(`${BASE_URL}/users/me`, {
+    headers: { Authorization: _token },
+  });
+}
+
 function getSearchUsers(filter) {
   return axios.get(`${BASE_URL}/searchUsers`, { headers: filter });
 }
@@ -53,6 +61,7 @@ function getHashtags() {
 export {
   postSignUp,
   postSignIn,
+  getUserDataByToken,
   getSearchUsers,
   createPost,
   createHashtag,
