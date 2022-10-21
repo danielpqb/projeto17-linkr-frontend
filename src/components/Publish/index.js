@@ -67,6 +67,7 @@ export default function Publish() {
       Swal.fire("Posted!", "", "success");
       setForm({ userId: 1, link: "", text: "" });
 
+      //Dá pra tirar isso aqui
       const postsPromise = await getAllPosts();
       
       for (let i = postsPromise.data.length - 1; i > 0; i--) {
@@ -75,6 +76,7 @@ export default function Publish() {
           break;
         }
       }
+      //Até aqui
 
       if (form.text) {
         const hashtags = checkHashtags(form.text);
@@ -82,27 +84,13 @@ export default function Publish() {
         for (let j = 0; j < hashtags.length; j++){
 
             const res = await createHashtag({ title: hashtags[j] });
-            console.log(res)
-            console.log(res.data.id, " | ", postId)
             let hashtagId = res.data.id;
 
-            const getHashtagPromise = await getHashtags();
-              //console.log(getHashtagPromise)
-              
-              /*for (let i = getHashtagPromise.data.length - 1; i > 0; i--) {
-                if (getHashtagPromise.data[i].title === hashtags[j]) {
-                  hashtagId = getHashtagPromise.data[i].id;
-                  break;
-                }
-              }*/
-              //console.log(hashtagId);
-              await createPostsHashtags({
-                hashtagId,
-                postId,
-              });
-
+            await createPostsHashtags({
+              hashtagId,
+              postId,
+            });
         }
-
       }
     } catch (error) {
       if (error.response.status === 409){
@@ -112,74 +100,10 @@ export default function Publish() {
               hashtagId,
               postId,
             });
-
-        console.log('ja existe')
       }
-      console.log('2o erro')
       console.log(error)
-      //Swal.fire(res.response.data.message);
       setIsLoading(false);
     }
-
-    
-      
-          /*
-        hashtags.forEach((hashtag) => {
-          const hashtagPromise = createHashtag({ title: hashtag });
-
-          hashtagPromise.catch((res) => {
-            const hashtagId = res.response.data.hashtagId;
-
-            const createPostsHashtagsPromise = createPostsHashtags({
-              hashtagId,
-              postId,
-            });
-
-            createPostsHashtagsPromise.catch((res) => {
-              Swal.fire(res.response.data.message);
-            });
-            createPostsHashtagsPromise.then((res) => {});
-          });
-
-          hashtagPromise.then(() => {
-            const getHashtagPromise = getHashtags();
-
-            getHashtagPromise.catch((res) => {
-              Swal.fire(res.response.data.message);
-            });
-
-            getHashtagPromise.then((res) => {
-              let hashtagId;
-              for (let i = res.data.length - 1; i > 0; i--) {
-                if (res.data[i].title === hashtag) {
-                  hashtagId = res.data[i].id;
-                  break;
-                }
-              }
-              const createPostsHashtagsPromise = createPostsHashtags({
-                hashtagId,
-                postId,
-              });
-
-              createPostsHashtagsPromise.catch((res) => {
-                Swal.fire(res.response.data.message);
-              });
-              createPostsHashtagsPromise.then((res) => {});
-            });
-          });
-        });
-      }
-
-      getTimelinePosts(1)
-        .then((answer) => {
-          setArrPosts(answer.data);
-        })
-        .catch((res) => {
-          Swal.fire(res.response.data.message);
-        });
-
-      setIsLoading(false);
-    });*/
 
     getTimelinePosts(1)
         .then((answer) => {
