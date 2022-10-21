@@ -51,7 +51,7 @@ export default function App() {
                 <Routes>
                   <Route path="/" element={<SignIn />}></Route>
                   <Route path="/sign-up" element={<SignUp />}></Route>
-                  <Route path="/feed" element={<Feed type={"timeline"} />}></Route>
+                  <Route path="/timeline" element={<Feed type={"timeline"} />}></Route>
                   <Route path="/hashtag/:hashtag" element={<Feed type={"hashtag"} />}></Route>
                   <Route path="/users/:id" element={<Feed type={"user"} />}></Route>
                   <Route path="*" element={<Navigate to="/" />}></Route>
