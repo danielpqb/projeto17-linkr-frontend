@@ -5,7 +5,8 @@ import styled from "styled-components";
 
 import GlobalStyle from "../styles/GlobalStyles";
 import UserContext from "../contexts/userContext";
-
+import ReloadContext from "../contexts/reloadContext";
+import PostsContext from "../contexts/postsContext";
 import Feed from "./Feed";
 
 import Alert from "./Common/Alert";
@@ -17,6 +18,8 @@ import { getUserDataByToken } from "../services/linkrAPI";
 export default function App() {
   const [userData, setUserData] = useState({});
   const [alert, setAlert] = useState({});
+  const [reload, setReload] = useState(false);
+  const [arrPosts, setArrPosts] = useState([]);
 
   useEffect(() => {
     const localToken = localStorage.getItem("userToken");
@@ -32,31 +35,32 @@ export default function App() {
   return (
     <>
       <GlobalStyle />
-      <UserContext.Provider
-        value={{
-          userData,
-          setUserData,
-          alert,
-          setAlert,
-        }}
-      >
-        <Container>
-          {alert.show && <Alert />}
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<SignIn />}></Route>
-              <Route path="/sign-up" element={<SignUp />}></Route>
-              <Route path="/feed" element={<Feed type={"timeline"} />}></Route>
-              <Route
-                path="/hashtag/:hashtag"
-                element={<Feed type={"hashtag"} />}
-              ></Route>
-              <Route path="/users/:id" element={<Feed type={"user"} />}></Route>
-              <Route path="*" element={<Navigate to="/" />}></Route>
-            </Routes>
-          </BrowserRouter>
-        </Container>
-      </UserContext.Provider>
+      <ReloadContext.Provider value={{ reload, setReload }}>
+        <UserContext.Provider
+          value={{
+            userData,
+            setUserData,
+            alert,
+            setAlert,
+          }}
+        >
+          <PostsContext.Provider value={{ arrPosts, setArrPosts }}>
+            <Container>
+              {alert.show && <Alert />}
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<SignIn />}></Route>
+                  <Route path="/sign-up" element={<SignUp />}></Route>
+                  <Route path="/feed" element={<Feed type={"timeline"} />}></Route>
+                  <Route path="/hashtag/:hashtag" element={<Feed type={"hashtag"} />}></Route>
+                  <Route path="/users/:id" element={<Feed type={"user"} />}></Route>
+                  <Route path="*" element={<Navigate to="/" />}></Route>
+                </Routes>
+              </BrowserRouter>
+            </Container>
+          </PostsContext.Provider>
+        </UserContext.Provider>
+      </ReloadContext.Provider>
     </>
   );
 }
