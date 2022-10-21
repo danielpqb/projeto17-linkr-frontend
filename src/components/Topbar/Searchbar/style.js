@@ -37,6 +37,14 @@ const Container = styled.div`
             outline:none;
         }
     }
+
+    @media (max-width: 620px) {
+        position: fixed;
+        top: 85px;
+        left: 0;
+        width: calc(100VW - 20px);
+        margin: 0 10px;
+    }
 `
 
 const SearchResults = styled.div`

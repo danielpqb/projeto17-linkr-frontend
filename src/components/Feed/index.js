@@ -6,6 +6,7 @@ import { Container, Loading } from "./style";
 import { getTimelinePosts } from "../../services/linkrAPI";
 import { useState, useEffect } from "react";
 import PostsContext from "../../contexts/postsContext";
+import UserContext from "../../contexts/userContext";
 
 export default function Feed({ type }) {
   const [title, setTitle] = useState("");
@@ -14,13 +15,13 @@ export default function Feed({ type }) {
   const [isError, setIsError] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
   const { arrPosts, setArrPosts } = React.useContext(PostsContext);
-  const token = localStorage.getItem("token");
+  const { userData } = React.useContext(UserContext);
 
   useEffect(() => {
     if (type === "timeline") {
       setIsTimeline(true);
       setTitle("timeline");
-      getTimelinePosts(1)
+      getTimelinePosts(userData.id)
         .then((answer) => {
           setArrPosts(answer.data);
           setIsLoading(false);

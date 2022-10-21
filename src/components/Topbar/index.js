@@ -1,21 +1,25 @@
 import React from "react";
-import { FiChevronDown } from "react-icons/fi";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { FiChevronDown } from 'react-icons/fi';
 
 import { Container, UserLogo } from "./style";
+import UserContext from "../../contexts/userContext";
 import SearchBar from "./Searchbar/index";
 
 export default function TopBar() {
-  const imgSrc =
-    "https://static1.personality-database.com/profile_images/c192170f01b245a1a180eb77aa6bb40f.png";
+    const { userData } = useContext(UserContext);
+    const imgSrc = userData.imageUrl;
+    const navigate = useNavigate();
 
-  return (
-    <Container>
-      <h1>linkr</h1>
-      <SearchBar />
-      <UserLogo>
-        <FiChevronDown />
-        <img src={imgSrc} alt="" />
-      </UserLogo>
-    </Container>
-  );
-}
+    return (
+        <Container>
+            <h1 onClick={() => navigate('/timeline')}>linkr</h1>
+            <SearchBar />
+            <UserLogo>
+                <FiChevronDown />
+                <img src={imgSrc} alt="" />
+            </UserLogo>
+        </Container>
+    )
+};

@@ -2,7 +2,8 @@ import styled from "styled-components";
 
 const Container = styled.div`
     width: 620px;
-    margin-top: 72px;
+    min-width: 375px;
+    margin-top: 45px;
     display: flex;
     flex-direction: column;
 
@@ -16,6 +17,7 @@ const Container = styled.div`
 
     @media (max-width: 620px) {
         width: 100%;
+        margin-top: 127px;
         
         h1 {
             margin-top: 20px;

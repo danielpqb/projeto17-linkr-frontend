@@ -4,20 +4,17 @@ import {
   createPost,
   createHashtag,
   createPostsHashtags,
-  getAllPosts,
-  getHashtags,
 } from "../../services/linkrAPI";
 import { getTimelinePosts } from "../../services/linkrAPI";
 import PostsContext from "../../contexts/postsContext";
+import UserContext from "../../contexts/userContext";
 import { Container, LeftDiv, Form, Input, Button, RightDiv } from "./style";
 
 export default function Publish() {
-  const [form, setForm] = React.useState({ userId: 1, link: "", text: "" });
+  const [form, setForm] = React.useState({ link: "", text: "" });
   const [isLoading, setIsLoading] = React.useState(false);
   const { setArrPosts } = React.useContext(PostsContext);
-
-  const imgSrc =
-    "https://static1.personality-database.com/profile_images/c192170f01b245a1a180eb77aa6bb40f.png";
+  const { userData } = React.useContext(UserContext);
 
   function validateUrl(value) {
     return /^(?:(?:(?:https?|http):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(
@@ -44,7 +41,7 @@ export default function Publish() {
     });
   }
 
-  function publishPost(e) {
+  async function publishPost(e) {
     e.preventDefault();
 
     if (!validateUrl(form.link)) {
@@ -56,103 +53,58 @@ export default function Publish() {
     }
 
     setIsLoading(true);
+    let postId;
+    try {
+      const promise = await createPost({
+        userId: userData.id,
+        text: form.text,
+        link: form.link,
+      });
 
-    const promise = createPost({
-      userId: form.userId,
-      text: form.text,
-      link: form.link,
-    });
-
-    promise.catch((res) => {
-      Swal.fire(res.response.data.message);
-      setIsLoading(false);
-    });
-
-    promise.then(() => {
       Swal.fire("Posted!", "", "success");
-      setForm({ userId: 1, link: "", text: "" });
+      setForm({ link: "", text: "" });
 
-      const postsPromise = getAllPosts();
-
-      let postId;
-      postsPromise.catch((res) => {
-        Swal.fire(res.response.data.message);
-      });
-
-      postsPromise.then((res) => {
-        for (let i = res.data.length - 1; i > 0; i--) {
-          if (res.data[i].userId === form.userId) {
-            postId = res.data[i].id;
-            break;
-          }
-        }
-      });
+      postId = promise.data.id;
 
       if (form.text) {
         const hashtags = checkHashtags(form.text);
 
-        hashtags.forEach((hashtag) => {
-          const hashtagPromise = createHashtag({ title: hashtag });
+        for (let j = 0; j < hashtags.length; j++) {
+          const res = await createHashtag({ title: hashtags[j] });
+          const hashtagId = res.data.id;
 
-          hashtagPromise.catch((res) => {
-            const hashtagId = res.response.data.hashtagId;
-
-            const createPostsHashtagsPromise = createPostsHashtags({
-              hashtagId,
-              postId,
-            });
-
-            createPostsHashtagsPromise.catch((res) => {
-              Swal.fire(res.response.data.message);
-            });
-            createPostsHashtagsPromise.then((res) => {});
+          await createPostsHashtags({
+            hashtagId,
+            postId,
           });
-
-          hashtagPromise.then(() => {
-            const getHashtagPromise = getHashtags();
-
-            getHashtagPromise.catch((res) => {
-              Swal.fire(res.response.data.message);
-            });
-
-            getHashtagPromise.then((res) => {
-              let hashtagId;
-              for (let i = res.data.length - 1; i > 0; i--) {
-                if (res.data[i].title === hashtag) {
-                  hashtagId = res.data[i].id;
-                  break;
-                }
-              }
-              const createPostsHashtagsPromise = createPostsHashtags({
-                hashtagId,
-                postId,
-              });
-
-              createPostsHashtagsPromise.catch((res) => {
-                Swal.fire(res.response.data.message);
-              });
-              createPostsHashtagsPromise.then((res) => {});
-            });
-          });
+        }
+      }
+    } catch (error) {
+      if (error.response.status === 409) {
+        const hashtagId = error.response.data.hashtagId;
+        await createPostsHashtags({
+          hashtagId,
+          postId,
         });
       }
-
-      getTimelinePosts(1)
-        .then((answer) => {
-          setArrPosts(answer.data);
-        })
-        .catch((res) => {
-          Swal.fire(res.response.data.message);
-        });
-
       setIsLoading(false);
-    });
+    }
+
+    getTimelinePosts(1)
+      .then((answer) => {
+        setArrPosts(answer.data);
+      })
+      .catch((res) => {
+        Swal.fire(res.response.data.message);
+      });
+
+    setIsLoading(false);
   }
 
   return (
     <Container>
       <LeftDiv>
-        <img src={imgSrc} alt="profilePicture" />
+        <img src={userData.imageUrl} alt="profilePicture" />
       </LeftDiv>
       <RightDiv>
         <h2>What are you going to share today?</h2>
