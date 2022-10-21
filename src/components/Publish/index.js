@@ -7,11 +7,14 @@ import {
   getAllPosts,
   getHashtags,
 } from "../../services/linkrAPI";
+import { getTimelinePosts } from "../../services/linkrAPI";
+import PostsContext from "../../contexts/postsContext";
 import { Container, LeftDiv, Form, Input, Button, RightDiv } from "./style";
 
 export default function Publish() {
   const [form, setForm] = React.useState({ userId: 1, link: "", text: "" });
   const [isLoading, setIsLoading] = React.useState(false);
+  const { setArrPosts } = React.useContext(PostsContext);
 
   const imgSrc =
     "https://static1.personality-database.com/profile_images/c192170f01b245a1a180eb77aa6bb40f.png";
@@ -48,8 +51,7 @@ export default function Publish() {
       return Swal.fire({
         icon: "error",
         title: "Invalid link!",
-        text:
-          "Be sure that you inserted the complete URL(with 'http://' or 'https://').",
+        text: "Be sure that you inserted the complete URL(with 'http://' or 'https://').",
       });
     }
 
@@ -134,6 +136,14 @@ export default function Publish() {
           });
         });
       }
+
+      getTimelinePosts(1)
+        .then((answer) => {
+          setArrPosts(answer.data);
+        })
+        .catch((res) => {
+          Swal.fire(res.response.data.message);
+        });
 
       setIsLoading(false);
     });
