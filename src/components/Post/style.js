@@ -43,6 +43,13 @@ const PostUserName = styled.div`
     line-height: 23px;
     color: #FFFFFF;
     margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    svg {
+        margin-left: 10px;
+    }
 
     @media (max-width: 620px) {
         font-size: 17px;
