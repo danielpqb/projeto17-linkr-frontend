@@ -3,23 +3,31 @@ import axios from "axios";
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const headerCreator = (token) => {
-  return {headers: {Authorization: `Bearer ${token}`}}
+  return { headers: { Authorization: `Bearer ${token}` } };
 };
 
-function getTimelinePosts(token){
+function getTimelinePosts(token) {
   return axios.get(`${BASE_URL}/posts`, headerCreator(token));
 }
 
 function postSignUp(user) {
-  return axios.post(`http://localhost:4000/signup`, user);
+  return axios.post(`${BASE_URL}/signup`, user);
 }
 
 function postSignIn(user) {
-  return axios.post(`${BASE_URL}/`, user);
+  return axios.post(`${BASE_URL}/signin`, user);
+}
+
+function getUserDataByToken(token) {
+  const _token = "Bearer " + token;
+
+  return axios.get(`${BASE_URL}/users/me`, {
+    headers: { Authorization: _token },
+  });
 }
 
 function getSearchUsers(filter) {
-  return axios.get(`${BASE_URL}/searchUsers`, {headers: filter});
+  return axios.get(`${BASE_URL}/searchUsers`, { headers: filter });
 }
 
 function createPost({ userId, text, link }) {
@@ -30,8 +38,8 @@ function createPost({ userId, text, link }) {
   return axios.post(`${BASE_URL}/create-post`, { userId, text, link });
 }
 
-function createHashtag({title}) {
-  return axios.post(`${BASE_URL}/create-hashtag`, {title});
+function createHashtag({ title }) {
+  return axios.post(`${BASE_URL}/create-hashtag`, { title });
 }
 
 function createPostsHashtags(body) {
@@ -53,12 +61,13 @@ function getHashtags() {
 export {
   postSignUp,
   postSignIn,
+  getUserDataByToken,
   getSearchUsers,
   createPost,
   createHashtag,
   createPostsHashtags,
   getPosts,
   getAllPosts,
-  getHashtags, 
-  getTimelinePosts
+  getHashtags,
+  getTimelinePosts,
 };

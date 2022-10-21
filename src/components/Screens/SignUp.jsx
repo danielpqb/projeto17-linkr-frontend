@@ -31,8 +31,7 @@ export default function SignUp() {
 
     //If Joi patterns not safitisfied
     if (code === 422) {
-      const { name, email, password, imageUrl } = form;
-
+      // const { name, email, password, imageUrl } = form;
       //Validate fields
     }
 
@@ -49,16 +48,20 @@ export default function SignUp() {
 
     try {
       await postSignUp(form);
+
       setAlert({
         ...alert,
         show: true,
-        message: "Usuário criado com sucesso!",
+        message: "User created sucessfully!",
         type: 0,
         doThis: () => {},
         color: undefined,
         icon: undefined,
       });
+
       setIsSubmitDisabled(false);
+
+      navigate("/");
     } catch (error) {
       const message = createMessage(error);
 
@@ -74,8 +77,6 @@ export default function SignUp() {
       setIsSubmitDisabled(false);
       return;
     }
-
-    navigate("/");
   }
 
   return (
