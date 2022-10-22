@@ -7,6 +7,7 @@ import InputBox from "../Common/InputBox";
 import LoginHeader from "../Common/LoginHeader";
 import SubmitButton from "../Common/SubmitButton";
 import { postSignIn } from "../../services/linkrAPI";
+import AppContext from "../../contexts/AppContext";
 
 export default function SignIn() {
   const [form, setForm] = useState({
@@ -18,6 +19,7 @@ export default function SignIn() {
 
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 
+  const { reloadApp, setReloadApp } = useContext(AppContext);
   const { alert, setAlert } = useContext(UserContext);
 
   function createMessage(error) {
@@ -46,8 +48,9 @@ export default function SignIn() {
 
     const promise = postSignIn(form);
     promise
-      .then((res) => {
+      .then(async (res) => {
         localStorage.setItem("userToken", res.data.token);
+        setReloadApp(!reloadApp);
 
         setAlert({
           ...alert,

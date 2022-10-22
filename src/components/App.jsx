@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 import GlobalStyle from "../styles/GlobalStyles";
 import UserContext from "../contexts/userContext";
-import ReloadContext from "../contexts/reloadContext";
+import AppContext from "../contexts/AppContext";
 import PostsContext from "../contexts/postsContext";
 import Feed from "./Feed";
 
@@ -18,7 +18,7 @@ import { getUserDataByToken } from "../services/linkrAPI";
 export default function App() {
   const [userData, setUserData] = useState({});
   const [alert, setAlert] = useState({});
-  const [reload, setReload] = useState(false);
+  const [reloadApp, setReloadApp] = useState(false);
   const [arrPosts, setArrPosts] = useState([]);
 
   useEffect(() => {
@@ -30,12 +30,12 @@ export default function App() {
         setUserData(res.data);
       });
     }
-  }, [setUserData]);
+  }, [setUserData, reloadApp]);
 
   return (
     <>
       <GlobalStyle />
-      <ReloadContext.Provider value={{ reload, setReload }}>
+      <AppContext.Provider value={{ reloadApp, setReloadApp }}>
         <UserContext.Provider
           value={{
             userData,
@@ -69,7 +69,7 @@ export default function App() {
             </Container>
           </PostsContext.Provider>
         </UserContext.Provider>
-      </ReloadContext.Provider>
+      </AppContext.Provider>
     </>
   );
 }
