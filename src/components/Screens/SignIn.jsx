@@ -21,7 +21,7 @@ export default function SignIn() {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 
   const { reloadApp, setReloadApp } = useContext(AppContext);
-  const { alert, setAlert } = useContext(UserContext);
+  const { setAlert } = useContext(UserContext);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -37,7 +37,6 @@ export default function SignIn() {
         localStorage.setItem("userToken", res.data.token);
 
         setAlert({
-          ...alert,
           show: true,
           message: "You have loged in!",
           type: 0,
