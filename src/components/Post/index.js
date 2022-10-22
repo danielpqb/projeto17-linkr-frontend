@@ -1,16 +1,28 @@
 import React from "react";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import { TiPencil, TiTrash } from "react-icons/ti";
 
 import UserContext from "../../contexts/userContext";
-import { Container, PostHeader, PostContent, MetadataContent, MetadataDiv, MetadataLink, MetadataText, MetadataTitle, PostText, PostUserName } from "./style";
+import { Container, PostHeader, PostContent, MetadataContent, MetadataDiv, MetadataLink, MetadataText, MetadataTitle, PostText, PostUserName, Input } from "./style";
 import LikeButton from "../LikeButton";
 
 export default function Post({ userId, userImage, userName, postText, metadata, postLink, postId}) {
     const { userData } = useContext(UserContext);
     const [ isEditing, setIsEditing ] = useState(false);
+    const [ text, setText ] = useState({text: postText});
+    const inputRef = useRef(null);
 
     const isEditable = userData.id === userId;
+
+    useEffect(() => {
+        if (isEditing) {
+            inputRef.current.focus();
+        }
+    }, [isEditing]);
+
+    function handleForm(e) {
+        setText({text: e.target.value});
+    }
 
     return (
         <Container>
@@ -32,7 +44,15 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
                     }
                 </PostUserName>
                 {isEditing?
-                    <PostText>Habilitando a edição de post</PostText>
+                    <Input
+                        placeholder="http:// ..."
+                        name="text"
+                        type="text"
+                        ref={inputRef}
+                        value={text.text}
+                        onChange={handleForm}
+                        required
+                    />
                     :
                     <PostText>{postText}</PostText>
                 }

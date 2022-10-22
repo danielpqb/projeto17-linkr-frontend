@@ -180,6 +180,26 @@ const MetadataLink = styled.div`
     }
 `
 
+const Input = styled.input`
+    position: relative;
+    width: 100%;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    padding: 5px 0 7px 13px;
+    border: none;
+    background-color: rgba(239, 239, 239, 1);
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 20px;
+    margin-bottom: 15px;
+
+    &:focus{
+        outline:none;
+    }
+`;
+
 export {
     Container,
     PostHeader,
@@ -190,5 +210,6 @@ export {
     MetadataContent,
     MetadataTitle,
     MetadataLink,
-    MetadataText
+    MetadataText,
+    Input
 }
