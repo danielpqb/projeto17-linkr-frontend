@@ -3,7 +3,8 @@ import { useState, useContext } from "react";
 import { TiPencil, TiTrash } from "react-icons/ti";
 
 import UserContext from "../../contexts/userContext";
-import { Container, MetadataContent, MetadataDiv, MetadataLink, MetadataText, MetadataTitle, PostText, PostUserName } from "./style";
+import { Container, PostHeader, PostContent, MetadataContent, MetadataDiv, MetadataLink, MetadataText, MetadataTitle, PostText, PostUserName } from "./style";
+import LikeButton from "../LikeButton";
 
 export default function Post({ userId, userImage, userName, postText, metadata, postLink, postId}) {
     const { userData } = useContext(UserContext);
@@ -13,8 +14,12 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
 
     return (
         <Container>
-            <img src={userImage} alt='User profile image'/>
-            <div>
+            <PostHeader>
+                <img src={userImage} alt='User profile image'/>
+                <LikeButton userId={userData.id} postId={postId}/>
+            </PostHeader>
+            
+            <PostContent>
                 <PostUserName>
                     {userName}
                     {isEditable? 
@@ -27,7 +32,7 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
                     }
                 </PostUserName>
                 {isEditing?
-                    <PostText>Ôvoeditah se for o userId{userId}</PostText>
+                    <PostText>Habilitando a edição de post</PostText>
                     :
                     <PostText>{postText}</PostText>
                 }
@@ -39,7 +44,7 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
                     </MetadataContent>
                     <img src={metadata.image}/>
                 </MetadataDiv>
-            </div>
+            </PostContent>
         </Container>
     )
 }

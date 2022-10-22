@@ -2,7 +2,6 @@ import styled from "styled-components";
 
 const Container = styled.div`
     width: 100%;
-    min-height: 280px;
     background-color: var(--box-grey);
     border-radius: 16px;
     margin-bottom: 16px;
@@ -11,13 +10,6 @@ const Container = styled.div`
     
     display: flex;
 
-    img{
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin-right: 18px;
-    }
     svg:hover, img:hover{
         cursor: pointer;
         filter: brightness(0.6);
@@ -25,7 +17,28 @@ const Container = styled.div`
 
     @media (max-width: 620px) {
         border-radius: 0;
-        height: 232px;
+    }
+`
+
+const PostHeader = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-right: 18px;
+
+    img{
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    button {
+        margin-top: 20px;
+    }
+
+    @media (max-width: 620px) {
         img{
             width: 40px;
             height: 40px;
@@ -33,6 +46,13 @@ const Container = styled.div`
             object-fit: cover;
         }
     }
+`
+
+const PostContent = styled.div`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 `
 
 const PostUserName = styled.div`
@@ -93,10 +113,11 @@ const MetadataDiv = styled.div`
         }
 
     @media (max-width: 620px) {
-        width: 74%;
+        width: 100%;
+        margin-right: 20px;
         min-height: 115px;
         img{
-            width: 34%;
+            width: 100px;
             height: 115px;
             object-fit: cover;
         }
@@ -161,6 +182,8 @@ const MetadataLink = styled.div`
 
 export {
     Container,
+    PostHeader,
+    PostContent,
     PostUserName,
     PostText,
     MetadataDiv,
