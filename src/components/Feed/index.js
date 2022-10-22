@@ -21,9 +21,9 @@ export default function Feed({ type }) {
     if (type === "timeline") {
       setIsTimeline(true);
       setTitle("timeline");
-      getTimelinePosts(userData.id)
+      getTimelinePosts()
         .then((answer) => {
-          setArrPosts(answer.data);
+          setArrPosts(answer.data[0]);
           setIsLoading(false);
           if (answer.data.length === 0) {
             setIsEmpty(true);

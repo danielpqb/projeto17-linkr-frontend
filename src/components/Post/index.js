@@ -9,7 +9,6 @@ import LikeButton from "../LikeButton";
 export default function Post({ userId, userImage, userName, postText, metadata, postLink, postId}) {
     const { userData } = useContext(UserContext);
     const [ isEditing, setIsEditing ] = useState(false);
-
     const isEditable = userData.id === userId;
 
     return (
