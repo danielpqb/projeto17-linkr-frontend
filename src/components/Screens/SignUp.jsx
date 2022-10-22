@@ -7,6 +7,7 @@ import LoginHeader from "../Common/LoginHeader";
 import SubmitButton from "../Common/SubmitButton";
 import { postSignUp } from "../../services/linkrAPI";
 import UserContext from "../../contexts/userContext";
+import createMessage from "../functions/createMessage";
 
 export default function SignUp() {
   const [form, setForm] = useState({
@@ -21,22 +22,6 @@ export default function SignUp() {
   const { alert, setAlert } = useContext(UserContext);
 
   const navigate = useNavigate();
-
-  function createMessage(error) {
-    const code = error.response.status;
-    const body = error.response.data.message;
-
-    let message = `Error ${code}\n\n
-    ${body}`;
-
-    //If Joi patterns not safitisfied
-    if (code === 422) {
-      // const { name, email, password, imageUrl } = form;
-      //Validate fields
-    }
-
-    return message;
-  }
 
   async function handleSubmit(e) {
     e.preventDefault();

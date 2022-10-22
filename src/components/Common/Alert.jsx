@@ -78,6 +78,7 @@ const Container = styled.div`
     z-index: 21;
 
     width: 90vw;
+    max-width: 450px;
     height: fit-content;
     padding: 15px;
 

@@ -8,6 +8,7 @@ import LoginHeader from "../Common/LoginHeader";
 import SubmitButton from "../Common/SubmitButton";
 import { postSignIn } from "../../services/linkrAPI";
 import AppContext from "../../contexts/AppContext";
+import createMessage from "../functions/createMessage";
 
 export default function SignIn() {
   const [form, setForm] = useState({
@@ -22,22 +23,6 @@ export default function SignIn() {
   const { reloadApp, setReloadApp } = useContext(AppContext);
   const { alert, setAlert } = useContext(UserContext);
 
-  function createMessage(error) {
-    const code = error.response.status;
-    const body = error.response.data.message;
-
-    let message = `Error ${code}\n\n
-    ${body}`;
-
-    //If Joi patterns not safitisfied
-    if (code === 422) {
-      // const { name, email, password, imageUrl } = form;
-      //Validate fields
-    }
-
-    return message;
-  }
-
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -48,9 +33,8 @@ export default function SignIn() {
 
     const promise = postSignIn(form);
     promise
-      .then(async (res) => {
+      .then((res) => {
         localStorage.setItem("userToken", res.data.token);
-        setReloadApp(!reloadApp);
 
         setAlert({
           ...alert,
@@ -65,12 +49,15 @@ export default function SignIn() {
         setIsSubmitDisabled(false);
 
         navigate("/timeline");
+
+        setTimeout(() => {
+          setReloadApp(!reloadApp);
+        }, 200);
       })
       .catch((res) => {
         const message = createMessage(res);
 
         setAlert({
-          ...alert,
           show: true,
           message: message,
           type: 0,
