@@ -4,7 +4,7 @@ import ReactTooltip from 'react-tooltip';
 import { handlePostLike } from './utils/handlePostLike';
 import { StyledLikeButton, HeartFill, HeartLine } from './style';
 
-const API_URL = 'http://localhost:4000';
+const API_URL = process.env.REACT_APP_API_BASE_URL;
 const api = axios.create({
   baseURL: API_URL,
 });

@@ -64,6 +64,7 @@ export default function Feed({ type }) {
                     {arrPosts.map((post, index) => (
                       <Post
                         key={index}
+                        userId={post.user.id}
                         userImage={post.user.image}
                         userName={post.user.name}
                         postText={post.text}

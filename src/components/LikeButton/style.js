@@ -6,7 +6,7 @@ export const StyledLikeButton = styled.button`
   outline: none;
   border: none;
 
-  background-color: #333333;
+  background-color: transparent;
 
   .toolTip {
     color: #505050 !important;
