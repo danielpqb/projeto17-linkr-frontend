@@ -3,7 +3,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { TiPencil, TiTrash } from "react-icons/ti";
 
-import { updatePostText } from "../../services/linkrAPI";
+import { updatePostHashtags, updatePostText } from "../../services/linkrAPI";
 import UserContext from "../../contexts/userContext";
 import {
   Container,
@@ -52,23 +52,33 @@ export default function Post({
       setIsEditing(!isEditing);
     };
 
-    async function handleForm(e) {
+    async function updatePost() {
+      try {
+
+        await updatePostText(postId, changeableText);
+        const hashtags = checkHashtags(changeableText);
+        console.log(hashtags);
+        //await updatePostHashtags(postId, hashtags);
+
+        setConsolidatedText(changeableText);
+        setIsEditing(false);
+
+      } catch (error) {
+        setAlert({
+          show: true,
+          message: error.response.data.message,
+          type: 0,
+          doThis: () => {},
+          color: "rgba(200,0,0)",
+          icon: "alert-circle",
+        });
+      };
+    };
+
+    function handleForm(e) {
       if (e.nativeEvent.inputType === 'insertLineBreak'){
-        setLoading(true)
-        try {
-          await updatePostText(postId, changeableText);
-          setConsolidatedText(changeableText);
-          setIsEditing(false);
-        } catch (error) {
-          setAlert({
-            show: true,
-            message: error.response.data.message,
-            type: 0,
-            doThis: () => {},
-            color: "rgba(200,0,0)",
-            icon: "alert-circle",
-          });
-        };
+        setLoading(true);
+        updatePost();
         setLoading(false);
         return;
       }

@@ -73,6 +73,10 @@ function updatePostText(postId, text) {
   return axios.put(`${BASE_URL}/posts/${postId}`, text, config);
 }
 
+function updatePostHashtags(postId, hashtags) {
+  return axios.put(`${BASE_URL}/posts/${postId}/hashtags`, hashtags, config);
+}
+
 export {
   postSignUp,
   postSignIn,
@@ -87,5 +91,6 @@ export {
   getTimelinePosts,
   getTrendingHashtags,
   getHashtagPosts,
-  updatePostText
+  updatePostText,
+  updatePostHashtags
 };
