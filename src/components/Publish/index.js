@@ -4,6 +4,7 @@ import {
   createPost,
   createHashtag,
   createPostsHashtags,
+  getTrendingHashtags,
 } from "../../services/linkrAPI";
 import { getTimelinePosts } from "../../services/linkrAPI";
 import PostsContext from "../../contexts/postsContext";
@@ -13,7 +14,7 @@ import { Container, LeftDiv, Form, Input, Button, RightDiv } from "./style";
 export default function Publish() {
   const [form, setForm] = React.useState({ link: "", text: "" });
   const [isLoading, setIsLoading] = React.useState(false);
-  const { setArrPosts } = React.useContext(PostsContext);
+  const { setArrPosts, setArrTrendingHashtags } = React.useContext(PostsContext);
   const { userData } = React.useContext(UserContext);
 
   function validateUrl(value) {
@@ -90,11 +91,18 @@ export default function Publish() {
       setIsLoading(false);
     }
 
-    getTimelinePosts(1)
+    getTimelinePosts()
       .then((answer) => {
-        setArrPosts(answer.data);
+        setArrPosts(answer.data[0]);
       })
       .catch((res) => {
+        Swal.fire(res.response.data.message);
+      });
+
+    getTrendingHashtags()
+      .then((answer) => {
+          setArrTrendingHashtags(answer.data[0]);
+      }).catch((res) => {
         Swal.fire(res.response.data.message);
       });
 

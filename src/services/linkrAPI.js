@@ -13,6 +13,14 @@ function getTimelinePosts() {
   return axios.get(`${BASE_URL}/posts`, config);
 }
 
+function getHashtagPosts(hashtag) {
+  return axios.get(`${BASE_URL}/posts/hashtag/${hashtag}`, config);
+}
+
+function getTrendingHashtags() {
+  return axios.get(`${BASE_URL}/trending`, config);
+}
+
 function postSignUp(user) {
   return axios.post(`${BASE_URL}/signup`, user);
 }
@@ -73,4 +81,6 @@ export {
   getAllPosts,
   getHashtags,
   getTimelinePosts,
+  getTrendingHashtags,
+  getHashtagPosts
 };

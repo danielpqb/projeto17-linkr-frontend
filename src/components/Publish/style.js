@@ -5,7 +5,7 @@ export const Container = styled.div`
   min-height: 210px;
   background-color: white;
   border-radius: 16px;
-  margin: 50px 0 30px 0;
+  margin: 0px 0 30px 0;
   display: flex;
 
   @media (max-width: 620px) {
