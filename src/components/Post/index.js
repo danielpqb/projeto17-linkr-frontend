@@ -54,19 +54,18 @@ export default function Post({
 
     async function updatePost() {
       try {
-
         await updatePostText(postId, changeableText);
-        const hashtags = checkHashtags(changeableText);
-        console.log(hashtags);
-        //await updatePostHashtags(postId, hashtags);
-
+        await updatePostHashtags(postId, checkHashtags(changeableText.text));
         setConsolidatedText(changeableText);
         setIsEditing(false);
-
       } catch (error) {
+        let err = error;
+        if (error.response?.data.message){
+          err = error.response?.data.message
+        }
         setAlert({
           show: true,
-          message: error.response.data.message,
+          message: err.toString(),
           type: 0,
           doThis: () => {},
           color: "rgba(200,0,0)",
