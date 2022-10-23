@@ -14,6 +14,9 @@ import SignUp from "./Screens/SignUp";
 import SignIn from "./Screens/SignIn";
 
 import { getUserDataByToken } from "../services/linkrAPI";
+import ProtectedRoute from "./Common/ProtectedRoute";
+import createMessage from "./functions/createMessage";
+import promiseRetry from "promise-retry";
 
 export default function App() {
   const [userData, setUserData] = useState({});
@@ -27,10 +30,32 @@ export default function App() {
     const localToken = localStorage.getItem("userToken");
 
     if (localToken) {
-      getUserDataByToken(localToken).then((res) => {
-        delete res.data.message;
-        setUserData(res.data);
-      });
+      promiseRetry(
+        //Function that will retry
+        (retry, number) => {
+          return getUserDataByToken(localToken).catch(retry);
+        },
+        { retries: 4, minTimeout: 1000, factor: 2 }
+      ).then(
+        //Resolved at any try
+        (res) => {
+          delete res.data.message;
+          setUserData(res.data);
+        },
+        //Couldn't resolve after all tries
+        (err) => {
+          const message = createMessage(err);
+
+          setAlert({
+            show: true,
+            message: message,
+            type: 0,
+            doThis: () => {},
+            color: "rgba(200,0,0)",
+            icon: "alert-circle",
+          });
+        }
+      );
     }
   }, [setUserData, reloadApp]);
 
@@ -60,21 +85,27 @@ export default function App() {
               {alert.show && <Alert />}
               <BrowserRouter>
                 <Routes>
-                  <Route path="/" element={<SignIn />}></Route>
-                  <Route path="/sign-up" element={<SignUp />}></Route>
+                  <Route path="/" element={<SignIn />} />
+                  <Route path="/sign-up" element={<SignUp />} />
                   <Route
-                    path="/timeline"
-                    element={<Feed type={"timeline"} />}
-                  ></Route>
-                  <Route
-                    path="/hashtag/:hashtag"
-                    element={<Feed type={"hashtag"} />}
-                  ></Route>
-                  <Route
-                    path="/users/:id"
-                    element={<Feed type={"user"} />}
-                  ></Route>
-                  <Route path="*" element={<Navigate to="/" />}></Route>
+                    element={
+                      <ProtectedRoute
+                        token={localStorage.getItem("userToken")}
+                        setAlert={setAlert}
+                      />
+                    }
+                  >
+                    <Route
+                      path="/timeline"
+                      element={<Feed type={"timeline"} />}
+                    />
+                    <Route
+                      path="/hashtag/:hashtag"
+                      element={<Feed type={"hashtag"} />}
+                    />
+                    <Route path="/users/:id" element={<Feed type={"user"} />} />
+                    <Route path="*" element={<Navigate to="/" />} />
+                  </Route>
                 </Routes>
               </BrowserRouter>
             </Container>
