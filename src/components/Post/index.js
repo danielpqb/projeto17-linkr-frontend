@@ -1,10 +1,10 @@
 import React from "react";
-import { useState, useContext, useEffect, useRef } from "react";
+import { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { TiPencil, TiTrash } from "react-icons/ti";
 
 import { updatePostText } from "../../services/linkrAPI";
 import UserContext from "../../contexts/userContext";
-import PostsContext from "../../contexts/postsContext";
 import {
   Container,
   PostHeader,
@@ -19,7 +19,7 @@ import {
   Input
 } from "./style";
 import LikeButton from "../LikeButton";
-import { useNavigate } from "react-router-dom";
+import checkHashtags from '../functions/checkHashtags';
 
 export default function Post({
   userId,
@@ -57,7 +57,8 @@ export default function Post({
         setLoading(true)
         try {
           await updatePostText(postId, changeableText);
-          setConsolidatedText(changeableText)
+          setConsolidatedText(changeableText);
+          setIsEditing(false);
         } catch (error) {
           setAlert({
             show: true,
@@ -69,7 +70,6 @@ export default function Post({
           });
         };
         setLoading(false);
-        setIsEditing(false);
         return;
       }
       setChengeableText({text: e.target.value});
