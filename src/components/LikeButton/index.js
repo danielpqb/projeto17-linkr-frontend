@@ -75,7 +75,6 @@ export default function LikeButton({ userId, postId }) {
   }
 
   function likeDataTip() {
-    // TODO: refactor function for better performance
     if (liked) {
       if (likesTotal === 1) {
         return `You liked this post`;
