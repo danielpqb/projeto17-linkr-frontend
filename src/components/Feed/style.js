@@ -8,6 +8,7 @@ const Container = styled.div`
     flex-direction: column;
 
     h1 {
+        margin-bottom: 50px;
         font-family: 'Oswald', sans-serif;
         font-weight: 700;
         font-size: 43px;
@@ -49,7 +50,67 @@ const Loading = styled.div`
     }
 `
 
+const Trending = styled.div`
+    width: 300px;
+    height: 406px;
+    background-color: #171717;
+    border-radius: 16px;
+    margin-left: 25px;
+    box-sizing: border-box;
+    padding: 10px 0px 25px 0px;
+    margin-top: 215px;
+
+    @media (max-width: 980px) {
+        display: none;
+    }
+`
+
+const TrendingLine = styled.div`
+    width: 100%;
+    height: 1px;
+    background-color: #484848;
+`
+const TrendingTitle = styled.div`
+    margin-left: 16px;
+    margin-bottom: 12px;
+    font-family: 'Oswald';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 27px;
+    line-height: 40px;
+    color: #FFFFFF;
+`
+
+const TrendingHashtags = styled.div`
+    margin-left: 16px;
+    margin-bottom: 7px;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 19px;
+    line-height: 23px;
+    color: #FFFFFF;
+    letter-spacing: 0.05em;
+    :hover{
+        filter: brightness(0.6);
+        cursor: pointer;
+    }
+`
+
+const Content = styled.div`
+    display: flex;
+    height: 100%;
+`
+
+
+
+
 export {
     Container,
-    Loading
+    Loading,
+    Content,
+    Trending,
+    TrendingLine,
+    TrendingTitle,
+    TrendingHashtags
 }
