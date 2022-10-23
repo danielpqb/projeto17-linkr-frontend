@@ -12,10 +12,7 @@ const api = axios.create({
 export default function LikeButton({ userId, postId }) {
   const [showTooltip, setShowTooltip] = useState(true);
   const [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState({
-    total: "0",
-    user: "0",
-  });
+  const [likesTotal, setLikesTotal] = useState(0);
   const [whoElseLiked, setWhoElseLiked] = useState({
     first: "",
     second: "",
@@ -27,11 +24,9 @@ export default function LikeButton({ userId, postId }) {
     const fetchUserLike = async () => {
       try {
         const userLike = await api.get(`likes/${postId}/?userId=${userId}`);
-        setLikes({ ...likes, user: userLike.data.likes * 1 });
 
         if (userLike.data.likes * 1 === 1) {
           setLiked(true);
-          setLikes({ ...likes, total: likes.total * 1 + 1 });
           return;
         }
       } catch (err) {
@@ -62,8 +57,7 @@ export default function LikeButton({ userId, postId }) {
       try {
         const totalLikes = await api.get(`likes/${postId}/`);
 
-        const likesCount = Number(totalLikes.data?.likes);
-        setLikes({ ...likes, total: likesCount });
+        setLikesTotal(Number(totalLikes.data?.likes));
       } catch (err) {
         console.error("Error fetching total likes: ", err);
       }
@@ -74,43 +68,37 @@ export default function LikeButton({ userId, postId }) {
 
   function handleClick() {
     setLiked(!liked);
-    liked
-      ? setLikes({ ...likes, total: likes.total * 1 - 1 })
-      : setLikes({ ...likes, total: likes.total * 1 + 1 });
+    liked ? setLikesTotal(likesTotal - 1) : setLikesTotal(likesTotal + 1);
     liked
       ? handlePostLike(false, postId, userId)
       : handlePostLike(true, postId, userId);
   }
 
   function likeDataTip() {
-    // TODO: refactor function for better performance
-    if (liked && likes.total * 1 === 1) {
-      return `You liked this post`;
-    }
-    if (liked && likes.total * 1 === 2) {
-      return `You and ${whoElseLiked.first}`;
-    }
-    if (liked && likes.total * 1 > 2) {
-      return `You, ${whoElseLiked.first} and other ${
-        likes.total * 1 - 2
-      } people.`;
-    }
-    if (!liked && likes.total * 1 === 1) {
-      return `${whoElseLiked.first} liked this post`;
-    }
-    if (!liked && likes.total * 1 === 2) {
-      return `${whoElseLiked.first} and ${whoElseLiked.second}`;
-    }
-    if (!liked && likes.total * 1 > 2) {
-      return `${whoElseLiked.first}, ${whoElseLiked.second} and other ${
-        likes.total * 1 - 2
-      } people.`;
+    if (liked) {
+      if (likesTotal === 1) {
+        return `You liked this post`;
+      }
+      if (likesTotal === 2) {
+        return `You and ${whoElseLiked.first}`;
+      }
+      if (likesTotal > 2) {
+        return `You, ${whoElseLiked.first} and other ${likesTotal - 2} people.`;
+      }
+    } else {
+      if (likesTotal === 1) {
+        return `${whoElseLiked.first} liked this post`;
+      }
+      if (likesTotal === 2) {
+        return `${whoElseLiked.first} and ${whoElseLiked.second}`;
+      }
+      if (likesTotal > 2) {
+        return `${whoElseLiked.first}, ${whoElseLiked.second} and other ${
+          likesTotal - 2
+        } people.`;
+      }
     }
     return "Like!";
-  }
-
-  function getTotalLikes() {
-    return likes.total * 1;
   }
 
   return (
@@ -141,7 +129,7 @@ export default function LikeButton({ userId, postId }) {
             setTimeout(() => setShowTooltip(true), 50);
           }}
         >
-          {getTotalLikes()}
+          {likesTotal}
         </p>
       </>
     </StyledLikeButton>
