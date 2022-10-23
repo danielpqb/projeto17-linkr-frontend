@@ -112,6 +112,7 @@ const MetadataDiv = styled.div`
     width: 153px;
     height: 155px;
     object-fit: cover;
+    object-position: center;
     margin-right: 0px;
     border-top-right-radius: 11px;
     border-bottom-right-radius: 11px;

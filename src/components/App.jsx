@@ -23,6 +23,8 @@ export default function App() {
   const [alert, setAlert] = useState({});
   const [reloadApp, setReloadApp] = useState(false);
   const [arrPosts, setArrPosts] = useState([]);
+  const [arrTrendingHashtags, setArrTrendingHashtags] = useState(['There are no hashtags yet']);
+  const [refreshFeed, setRefreshFeed] = useState(false);
 
   useEffect(() => {
     const localToken = localStorage.getItem("userToken");
@@ -69,7 +71,16 @@ export default function App() {
             setAlert,
           }}
         >
-          <PostsContext.Provider value={{ arrPosts, setArrPosts }}>
+          <PostsContext.Provider 
+            value={{ 
+              arrPosts,
+              setArrPosts,
+              arrTrendingHashtags,
+              setArrTrendingHashtags, 
+              refreshFeed, 
+              setRefreshFeed 
+            }}
+          >
             <Container>
               {alert.show && <Alert />}
               <BrowserRouter>
