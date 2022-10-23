@@ -1,8 +1,8 @@
-import axios from 'axios';
-import { useState, useEffect, useId } from 'react';
-import ReactTooltip from 'react-tooltip';
-import { handlePostLike } from './utils/handlePostLike';
-import { StyledLikeButton, HeartFill, HeartLine } from './style';
+import axios from "axios";
+import { useState, useEffect, useId } from "react";
+import ReactTooltip from "react-tooltip";
+import { handlePostLike } from "./utils/handlePostLike";
+import { StyledLikeButton, HeartFill, HeartLine } from "./style";
 
 const API_URL = process.env.REACT_APP_API_BASE_URL;
 const api = axios.create({
@@ -13,50 +13,34 @@ export default function LikeButton({ userId, postId }) {
   const [showTooltip, setShowTooltip] = useState(true);
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState({
-    total: '0',
-    user: '0',
+    total: "0",
+    user: "0",
   });
   const [whoElseLiked, setWhoElseLiked] = useState({
-    first: '',
-    second: '',
+    first: "",
+    second: "",
   });
 
   const tipId = useId();
-
-  useEffect(() => {
-    const fetchLikes = async () => {
-      try {
-        const totalLikes = await api.get(`likes/${postId}/`);
-        const likesCount = totalLikes.data?.likes;
-
-        setLikes({ ...likes, total: likesCount });
-      } catch (err) {
-        console.error('Error fetching total likes: ', err);
-      }
-    };
-
-    fetchLikes();
-  }, []); // eslint-disable-line
 
   useEffect(() => {
     const fetchUserLike = async () => {
       try {
         const userLike = await api.get(`likes/${postId}/?userId=${userId}`);
         setLikes({ ...likes, user: userLike.data.likes * 1 });
+
         if (userLike.data.likes * 1 === 1) {
           setLiked(true);
           setLikes({ ...likes, total: likes.total * 1 + 1 });
           return;
         }
       } catch (err) {
-        console.error('Error fetching user like: ', err);
+        console.error("Error fetching user like: ", err);
       }
     };
 
     fetchUserLike();
-  }, []); // eslint-disable-line
 
-  useEffect(() => {
     const fetchWhoElseLiked = async () => {
       try {
         const whoElseLikedResponse = await api.get(
@@ -68,11 +52,24 @@ export default function LikeButton({ userId, postId }) {
           second: whoElseLikedResponse.data[1]?.name,
         });
       } catch (err) {
-        console.error('Error fetching who else liked: ', err);
+        console.error("Error fetching who else liked: ", err);
       }
     };
 
     fetchWhoElseLiked();
+
+    const fetchLikes = async () => {
+      try {
+        const totalLikes = await api.get(`likes/${postId}/`);
+
+        const likesCount = Number(totalLikes.data?.likes);
+        setLikes({ ...likes, total: likesCount });
+      } catch (err) {
+        console.error("Error fetching total likes: ", err);
+      }
+    };
+
+    fetchLikes();
   }, []); // eslint-disable-line
 
   function handleClick() {
@@ -109,7 +106,7 @@ export default function LikeButton({ userId, postId }) {
         likes.total * 1 - 2
       } people.`;
     }
-    return 'Like!';
+    return "Like!";
   }
 
   function getTotalLikes() {
@@ -121,10 +118,10 @@ export default function LikeButton({ userId, postId }) {
       {showTooltip && (
         <ReactTooltip
           id={tipId}
-          className='toolTip'
-          effect='solid'
-          place='bottom'
-          type='light'
+          className="toolTip"
+          effect="solid"
+          place="bottom"
+          type="light"
         >
           <span>{likeDataTip()}</span>
         </ReactTooltip>
@@ -136,7 +133,7 @@ export default function LikeButton({ userId, postId }) {
           <HeartLine onClick={() => handleClick()} />
         )}
         <p
-          data-tip='ReactTooltip'
+          data-tip="ReactTooltip"
           data-for={tipId}
           onMouseEnter={() => setShowTooltip(true)}
           onMouseLeave={() => {
