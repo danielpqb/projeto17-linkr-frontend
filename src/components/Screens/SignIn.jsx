@@ -53,8 +53,8 @@ export default function SignIn() {
           setReloadApp(!reloadApp);
         }, 200);
       })
-      .catch((res) => {
-        const message = createMessage(res);
+      .catch((error) => {
+        const message = createMessage(error);
 
         setAlert({
           show: true,

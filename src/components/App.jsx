@@ -92,7 +92,7 @@ export default function App() {
                       path="/hashtag/:hashtag"
                       element={<Feed type={"hashtag"} />}
                     />
-                    <Route path="/users/:id" element={<Feed type={"user"} />} />
+                    <Route path="/user/:id" element={<Feed type={"user"} />} />
                     <Route path="*" element={<Navigate to="/" />} />
                   </Route>
                 </Routes>
