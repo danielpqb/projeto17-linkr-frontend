@@ -2,26 +2,77 @@ import React from "react";
 import { useState, useContext, useEffect, useRef } from "react";
 import { TiPencil, TiTrash } from "react-icons/ti";
 
+import { updatePostText } from "../../services/linkrAPI";
 import UserContext from "../../contexts/userContext";
-import { Container, PostHeader, PostContent, MetadataContent, MetadataDiv, MetadataLink, MetadataText, MetadataTitle, PostText, PostUserName, Input } from "./style";
+import PostsContext from "../../contexts/postsContext";
+import {
+  Container,
+  PostHeader,
+  PostContent,
+  MetadataContent,
+  MetadataDiv,
+  MetadataLink,
+  MetadataText,
+  MetadataTitle,
+  PostText,
+  PostUserName,
+  Input
+} from "./style";
 import LikeButton from "../LikeButton";
+import { useNavigate } from "react-router-dom";
 
-export default function Post({ userId, userImage, userName, postText, metadata, postLink, postId}) {
-    const { userData } = useContext(UserContext);
-    const [ isEditing, setIsEditing ] = useState(false);
-    const [ text, setText ] = useState({text: postText});
-    const inputRef = useRef(null);
+export default function Post({
+  userId,
+  userImage,
+  userName,
+  postText,
+  metadata,
+  postLink,
+  postId,
+}) {
+  const { userData, setAlert } = useContext(UserContext);
+  const [isEditing, setIsEditing] = useState(false);
+  const [ loading, setLoading ] = useState(false);
+  const [ consolidatedText, setConsolidatedText ] = useState({text: postText});
+  const [ changeableText, setChengeableText ] = useState({text: postText});
 
-    const isEditable = userData.id === userId;
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        if (isEditing) {
-            inputRef.current.focus();
-        }
-    }, [isEditing]);
+  const isEditable = userData.id === userId;
 
-    function handleForm(e) {
-        setText({text: e.target.value});
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape'){
+        setChengeableText(consolidatedText);
+        setIsEditing(false);
+      }
+    });
+
+    function changeEditing(){
+      setChengeableText(consolidatedText);
+      setIsEditing(!isEditing);
+    };
+
+    async function handleForm(e) {
+      if (e.nativeEvent.inputType === 'insertLineBreak'){
+        setLoading(true)
+        try {
+          await updatePostText(postId, changeableText);
+          setConsolidatedText(changeableText)
+        } catch (error) {
+          setAlert({
+            show: true,
+            message: error.response.data.message,
+            type: 0,
+            doThis: () => {},
+            color: "rgba(200,0,0)",
+            icon: "alert-circle",
+          });
+        };
+        setLoading(false);
+        setIsEditing(false);
+        return;
+      }
+      setChengeableText({text: e.target.value});
     }
 
     return (
@@ -33,10 +84,17 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
             
             <PostContent>
                 <PostUserName>
-                    {userName}
+                    <div
+                      onClick={() => {
+                        navigate(`/user/${userData.id}`);
+                      }}
+                    >
+                      {userName}
+                    </div>
+
                     {isEditable? 
                         <div>
-                            <TiPencil onClick={() => setIsEditing(!isEditing)}/>
+                            <TiPencil onClick={changeEditing}/>
                             <TiTrash onClick={() => alert(`Aqui vai deletar o post id:${postId}!`)}/>
                         </div>
                         :
@@ -45,16 +103,16 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
                 </PostUserName>
                 {isEditing?
                     <Input
-                        placeholder="http:// ..."
                         name="text"
                         type="text"
-                        ref={inputRef}
-                        value={text.text}
+                        autoFocus={true}
+                        disabled={loading}
+                        value={changeableText.text}
                         onChange={handleForm}
                         required
                     />
                     :
-                    <PostText>{postText}</PostText>
+                    <PostText>{consolidatedText.text}</PostText>
                 }
                 <MetadataDiv onClick={()=>{window.open(postLink)}}>
                     <MetadataContent>
