@@ -76,11 +76,12 @@ export {
   getSearchUsers,
   createPost,
   createHashtag,
+  createHeader,
   createPostsHashtags,
   getPosts,
   getAllPosts,
   getHashtags,
   getTimelinePosts,
   getTrendingHashtags,
-  getHashtagPosts
+  getHashtagPosts,
 };

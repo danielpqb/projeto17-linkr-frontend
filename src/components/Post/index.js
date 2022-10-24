@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useContext } from "react";
-import { TiPencil, TiTrash } from "react-icons/ti";
+import { TiPencil } from "react-icons/ti";
 
 import UserContext from "../../contexts/userContext";
 import {
@@ -15,6 +15,7 @@ import {
   PostText,
   PostUserName,
 } from "./style";
+import DeleteButton from "../Common/DeleteButton";
 import LikeButton from "../LikeButton";
 import { useNavigate } from "react-router-dom";
 
@@ -37,7 +38,7 @@ export default function Post({
   return (
     <Container>
       <PostHeader>
-        <img src={userImage} alt="User profile image" />
+        <img src={userImage} alt='User profile image' />
         <LikeButton userId={userData.id} postId={postId} />
       </PostHeader>
 
@@ -53,9 +54,7 @@ export default function Post({
           {isEditable ? (
             <div>
               <TiPencil onClick={() => setIsEditing(!isEditing)} />
-              <TiTrash
-                onClick={() => alert(`Aqui vai deletar o post id:${postId}!`)}
-              />
+              <DeleteButton postId={postId} />
             </div>
           ) : (
             <></>
