@@ -2,15 +2,7 @@ import React from "react";
 import TopBar from "../Topbar";
 import Publish from "../Publish";
 import Post from "../Post";
-import {
-  Container,
-  Content,
-  Loading,
-  Trending,
-  TrendingHashtags,
-  TrendingLine,
-  TrendingTitle,
-} from "./style";
+import { Container, Content, Loading, Trending, TrendingHashtags, TrendingLine, TrendingTitle } from "./style";
 import {
   getHashtagPosts,
   getTimelinePosts,
@@ -35,8 +27,7 @@ export default function Feed({ type }) {
   const [isEmpty, setIsEmpty] = useState(false);
   /* const [refreshFeed, setRefreshFeed] = useState(false); */
   const { arrPosts, setArrPosts } = React.useContext(PostsContext);
-  const { arrTrendingHashtags, setArrTrendingHashtags } =
-    React.useContext(PostsContext);
+  const { arrTrendingHashtags, setArrTrendingHashtags } = React.useContext(PostsContext);
   const { userData, setUserData } = React.useContext(UserContext);
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
   const [thisUserId, setThisUserId] = useState(-1);
@@ -59,6 +50,8 @@ export default function Feed({ type }) {
           setThisUserId(res.data.id);
 
           setUserData(res.data);
+
+          setRefreshFeed(!refreshFeed);
         },
         //Couldn't resolve after all tries
         (err) => {
@@ -172,10 +165,7 @@ export default function Feed({ type }) {
           ) : (
             <>
               {isError ? (
-                <Loading>
-                  An error occured while trying to fetch the posts, please
-                  refresh the page
-                </Loading>
+                <Loading>An error occured while trying to fetch the posts, please refresh the page</Loading>
               ) : (
                 <>
                   {isEmpty ? (
