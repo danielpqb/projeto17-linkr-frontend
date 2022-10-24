@@ -84,6 +84,7 @@ export {
   getSearchUsers,
   createPost,
   createHashtag,
+  createHeader,
   createPostsHashtags,
   getPosts,
   getAllPosts,

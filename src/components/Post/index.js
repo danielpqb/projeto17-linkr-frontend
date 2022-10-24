@@ -18,6 +18,7 @@ import {
   PostUserName,
   Input
 } from "./style";
+import Button from "../Common/DeleteButton";
 import LikeButton from "../LikeButton";
 import checkHashtags from '../functions/checkHashtags';
 
@@ -39,6 +40,7 @@ export default function Post({
   const navigate = useNavigate();
 
   const isEditable = userData.id === userId;
+
 
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape'){
@@ -104,7 +106,7 @@ export default function Post({
                     {isEditable? 
                         <div>
                             <TiPencil onClick={changeEditing}/>
-                            <TiTrash onClick={() => alert(`Aqui vai deletar o post id:${postId}!`)}/>
+                            <DeleteButton postId={postId} />
                         </div>
                         :
                         <></>
