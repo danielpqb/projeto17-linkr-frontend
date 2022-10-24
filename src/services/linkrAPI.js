@@ -17,6 +17,10 @@ function getHashtagPosts(hashtag) {
   return axios.get(`${BASE_URL}/posts/hashtag/${hashtag}`, config);
 }
 
+function getUserPosts(userId) {
+  return axios.get(`${BASE_URL}/posts/${userId}`);
+}
+
 function getTrendingHashtags() {
   return axios.get(`${BASE_URL}/trending`, config);
 }
@@ -87,10 +91,11 @@ export {
   createPostsHashtags,
   getPosts,
   getAllPosts,
+  getUserPosts,
   getHashtags,
   getTimelinePosts,
   getTrendingHashtags,
   getHashtagPosts,
   updatePostText,
-  updatePostHashtags
+  updatePostHashtags,
 };
