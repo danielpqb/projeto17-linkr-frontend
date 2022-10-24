@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { TiPencil, TiTrash } from "react-icons/ti";
+import { TiPencil } from "react-icons/ti";
 
 import { updatePostHashtags, updatePostText } from "../../services/linkrAPI";
 import UserContext from "../../contexts/userContext";
@@ -18,8 +18,11 @@ import {
   PostUserName,
   Input
 } from "./style";
+import DeleteButton from "../Common/DeleteButton";
 import LikeButton from "../LikeButton";
 import checkHashtags from '../functions/checkHashtags';
+import { ReactTagify } from "react-tagify";
+import PostsContext from "../../contexts/postsContext";
 
 export default function Post({
   userId,
@@ -35,10 +38,12 @@ export default function Post({
   const [ loading, setLoading ] = useState(false);
   const [ consolidatedText, setConsolidatedText ] = useState({text: postText});
   const [ changeableText, setChengeableText ] = useState({text: postText});
+  const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
 
   const navigate = useNavigate();
 
   const isEditable = userData.id === userId;
+
 
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape'){
@@ -104,7 +109,7 @@ export default function Post({
                     {isEditable? 
                         <div>
                             <TiPencil onClick={changeEditing}/>
-                            <TiTrash onClick={() => alert(`Aqui vai deletar o post id:${postId}!`)}/>
+                            <DeleteButton postId={postId} />
                         </div>
                         :
                         <></>
@@ -121,7 +126,18 @@ export default function Post({
                         required
                     />
                     :
-                    <PostText>{consolidatedText.text}</PostText>
+                    <PostText>
+                      <ReactTagify tagStyle={{
+                        color: '#FFFFFF',
+                        fontWeight: 700,
+                        cursor: 'pointer'
+                      }} tagClicked={(tag) => {
+                        navigate(`/hashtag/${tag.substring(1)}`);
+                        setRefreshFeed(!refreshFeed);
+                      }}>
+                        {consolidatedText.text} 
+                      </ReactTagify> 
+                    </PostText>
                 }
                 <MetadataDiv onClick={()=>{window.open(postLink)}}>
                     <MetadataContent>
