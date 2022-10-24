@@ -51,7 +51,7 @@ export default function Feed({ type }) {
 
           setUserData(res.data);
 
-          setRefreshFeed(!refreshFeed);
+          //setRefreshFeed(!refreshFeed);
         },
         //Couldn't resolve after all tries
         (err) => {
