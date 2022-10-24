@@ -50,6 +50,8 @@ export default function Feed({ type }) {
           setThisUserId(res.data.id);
 
           setUserData(res.data);
+
+          //setRefreshFeed(!refreshFeed);
         },
         //Couldn't resolve after all tries
         (err) => {
