@@ -69,6 +69,14 @@ function getHashtags() {
   return axios.get(`${BASE_URL}/hashtags`, config);
 }
 
+function updatePostText(postId, text) {
+  return axios.put(`${BASE_URL}/posts/${postId}`, text, config);
+}
+
+function updatePostHashtags(postId, hashtags) {
+  return axios.put(`${BASE_URL}/posts/${postId}/hashtags`, hashtags, config);
+}
+
 export {
   postSignUp,
   postSignIn,
@@ -82,5 +90,7 @@ export {
   getHashtags,
   getTimelinePosts,
   getTrendingHashtags,
-  getHashtagPosts
+  getHashtagPosts,
+  updatePostText,
+  updatePostHashtags
 };
