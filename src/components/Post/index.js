@@ -21,6 +21,8 @@ import {
 import DeleteButton from "../Common/DeleteButton";
 import LikeButton from "../LikeButton";
 import checkHashtags from '../functions/checkHashtags';
+import { ReactTagify } from "react-tagify";
+import PostsContext from "../../contexts/postsContext";
 
 export default function Post({
   userId,
@@ -36,6 +38,7 @@ export default function Post({
   const [ loading, setLoading ] = useState(false);
   const [ consolidatedText, setConsolidatedText ] = useState({text: postText});
   const [ changeableText, setChengeableText ] = useState({text: postText});
+  const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
 
   const navigate = useNavigate();
 
@@ -123,7 +126,18 @@ export default function Post({
                         required
                     />
                     :
-                    <PostText>{consolidatedText.text}</PostText>
+                    <PostText>
+                      <ReactTagify tagStyle={{
+                        color: '#FFFFFF',
+                        fontWeight: 700,
+                        cursor: 'pointer'
+                      }} tagClicked={(tag) => {
+                        navigate(`/hashtag/${tag.substring(1)}`);
+                        setRefreshFeed(!refreshFeed);
+                      }}>
+                        {consolidatedText.text} 
+                      </ReactTagify> 
+                    </PostText>
                 }
                 <MetadataDiv onClick={()=>{window.open(postLink)}}>
                     <MetadataContent>
