@@ -23,7 +23,7 @@ export default function App() {
   const [alert, setAlert] = useState({});
   const [reloadApp, setReloadApp] = useState(false);
   const [arrPosts, setArrPosts] = useState([]);
-  const [arrTrendingHashtags, setArrTrendingHashtags] = useState(['There are no hashtags yet']);
+  const [arrTrendingHashtags, setArrTrendingHashtags] = useState(["There are no hashtags yet"]);
   const [refreshFeed, setRefreshFeed] = useState(false);
 
   useEffect(() => {
@@ -71,14 +71,14 @@ export default function App() {
             setAlert,
           }}
         >
-          <PostsContext.Provider 
-            value={{ 
+          <PostsContext.Provider
+            value={{
               arrPosts,
               setArrPosts,
               arrTrendingHashtags,
-              setArrTrendingHashtags, 
-              refreshFeed, 
-              setRefreshFeed 
+              setArrTrendingHashtags,
+              refreshFeed,
+              setRefreshFeed,
             }}
           >
             <Container>
@@ -87,22 +87,9 @@ export default function App() {
                 <Routes>
                   <Route path="/" element={<SignIn />} />
                   <Route path="/sign-up" element={<SignUp />} />
-                  <Route
-                    element={
-                      <ProtectedRoute
-                        token={localStorage.getItem("userToken")}
-                        setAlert={setAlert}
-                      />
-                    }
-                  >
-                    <Route
-                      path="/timeline"
-                      element={<Feed type={"timeline"} />}
-                    />
-                    <Route
-                      path="/hashtag/:hashtag"
-                      element={<Feed type={"hashtag"} />}
-                    />
+                  <Route element={<ProtectedRoute token={localStorage.getItem("userToken")} setAlert={setAlert} />}>
+                    <Route path="/timeline" element={<Feed type={"timeline"} />} />
+                    <Route path="/hashtag/:hashtag" element={<Feed type={"hashtag"} />} />
                     <Route path="/user/:id" element={<Feed type={"user"} />} />
                     <Route path="*" element={<Navigate to="/" />} />
                   </Route>

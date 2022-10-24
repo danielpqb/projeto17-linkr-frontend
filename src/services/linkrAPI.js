@@ -42,7 +42,12 @@ function getUserDataByToken(token) {
 }
 
 function getSearchUsers(filter) {
-  return axios.get(`${BASE_URL}/searchUsers`, { headers: filter });
+  const auth2 = localStorage.getItem("userToken");
+  const config2 = `Bearer ${auth2}`;
+
+  return axios.get(`${BASE_URL}/searchUsers`, {
+    headers: { filter: filter, Authorization: config2 },
+  });
 }
 
 function createPost({ userId, text, link }) {
@@ -59,6 +64,10 @@ function createHashtag({ title }) {
 
 function createPostsHashtags(body) {
   return axios.post(`${BASE_URL}/create-posts-hashtags`, body, config);
+}
+
+function getPostDataById(id) {
+  return axios.get(`${BASE_URL}/posts/post/${id}`, config);
 }
 
 function getPosts() {
@@ -90,6 +99,7 @@ export {
   createHashtag,
   createHeader,
   createPostsHashtags,
+  getPostDataById,
   getPosts,
   getAllPosts,
   getUserPosts,

@@ -57,7 +57,6 @@ export default function Feed({ type }) {
         (res) => {
           delete res.data.message;
           setThisUserId(res.data.id);
-          console.log(res.data.id);
 
           setUserData(res.data);
         },
@@ -119,7 +118,6 @@ export default function Feed({ type }) {
           if (thisUserId === -1) {
             setThisUserId(userData.id);
           }
-          console.log(thisUserId);
         });
       getTrendingHashtags()
         .then((answer) => {

@@ -5,7 +5,7 @@ import { Oval } from "react-loader-spinner";
 import { TiTrash } from "react-icons/ti";
 import Modal from "react-modal";
 import PostsContext from "../../contexts/postsContext";
-const API_URL = "https://server-linkr.herokuapp.com";
+const API_URL = process.env.REACT_APP_API_BASE_URL;
 
 export default function DeleteButton({ postId }) {
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -23,12 +23,12 @@ export default function DeleteButton({ postId }) {
     <Oval
       height={80}
       width={80}
-      color='#FFFFFF'
+      color="#FFFFFF"
       wrapperStyle={{}}
-      wrapperClass=''
+      wrapperClass=""
       visible={true}
-      ariaLabel='oval-loading'
-      secondaryColor='#000000'
+      ariaLabel="oval-loading"
+      secondaryColor="#000000"
       strokeWidth={2}
       strokeWidthSecondary={2}
     />
@@ -60,23 +60,18 @@ export default function DeleteButton({ postId }) {
     <>
       <TiTrash onClick={() => setModalOpen(!modalOpen)} />
 
-      <Modal
-        isOpen={modalOpen}
-        onRequestClose={showModal}
-        contentLabel='Delete Modal'
-        style={modalStyle}
-      >
+      <Modal isOpen={modalOpen} onRequestClose={showModal} contentLabel="Delete Modal" style={modalStyle}>
         <ContainerModal>
           {loadingDelete ? (
             loadingAnimation
           ) : (
             <>
               <h4>Are you sure you want to delete this post?</h4>
-              <div className='modalButtons'>
-                <button className='back' onClick={showModal}>
+              <div className="modalButtons">
+                <button className="back" onClick={showModal}>
                   No, go back
                 </button>
-                <button type='submit' className='delete' onClick={deletePost}>
+                <button type="submit" className="delete" onClick={deletePost}>
                   {" "}
                   Yes, delete it
                 </button>
