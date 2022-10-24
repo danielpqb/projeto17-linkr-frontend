@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { TiPencil, TiTrash } from "react-icons/ti";
+import { TiPencil } from "react-icons/ti";
 
 import { updatePostHashtags, updatePostText } from "../../services/linkrAPI";
 import UserContext from "../../contexts/userContext";
@@ -18,7 +18,7 @@ import {
   PostUserName,
   Input
 } from "./style";
-import Button from "../Common/DeleteButton";
+import DeleteButton from "../Common/DeleteButton";
 import LikeButton from "../LikeButton";
 import checkHashtags from '../functions/checkHashtags';
 
