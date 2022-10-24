@@ -16,7 +16,6 @@ export default function Feed({ type }) {
     const [isError, setIsError] = useState(false);
     const [isTimeline, setIsTimeline] = useState(false);
     const [isEmpty, setIsEmpty] = useState(false);
-    /* const [refreshFeed, setRefreshFeed] = useState(false); */
     const { arrPosts, setArrPosts } = React.useContext(PostsContext);
     const { arrTrendingHashtags, setArrTrendingHashtags } = React.useContext(PostsContext);
     const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
