@@ -6,11 +6,8 @@ export default function CheckBox({ size, color, isChecked, setIsChecked }) {
 
   return (
     <Container
-      size={size}
-      isChecked={isChecked}
       onClick={() => {
         setIsChecked(!isChecked);
-        console.log(isChecked);
       }}
     >
       {isChecked ? <BiCheckboxSquare color={color} size={size} /> : <BiCheckbox color={color} size={size} />}
