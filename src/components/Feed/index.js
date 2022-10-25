@@ -161,7 +161,7 @@ export default function Feed({ type }) {
     setUserData,
     type,
     setArrTrendingHashtags,
-    userData,
+    // userData,
     setTargetUser,
   ]);
 
