@@ -9,6 +9,7 @@ import SubmitButton from "../Common/SubmitButton";
 import { postSignIn } from "../../services/linkrAPI";
 import AppContext from "../../contexts/AppContext";
 import createMessage from "../functions/createMessage";
+import CheckBox from "../Common/CheckBox";
 
 export default function SignIn() {
   const [form, setForm] = useState({
@@ -90,6 +91,7 @@ export default function SignIn() {
             setForm({ ...form, password: e.target.value });
           }}
           value={form.password}
+          hasCheckBox={true}
         />
 
         <SubmitButton disabled={isSubmitDisabled}>Log In</SubmitButton>

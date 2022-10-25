@@ -1,14 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import CheckBox from "./CheckBox";
 
-export default function InputBox({
-  name,
-  placeholder,
-  onChange,
-  value,
-  type,
-  height,
-}) {
+export default function InputBox({ name, placeholder, onChange, value, type, height, hasCheckBox }) {
+  const [isChecked, setIsChecked] = useState(false);
+
+  type = type === "password" && isChecked ? "text" : type;
+
   return (
     <Container height={height}>
       <input
@@ -19,6 +17,12 @@ export default function InputBox({
         value={value}
         onChange={onChange}
       />
+      {hasCheckBox && (
+        <ShowPassword>
+          <CheckBox size={"35px"} color={"#555555"} isChecked={isChecked} setIsChecked={setIsChecked} />
+          <div>Show</div>
+        </ShowPassword>
+      )}
     </Container>
   );
 }
@@ -48,5 +52,16 @@ const Container = styled.div`
 
   input::placeholder {
     color: #9f9f9f;
+  }
+`;
+
+const ShowPassword = styled.div`
+  & {
+    flex-direction: column;
+  }
+
+  div:nth-child(2) {
+    color: #9f9f9f;
+    font-size: 12px;
   }
 `;
