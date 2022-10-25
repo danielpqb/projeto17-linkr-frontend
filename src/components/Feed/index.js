@@ -3,7 +3,13 @@ import TopBar from "../Topbar";
 import Publish from "../Publish";
 import Post from "../Post";
 import { Container, Content, Loading, Trending, TrendingHashtags, TrendingLine, TrendingTitle } from "./style";
-import { getHashtagPosts, getTimelinePosts, getTrendingHashtags, getUserPosts } from "../../services/linkrAPI";
+import {
+  getHashtagPosts,
+  getTimelinePosts,
+  getTrendingHashtags,
+  getUserDataByToken,
+  getUserPosts,
+} from "../../services/linkrAPI";
 import { useState, useEffect } from "react";
 import UserContext from "../../contexts/userContext";
 import PostsContext from "../../contexts/postsContext";
@@ -21,7 +27,7 @@ export default function Feed({ type }) {
   const { arrPosts, setArrPosts } = React.useContext(PostsContext);
   const { arrTrendingHashtags, setArrTrendingHashtags } = React.useContext(PostsContext);
   const { targetUser, setTargetUser } = React.useContext(UserContext);
-  const { userData, setUserData } = React.useContext(UserContext);
+  const { userData, setUserData, setAlert } = React.useContext(UserContext);
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
   const [thisUserId, setThisUserId] = useState(-1);
 
@@ -108,8 +114,19 @@ export default function Feed({ type }) {
           console.log(error);
         });
     }
-  }, [refreshFeed, targetUser]);
-  //, thisUserId, setAlert, hashtag, setArrPosts, setUserData, type, setArrTrendingHashtags, userData]);
+  }, [
+    refreshFeed,
+    targetUser,
+    thisUserId,
+    setAlert,
+    hashtag,
+    setArrPosts,
+    setUserData,
+    type,
+    setArrTrendingHashtags,
+    userData,
+    setTargetUser,
+  ]);
 
   function goHashtag(hashtag) {
     if (isLoading === false) {
