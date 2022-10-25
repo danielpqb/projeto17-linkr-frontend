@@ -4,31 +4,11 @@ import styled from "styled-components";
 import { MdImage, MdOutlineEmail, MdPerson } from "react-icons/md";
 import { AiOutlineFileText } from "react-icons/ai";
 import { IoKeyOutline } from "react-icons/io5";
-import { IoMdAlert } from "react-icons/io";
 
 import CheckBox from "./CheckBox";
 
-export default function InputBox({
-  name,
-  placeholder,
-  type,
-  onChange,
-  value,
-  height = "60px",
-  hasCheckBox,
-  hasIcon,
-  regex,
-}) {
+export default function InputBox({ name, placeholder, type, onChange, value, height = "60px", hasCheckBox, hasIcon }) {
   const [isChecked, setIsChecked] = useState(false);
-  const [isValidPattern, setIsValidPattern] = useState(true);
-
-  useEffect(() => {
-    if (value.match(regex) || value.length === 0) {
-      setIsValidPattern(true);
-    } else {
-      setIsValidPattern(false);
-    }
-  }, [value, regex]);
 
   if (hasIcon) {
     switch (name) {
@@ -53,7 +33,7 @@ export default function InputBox({
   type = type === "password" && isChecked ? "text" : type;
 
   return (
-    <Container height={height} isValidPattern={isValidPattern}>
+    <Container height={height}>
       {hasIcon && <ShowIcon>{hasIcon}</ShowIcon>}
       <input
         required
@@ -124,7 +104,7 @@ const ShowPassword = styled.div`
 
 const ShowIcon = styled.div`
   & {
-    color: ${({ color }) => (color ? color : "rgb(70, 70, 70)")};
+    color: rgb(70, 70, 70);
     font-size: 30px;
     margin: 0px 5px;
   }

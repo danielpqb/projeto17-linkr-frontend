@@ -77,8 +77,8 @@ export default function SignUp() {
             setForm({ ...form, email: e.target.value });
           }}
           value={form.email}
+          required
           hasIcon={true}
-          regex={regexPatterns.email}
         />
         <InputBox
           name="password"
@@ -90,7 +90,6 @@ export default function SignUp() {
           value={form.password}
           hasCheckBox={true}
           hasIcon={true}
-          regex={regexPatterns.password}
         />
         <InputBox
           name="name"
@@ -99,18 +98,19 @@ export default function SignUp() {
             setForm({ ...form, name: e.target.value });
           }}
           value={form.name}
+          required
           hasIcon={true}
-          regex={regexPatterns.name}
         />
         <InputBox
           name="imageUrl"
           placeholder="picture url"
+          type="url"
           onChange={(e) => {
             setForm({ ...form, imageUrl: e.target.value });
           }}
           value={form.imageUrl}
+          required
           hasIcon={true}
-          regex={regexPatterns.url}
         />
 
         <SubmitButton disabled={isSubmitDisabled}>Sign Up</SubmitButton>

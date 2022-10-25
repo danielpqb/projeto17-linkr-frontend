@@ -83,7 +83,6 @@ export default function SignIn() {
           }}
           value={form.email}
           hasIcon={true}
-          regex={regexPatterns.email}
         />
 
         <InputBox
@@ -95,6 +94,7 @@ export default function SignIn() {
             setForm({ ...form, password: e.target.value });
           }}
           value={form.password}
+          hasCheckBox={true}
           hasIcon={true}
         />
         <SubmitButton disabled={isSubmitDisabled}>Log In</SubmitButton>
