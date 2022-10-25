@@ -3,19 +3,11 @@ import TopBar from "../Topbar";
 import Publish from "../Publish";
 import Post from "../Post";
 import { Container, Content, Loading, Trending, TrendingHashtags, TrendingLine, TrendingTitle } from "./style";
-import {
-  getHashtagPosts,
-  getTimelinePosts,
-  getTrendingHashtags,
-  getUserPosts,
-  getUserDataByToken,
-} from "../../services/linkrAPI";
+import { getHashtagPosts, getTimelinePosts, getTrendingHashtags, getUserPosts } from "../../services/linkrAPI";
 import { useState, useEffect } from "react";
 import UserContext from "../../contexts/userContext";
 import PostsContext from "../../contexts/postsContext";
 import { useNavigate, useParams } from "react-router-dom";
-import promiseRetry from "promise-retry";
-import createMessage from "../functions/createMessage";
 
 export default function Feed({ type }) {
   const navigate = useNavigate();
@@ -25,7 +17,6 @@ export default function Feed({ type }) {
   const [isError, setIsError] = useState(false);
   const [isTimeline, setIsTimeline] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
-  /* const [refreshFeed, setRefreshFeed] = useState(false); */
   const { arrPosts, setArrPosts } = React.useContext(PostsContext);
   const { arrTrendingHashtags, setArrTrendingHashtags } = React.useContext(PostsContext);
   const { userData, setUserData } = React.useContext(UserContext);
@@ -34,41 +25,6 @@ export default function Feed({ type }) {
   const [setAlert] = useState({});
 
   useEffect(() => {
-    const localToken = localStorage.getItem("userToken");
-
-    if (localToken) {
-      promiseRetry(
-        //Function that will retry
-        (retry, number) => {
-          return getUserDataByToken(localToken).catch(retry);
-        },
-        { retries: 4, minTimeout: 1000, factor: 2 }
-      ).then(
-        //Resolved at any try
-        (res) => {
-          delete res.data.message;
-          setThisUserId(res.data.id);
-
-          setUserData(res.data);
-
-          //setRefreshFeed(!refreshFeed);
-        },
-        //Couldn't resolve after all tries
-        (err) => {
-          const message = createMessage(err);
-
-          setAlert({
-            show: true,
-            message: message,
-            type: 0,
-            doThis: () => {},
-            color: "rgba(200,0,0)",
-            icon: "alert-circle",
-          });
-        }
-      );
-    }
-
     if (type === "timeline") {
       setIsLoading(true);
       setIsTimeline(true);
@@ -105,7 +61,7 @@ export default function Feed({ type }) {
             setIsEmpty(true);
           }
         })
-        .catch((error) => {
+        .catch(() => {
           setIsLoading(false);
           setIsError(true);
           if (thisUserId === -1) {
@@ -133,7 +89,7 @@ export default function Feed({ type }) {
             setIsEmpty(true);
           }
         })
-        .catch((error) => {
+        .catch(() => {
           setIsLoading(false);
           setIsError(true);
         });
@@ -145,7 +101,19 @@ export default function Feed({ type }) {
           console.log(error);
         });
     }
-  }, [refreshFeed, thisUserId, setAlert, hashtag, setArrPosts, setUserData, type, setArrTrendingHashtags, userData]);
+  }, [
+    refreshFeed,
+    targetUser,
+    thisUserId,
+    setAlert,
+    hashtag,
+    setArrPosts,
+    setUserData,
+    type,
+    setArrTrendingHashtags,
+    // userData,
+    setTargetUser,
+  ]);
 
   function goHashtag(hashtag) {
     if (isLoading === false) {
