@@ -71,6 +71,33 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
     }
   }
 
+  function getPostsDataByUserId() {
+    getPostDataById(postId)
+      .then((res) => {
+        navigate(`/user/${res.data.postData.userId}`);
+        localStorage.setItem(
+          "targetUser",
+          JSON.stringify({
+            id: res.data.user.id,
+            name: res.data.user.name,
+          })
+        );
+      })
+      .catch((error) => {
+        const message = createErrorMessage(error);
+
+        setAlert({
+          show: true,
+          message: message,
+          type: 0,
+          doThis: () => {},
+          color: "rgba(200,0,0)",
+          icon: "alert-circle",
+        });
+        return;
+      });
+  }
+
   function handleForm(e) {
     if (e.nativeEvent.inputType === "insertLineBreak") {
       setLoading(true);
@@ -84,7 +111,13 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
   return (
     <Container>
       <PostHeader>
-        <img src={userImage} alt="User profile" />
+        <img
+          src={userImage}
+          alt="User profile"
+          onClick={() => {
+            getPostsDataByUserId();
+          }}
+        />
         <LikeButton userId={userData.id} postId={postId} />
       </PostHeader>
 
@@ -92,23 +125,7 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
         <PostUserName>
           <div
             onClick={() => {
-              getPostDataById(postId)
-                .then((res) => {
-                  navigate(`/user/${res.data.postData.userId}`);
-                })
-                .catch((error) => {
-                  const message = createErrorMessage(error);
-
-                  setAlert({
-                    show: true,
-                    message: message,
-                    type: 0,
-                    doThis: () => {},
-                    color: "rgba(200,0,0)",
-                    icon: "alert-circle",
-                  });
-                  return;
-                });
+              getPostsDataByUserId();
             }}
           >
             {userName}

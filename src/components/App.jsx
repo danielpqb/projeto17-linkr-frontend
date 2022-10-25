@@ -25,7 +25,6 @@ export default function App() {
   const [arrPosts, setArrPosts] = useState([]);
   const [arrTrendingHashtags, setArrTrendingHashtags] = useState(["There are no hashtags yet"]);
   const [refreshFeed, setRefreshFeed] = useState(false);
-  const [targetUser, setTargetUser] = useState({ id: -1, name: ""});
 
   useEffect(() => {
     const localToken = localStorage.getItem("userToken");
@@ -70,8 +69,6 @@ export default function App() {
             setUserData,
             alert,
             setAlert,
-            targetUser, 
-            setTargetUser
           }}
         >
           <PostsContext.Provider
