@@ -87,6 +87,7 @@ export default function SignUp() {
             setForm({ ...form, password: e.target.value });
           }}
           value={form.password}
+          hasCheckBox={true}
         />
         <InputBox
           name="name"
