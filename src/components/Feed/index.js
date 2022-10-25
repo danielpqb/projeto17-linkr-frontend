@@ -7,15 +7,15 @@ import {
   getHashtagPosts,
   getTimelinePosts,
   getTrendingHashtags,
-  getUserDataByToken,
   getUserPosts,
+  getUserDataByToken,
 } from "../../services/linkrAPI";
 import { useState, useEffect } from "react";
 import UserContext from "../../contexts/userContext";
 import PostsContext from "../../contexts/postsContext";
 import { useNavigate, useParams } from "react-router-dom";
 import promiseRetry from "promise-retry";
-import createErrorMessage from "../functions/createErrorMessage";
+import createMessage from "../functions/createMessage";
 
 export default function Feed({ type }) {
   const navigate = useNavigate();
@@ -28,10 +28,10 @@ export default function Feed({ type }) {
   /* const [refreshFeed, setRefreshFeed] = useState(false); */
   const { arrPosts, setArrPosts } = React.useContext(PostsContext);
   const { arrTrendingHashtags, setArrTrendingHashtags } = React.useContext(PostsContext);
-  const { targetUser, setTargetUser } = React.useContext(UserContext);
-  const { userData, setUserData, setAlert } = React.useContext(UserContext);
+  const { userData, setUserData } = React.useContext(UserContext);
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
   const [thisUserId, setThisUserId] = useState(-1);
+  const [setAlert] = useState({});
 
   useEffect(() => {
     const localToken = localStorage.getItem("userToken");
@@ -55,7 +55,7 @@ export default function Feed({ type }) {
         },
         //Couldn't resolve after all tries
         (err) => {
-          const message = createErrorMessage(err);
+          const message = createMessage(err);
 
           setAlert({
             show: true,
@@ -124,14 +124,8 @@ export default function Feed({ type }) {
       setIsLoading(true);
       setIsTimeline(false);
 
-      const localTargetUser = JSON.parse(localStorage.getItem("targetUser"));
-
-      if (targetUser.id === -1 && localTargetUser) {
-        setTargetUser(localTargetUser);
-      }
-
-      setTitle(`${targetUser.name}'s page`);
-      getUserPosts(targetUser.id)
+      setTitle(`${userData.name}'s page`);
+      getUserPosts(thisUserId)
         .then((answer) => {
           setArrPosts(answer.data[0]);
           setIsLoading(false);
@@ -151,19 +145,7 @@ export default function Feed({ type }) {
           console.log(error);
         });
     }
-  }, [
-    refreshFeed,
-    targetUser,
-    thisUserId,
-    setAlert,
-    hashtag,
-    setArrPosts,
-    setUserData,
-    type,
-    setArrTrendingHashtags,
-    userData,
-    setTargetUser,
-  ]);
+  }, [refreshFeed, thisUserId, setAlert, hashtag, setArrPosts, setUserData, type, setArrTrendingHashtags, userData]);
 
   function goHashtag(hashtag) {
     if (isLoading === false) {
