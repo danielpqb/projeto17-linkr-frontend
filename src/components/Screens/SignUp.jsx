@@ -8,6 +8,7 @@ import SubmitButton from "../Common/SubmitButton";
 import { postSignUp } from "../../services/linkrAPI";
 import UserContext from "../../contexts/userContext";
 import createMessage from "../functions/createErrorMessage";
+import { regexPatterns } from "../../constants/regexPatterns";
 
 export default function SignUp() {
   const [form, setForm] = useState({
@@ -77,7 +78,7 @@ export default function SignUp() {
           }}
           value={form.email}
           hasIcon={true}
-          regex={/^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i}
+          regex={regexPatterns.email}
         />
         <InputBox
           name="password"
@@ -89,7 +90,7 @@ export default function SignUp() {
           value={form.password}
           hasCheckBox={true}
           hasIcon={true}
-          regex={/^(?=.*[0-9])(?=.*[a-z]).{8,32}$/i}
+          regex={regexPatterns.password}
         />
         <InputBox
           name="name"
@@ -99,7 +100,7 @@ export default function SignUp() {
           }}
           value={form.name}
           hasIcon={true}
-          regex={/^[a-zA-Z0-9]*$/g}
+          regex={regexPatterns.name}
         />
         <InputBox
           name="imageUrl"
@@ -109,9 +110,7 @@ export default function SignUp() {
           }}
           value={form.imageUrl}
           hasIcon={true}
-          regex={
-            /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\\/+~#=!$¨&*()]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()]*)$/i
-          }
+          regex={regexPatterns.url}
         />
 
         <SubmitButton disabled={isSubmitDisabled}>Sign Up</SubmitButton>
