@@ -13,7 +13,7 @@ import {
 import { useState, useEffect } from "react";
 import UserContext from "../../contexts/userContext";
 import PostsContext from "../../contexts/postsContext";
-import { useAsyncError, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import promiseRetry from "promise-retry";
 import createMessage from "../functions/createMessage";
 
@@ -31,7 +31,7 @@ export default function Feed({ type }) {
   const { userData, setUserData } = React.useContext(UserContext);
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
   const [thisUserId, setThisUserId] = useState(-1);
-  const [alert, setAlert] = useState({});
+  const [setAlert] = useState({});
 
   useEffect(() => {
     const localToken = localStorage.getItem("userToken");
@@ -123,6 +123,7 @@ export default function Feed({ type }) {
     if (type === "user") {
       setIsLoading(true);
       setIsTimeline(false);
+
       setTitle(`${userData.name}'s page`);
       getUserPosts(thisUserId)
         .then((answer) => {
@@ -144,7 +145,7 @@ export default function Feed({ type }) {
           console.log(error);
         });
     }
-  }, [refreshFeed, thisUserId]);
+  }, [refreshFeed, thisUserId, setAlert, hashtag, setArrPosts, setUserData, type, setArrTrendingHashtags, userData]);
 
   function goHashtag(hashtag) {
     if (isLoading === false) {
