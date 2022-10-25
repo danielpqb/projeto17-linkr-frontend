@@ -9,7 +9,6 @@ import SubmitButton from "../Common/SubmitButton";
 import { postSignIn } from "../../services/linkrAPI";
 import AppContext from "../../contexts/AppContext";
 import createMessage from "../functions/createMessage";
-import CheckBox from "../Common/CheckBox";
 
 export default function SignIn() {
   const [form, setForm] = useState({
