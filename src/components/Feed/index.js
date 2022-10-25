@@ -19,10 +19,10 @@ export default function Feed({ type }) {
   const [isEmpty, setIsEmpty] = useState(false);
   const { arrPosts, setArrPosts } = React.useContext(PostsContext);
   const { arrTrendingHashtags, setArrTrendingHashtags } = React.useContext(PostsContext);
-  const { userData, setUserData } = React.useContext(UserContext);
+  const { targetUser, setTargetUser } = React.useContext(UserContext);
+  const { userData, setUserData, setAlert } = React.useContext(UserContext);
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
   const [thisUserId, setThisUserId] = useState(-1);
-  const [setAlert] = useState({});
 
   useEffect(() => {
     if (type === "timeline") {
@@ -80,8 +80,14 @@ export default function Feed({ type }) {
       setIsLoading(true);
       setIsTimeline(false);
 
-      setTitle(`${userData.name}'s page`);
-      getUserPosts(thisUserId)
+      const localTargetUser = JSON.parse(localStorage.getItem("targetUser"));
+
+      if (targetUser.id === -1 && localTargetUser) {
+        setTargetUser(localTargetUser);
+      }
+
+      setTitle(`${targetUser.name}'s page`);
+      getUserPosts(targetUser.id)
         .then((answer) => {
           setArrPosts(answer.data[0]);
           setIsLoading(false);
