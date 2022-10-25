@@ -9,6 +9,7 @@ import SubmitButton from "../Common/SubmitButton";
 import { postSignIn } from "../../services/linkrAPI";
 import AppContext from "../../contexts/AppContext";
 import createMessage from "../functions/createErrorMessage";
+import { regexPatterns } from "../../constants/regexPatterns";
 
 export default function SignIn() {
   const [form, setForm] = useState({
@@ -82,7 +83,7 @@ export default function SignIn() {
           }}
           value={form.email}
           hasIcon={true}
-          regex={/^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i}
+          regex={regexPatterns.email}
         />
 
         <InputBox
