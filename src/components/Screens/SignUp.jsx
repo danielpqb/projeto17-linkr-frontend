@@ -7,7 +7,7 @@ import LoginHeader from "../Common/LoginHeader";
 import SubmitButton from "../Common/SubmitButton";
 import { postSignUp } from "../../services/linkrAPI";
 import UserContext from "../../contexts/userContext";
-import createMessage from "../functions/createMessage";
+import createMessage from "../functions/createErrorMessage";
 
 export default function SignUp() {
   const [form, setForm] = useState({
@@ -48,7 +48,7 @@ export default function SignUp() {
 
       navigate("/");
     } catch (error) {
-      const message = createMessage(error);
+      const message = createMessage(error, form);
 
       setAlert({
         ...alert,
@@ -72,13 +72,12 @@ export default function SignUp() {
         <InputBox
           name="email"
           placeholder="e-mail"
-          type="email"
           onChange={(e) => {
             setForm({ ...form, email: e.target.value });
           }}
           value={form.email}
-          required
           hasIcon={true}
+          regex={/^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i}
         />
         <InputBox
           name="password"
@@ -90,28 +89,29 @@ export default function SignUp() {
           value={form.password}
           hasCheckBox={true}
           hasIcon={true}
+          regex={/^(?=.*[0-9])(?=.*[a-z]).{8,32}$/i}
         />
         <InputBox
           name="name"
           placeholder="username"
-          type="name"
           onChange={(e) => {
             setForm({ ...form, name: e.target.value });
           }}
           value={form.name}
-          required
           hasIcon={true}
+          regex={/^[a-zA-Z0-9]*$/g}
         />
         <InputBox
           name="imageUrl"
           placeholder="picture url"
-          type="url"
           onChange={(e) => {
             setForm({ ...form, imageUrl: e.target.value });
           }}
           value={form.imageUrl}
-          required
           hasIcon={true}
+          regex={
+            /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\\/+~#=!$¨&*()]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()]*)$/i
+          }
         />
 
         <SubmitButton disabled={isSubmitDisabled}>Sign Up</SubmitButton>

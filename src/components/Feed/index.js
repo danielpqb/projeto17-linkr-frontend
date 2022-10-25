@@ -15,7 +15,7 @@ import UserContext from "../../contexts/userContext";
 import PostsContext from "../../contexts/postsContext";
 import { useNavigate, useParams } from "react-router-dom";
 import promiseRetry from "promise-retry";
-import createMessage from "../functions/createMessage";
+import createErrorMessage from "../functions/createErrorMessage";
 
 export default function Feed({ type }) {
   const navigate = useNavigate();
@@ -55,7 +55,7 @@ export default function Feed({ type }) {
         },
         //Couldn't resolve after all tries
         (err) => {
-          const message = createMessage(err);
+          const message = createErrorMessage(err);
 
           setAlert({
             show: true,
