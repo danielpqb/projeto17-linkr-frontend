@@ -9,7 +9,6 @@ import SubmitButton from "../Common/SubmitButton";
 import { postSignIn } from "../../services/linkrAPI";
 import AppContext from "../../contexts/AppContext";
 import createMessage from "../functions/createErrorMessage";
-import { regexPatterns } from "../../constants/regexPatterns";
 
 export default function SignIn() {
   const [form, setForm] = useState({
@@ -83,6 +82,7 @@ export default function SignIn() {
           }}
           value={form.email}
           hasIcon={true}
+          regex={/^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i}
         />
 
         <InputBox
@@ -94,7 +94,6 @@ export default function SignIn() {
             setForm({ ...form, password: e.target.value });
           }}
           value={form.password}
-          hasCheckBox={true}
           hasIcon={true}
         />
         <SubmitButton disabled={isSubmitDisabled}>Log In</SubmitButton>
