@@ -8,7 +8,7 @@ import LoginHeader from "../Common/LoginHeader";
 import SubmitButton from "../Common/SubmitButton";
 import { postSignIn } from "../../services/linkrAPI";
 import AppContext from "../../contexts/AppContext";
-import createMessage from "../functions/createMessage";
+import createMessage from "../functions/createErrorMessage";
 
 export default function SignIn() {
   const [form, setForm] = useState({
@@ -54,7 +54,7 @@ export default function SignIn() {
         }, 200);
       })
       .catch((error) => {
-        const message = createMessage(error);
+        const message = createMessage(error, form);
 
         setAlert({
           show: true,
@@ -82,17 +82,18 @@ export default function SignIn() {
           }}
           value={form.email}
           hasIcon={true}
+          regex={/^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i}
         />
 
         <InputBox
           name="password"
           type="password"
+          hasCheckBox={true}
           placeholder="password"
           onChange={(e) => {
             setForm({ ...form, password: e.target.value });
           }}
           value={form.password}
-          hasCheckBox={true}
           hasIcon={true}
         />
         <SubmitButton disabled={isSubmitDisabled}>Log In</SubmitButton>

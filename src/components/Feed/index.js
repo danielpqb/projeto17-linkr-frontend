@@ -3,12 +3,7 @@ import TopBar from "../Topbar";
 import Publish from "../Publish";
 import Post from "../Post";
 import { Container, Content, Loading, Trending, TrendingHashtags, TrendingLine, TrendingTitle } from "./style";
-import {
-  getHashtagPosts,
-  getTimelinePosts,
-  getTrendingHashtags,
-  getUserPosts,
-} from "../../services/linkrAPI";
+import { getHashtagPosts, getTimelinePosts, getTrendingHashtags, getUserPosts } from "../../services/linkrAPI";
 import { useState, useEffect } from "react";
 import UserContext from "../../contexts/userContext";
 import PostsContext from "../../contexts/postsContext";
@@ -31,7 +26,6 @@ export default function Feed({ type }) {
   const [thisUserId, setThisUserId] = useState(-1);
 
   useEffect(() => {
-    
     if (type === "timeline") {
       setIsLoading(true);
       setIsTimeline(true);
@@ -87,7 +81,7 @@ export default function Feed({ type }) {
       setIsLoading(true);
       setIsTimeline(false);
 
-      const localTargetUser = JSON.parse(localStorage.getItem("targetUser"))
+      const localTargetUser = JSON.parse(localStorage.getItem("targetUser"));
 
       if (targetUser.id === -1 && localTargetUser) {
         setTargetUser(localTargetUser);

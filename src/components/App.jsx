@@ -15,8 +15,8 @@ import SignIn from "./Screens/SignIn";
 
 import { getUserDataByToken } from "../services/linkrAPI";
 import ProtectedRoute from "./Common/ProtectedRoute";
-import createMessage from "./functions/createMessage";
 import promiseRetry from "promise-retry";
+import createErrorMessage from "./functions/createErrorMessage";
 
 export default function App() {
   const [userData, setUserData] = useState({});
@@ -45,7 +45,7 @@ export default function App() {
         },
         //Couldn't resolve after all tries
         (err) => {
-          const message = createMessage(err);
+          const message = createErrorMessage(err);
 
           setAlert({
             show: true,
