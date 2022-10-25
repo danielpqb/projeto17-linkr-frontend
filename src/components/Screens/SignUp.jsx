@@ -78,6 +78,7 @@ export default function SignUp() {
           }}
           value={form.email}
           required
+          hasIcon={true}
         />
         <InputBox
           name="password"
@@ -88,6 +89,7 @@ export default function SignUp() {
           }}
           value={form.password}
           hasCheckBox={true}
+          hasIcon={true}
         />
         <InputBox
           name="name"
@@ -98,16 +100,18 @@ export default function SignUp() {
           }}
           value={form.name}
           required
+          hasIcon={true}
         />
         <InputBox
           name="imageUrl"
           placeholder="picture url"
-          type="imageUrl"
+          type="url"
           onChange={(e) => {
             setForm({ ...form, imageUrl: e.target.value });
           }}
           value={form.imageUrl}
           required
+          hasIcon={true}
         />
 
         <SubmitButton disabled={isSubmitDisabled}>Sign Up</SubmitButton>
