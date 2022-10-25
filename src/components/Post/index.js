@@ -3,11 +3,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { TiPencil } from "react-icons/ti";
 
-import {
-  getPostDataById,
-  updatePostHashtags,
-  updatePostText,
-} from "../../services/linkrAPI";
+import { getPostDataById, updatePostHashtags, updatePostText } from "../../services/linkrAPI";
 import UserContext from "../../contexts/userContext";
 import {
   Container,
@@ -27,24 +23,15 @@ import LikeButton from "../LikeButton";
 import checkHashtags from "../functions/checkHashtags";
 import { ReactTagify } from "react-tagify";
 import PostsContext from "../../contexts/postsContext";
-import createMessage from "../functions/createMessage";
+import createErrorMessage from "../functions/createErrorMessage";
 
-export default function Post({
-  userId,
-  userImage,
-  userName,
-  postText,
-  metadata,
-  postLink,
-  postId,
-}) {
+export default function Post({ userId, userImage, userName, postText, metadata, postLink, postId }) {
   const { userData, setAlert } = useContext(UserContext);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [consolidatedText, setConsolidatedText] = useState({ text: postText });
   const [changeableText, setChengeableText] = useState({ text: postText });
-  const { refreshFeed, setRefreshFeed, arrPosts } =
-    React.useContext(PostsContext);
+  const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
 
   const navigate = useNavigate();
 
@@ -97,7 +84,7 @@ export default function Post({
   return (
     <Container>
       <PostHeader>
-        <img src={userImage} alt="User profile image" />
+        <img src={userImage} alt="User profile" />
         <LikeButton userId={userData.id} postId={postId} />
       </PostHeader>
 
@@ -110,7 +97,7 @@ export default function Post({
                   navigate(`/user/${res.data.postData.userId}`);
                 })
                 .catch((error) => {
-                  const message = createMessage(error);
+                  const message = createErrorMessage(error);
 
                   setAlert({
                     show: true,
@@ -173,7 +160,7 @@ export default function Post({
             <MetadataText>{metadata.description}</MetadataText>
             <MetadataLink>{postLink}</MetadataLink>
           </MetadataContent>
-          <img src={metadata.image} />
+          <img src={metadata.image} alt="" />
         </MetadataDiv>
       </PostContent>
     </Container>

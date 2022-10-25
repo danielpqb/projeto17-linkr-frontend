@@ -1,14 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import { MdImage, MdOutlineEmail, MdPerson } from "react-icons/md";
 import { AiOutlineFileText } from "react-icons/ai";
 import { IoKeyOutline } from "react-icons/io5";
+import { IoMdAlert } from "react-icons/io";
 
 import CheckBox from "./CheckBox";
 
-export default function InputBox({ name, placeholder, type, onChange, value, height = "60px", hasCheckBox, hasIcon }) {
+export default function InputBox({
+  name,
+  placeholder,
+  type,
+  onChange,
+  value,
+  height = "60px",
+  hasCheckBox,
+  hasIcon,
+  regex,
+}) {
   const [isChecked, setIsChecked] = useState(false);
+  const [isValidPattern, setIsValidPattern] = useState(true);
+
+  useEffect(() => {
+    if (value.match(regex) || value.length === 0) {
+      setIsValidPattern(true);
+    } else {
+      setIsValidPattern(false);
+    }
+  }, [value, regex]);
 
   if (hasIcon) {
     switch (name) {
@@ -33,21 +53,28 @@ export default function InputBox({ name, placeholder, type, onChange, value, hei
   type = type === "password" && isChecked ? "text" : type;
 
   return (
-    <Container height={height}>
+    <Container height={height} isValidPattern={isValidPattern}>
       {hasIcon && <ShowIcon>{hasIcon}</ShowIcon>}
       <input
-        type={type ? type : "text"}
-        placeholder={placeholder}
-        name={name}
         required
+        name={name}
+        type={type ? type : "text"}
         value={value}
-        onChange={onChange}
+        placeholder={placeholder}
+        onChange={(e) => {
+          onChange(e);
+        }}
       />
       {hasCheckBox && (
         <ShowPassword>
           <CheckBox size={"35px"} color={"#555555"} isChecked={isChecked} setIsChecked={setIsChecked} />
           <div>Show</div>
         </ShowPassword>
+      )}
+      {!isValidPattern && (
+        <ShowIcon color={"rgb(190, 0, 0)"}>
+          <IoMdAlert />
+        </ShowIcon>
       )}
     </Container>
   );
@@ -59,6 +86,8 @@ const Container = styled.div`
     border-radius: 5px;
     height: ${({ height }) => height};
     margin: 10px 0px;
+
+    border: ${({ isValidPattern }) => (isValidPattern ? "0px" : "3px")} solid rgb(190, 0, 0);
   }
 
   input {
@@ -95,7 +124,7 @@ const ShowPassword = styled.div`
 
 const ShowIcon = styled.div`
   & {
-    color: rgb(70, 70, 70);
+    color: ${({ color }) => (color ? color : "rgb(70, 70, 70)")};
     font-size: 30px;
     margin: 0px 5px;
   }

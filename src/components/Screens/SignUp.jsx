@@ -7,7 +7,8 @@ import LoginHeader from "../Common/LoginHeader";
 import SubmitButton from "../Common/SubmitButton";
 import { postSignUp } from "../../services/linkrAPI";
 import UserContext from "../../contexts/userContext";
-import createMessage from "../functions/createMessage";
+import createMessage from "../functions/createErrorMessage";
+import { regexPatterns } from "../../constants/regexPatterns";
 
 export default function SignUp() {
   const [form, setForm] = useState({
@@ -48,7 +49,7 @@ export default function SignUp() {
 
       navigate("/");
     } catch (error) {
-      const message = createMessage(error);
+      const message = createMessage(error, form);
 
       setAlert({
         ...alert,
@@ -72,13 +73,12 @@ export default function SignUp() {
         <InputBox
           name="email"
           placeholder="e-mail"
-          type="email"
           onChange={(e) => {
             setForm({ ...form, email: e.target.value });
           }}
           value={form.email}
-          required
           hasIcon={true}
+          regex={regexPatterns.email}
         />
         <InputBox
           name="password"
@@ -90,28 +90,27 @@ export default function SignUp() {
           value={form.password}
           hasCheckBox={true}
           hasIcon={true}
+          regex={regexPatterns.password}
         />
         <InputBox
           name="name"
           placeholder="username"
-          type="name"
           onChange={(e) => {
             setForm({ ...form, name: e.target.value });
           }}
           value={form.name}
-          required
           hasIcon={true}
+          regex={regexPatterns.name}
         />
         <InputBox
           name="imageUrl"
           placeholder="picture url"
-          type="url"
           onChange={(e) => {
             setForm({ ...form, imageUrl: e.target.value });
           }}
           value={form.imageUrl}
-          required
           hasIcon={true}
+          regex={regexPatterns.url}
         />
 
         <SubmitButton disabled={isSubmitDisabled}>Sign Up</SubmitButton>

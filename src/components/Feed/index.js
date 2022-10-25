@@ -7,12 +7,15 @@ import {
   getHashtagPosts,
   getTimelinePosts,
   getTrendingHashtags,
+  getUserDataByToken,
   getUserPosts,
 } from "../../services/linkrAPI";
 import { useState, useEffect } from "react";
 import UserContext from "../../contexts/userContext";
 import PostsContext from "../../contexts/postsContext";
 import { useNavigate, useParams } from "react-router-dom";
+import promiseRetry from "promise-retry";
+import createErrorMessage from "../functions/createErrorMessage";
 
 export default function Feed({ type }) {
   const navigate = useNavigate();
@@ -26,12 +29,46 @@ export default function Feed({ type }) {
   const { arrPosts, setArrPosts } = React.useContext(PostsContext);
   const { arrTrendingHashtags, setArrTrendingHashtags } = React.useContext(PostsContext);
   const { targetUser, setTargetUser } = React.useContext(UserContext);
-  const { userData, setUserData } = React.useContext(UserContext);
+  const { userData, setUserData, setAlert } = React.useContext(UserContext);
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
   const [thisUserId, setThisUserId] = useState(-1);
 
   useEffect(() => {
-    
+    const localToken = localStorage.getItem("userToken");
+
+    if (localToken) {
+      promiseRetry(
+        //Function that will retry
+        (retry, number) => {
+          return getUserDataByToken(localToken).catch(retry);
+        },
+        { retries: 4, minTimeout: 1000, factor: 2 }
+      ).then(
+        //Resolved at any try
+        (res) => {
+          delete res.data.message;
+          setThisUserId(res.data.id);
+
+          setUserData(res.data);
+
+          //setRefreshFeed(!refreshFeed);
+        },
+        //Couldn't resolve after all tries
+        (err) => {
+          const message = createErrorMessage(err);
+
+          setAlert({
+            show: true,
+            message: message,
+            type: 0,
+            doThis: () => {},
+            color: "rgba(200,0,0)",
+            icon: "alert-circle",
+          });
+        }
+      );
+    }
+
     if (type === "timeline") {
       setIsLoading(true);
       setIsTimeline(true);
@@ -87,7 +124,7 @@ export default function Feed({ type }) {
       setIsLoading(true);
       setIsTimeline(false);
 
-      const localTargetUser = JSON.parse(localStorage.getItem("targetUser"))
+      const localTargetUser = JSON.parse(localStorage.getItem("targetUser"));
 
       if (targetUser.id === -1 && localTargetUser) {
         setTargetUser(localTargetUser);
@@ -114,8 +151,19 @@ export default function Feed({ type }) {
           console.log(error);
         });
     }
-  }, [refreshFeed, targetUser]);
-  //, thisUserId, setAlert, hashtag, setArrPosts, setUserData, type, setArrTrendingHashtags, userData]);
+  }, [
+    refreshFeed,
+    targetUser,
+    thisUserId,
+    setAlert,
+    hashtag,
+    setArrPosts,
+    setUserData,
+    type,
+    setArrTrendingHashtags,
+    userData,
+    setTargetUser,
+  ]);
 
   function goHashtag(hashtag) {
     if (isLoading === false) {
