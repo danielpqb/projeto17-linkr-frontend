@@ -12,7 +12,7 @@ export default function TopBar() {
   const { userData, setUserData } = useContext(UserContext);
   const { refreshFeed, setRefreshFeed } = useContext(PostsContext);
   const [isMenuAppering, setIsMenuAppering] = useState(false);
-  const { isLoading, setIsLoading } = React.useContext(PostsContext);
+  const { isLoading } = React.useContext(PostsContext);
   const imgSrc = userData.imageUrl;
   const navigate = useNavigate();
 

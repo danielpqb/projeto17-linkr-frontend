@@ -13,7 +13,7 @@ export default function SearchBar() {
 
   const [searchTag, setSearchTag] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const { isLoading, setIsLoading } = React.useContext(PostsContext);
+  const { isLoading } = React.useContext(PostsContext);
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
 
   async function handleSearch(e) {

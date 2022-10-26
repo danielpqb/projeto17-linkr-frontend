@@ -82,6 +82,7 @@ export default function Feed({ type }) {
     hashtag,
     setArrPosts,
     setUserData,
+    setIsLoading,
     type,
     userData.id,
   ]);
