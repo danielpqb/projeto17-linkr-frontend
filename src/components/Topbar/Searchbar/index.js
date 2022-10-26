@@ -7,16 +7,13 @@ import { BiSearch } from "react-icons/bi";
 import { Container, SearchResults, StyledResult } from "./style";
 import { getSearchUsers } from "../../../services/linkrAPI";
 import PostsContext from "../../../contexts/postsContext";
-import UserContext from "../../../contexts/userContext";
 
 export default function SearchBar() {
   const navigate = useNavigate();
 
   const [searchTag, setSearchTag] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
-  const { setTargetUser } = React.useContext(UserContext);
 
   async function handleSearch(e) {
     const filter = e.target.value;
@@ -37,7 +34,6 @@ export default function SearchBar() {
       <StyledResult
         onClick={() => {
           navigate(`/user/${user.id}`);
-          setTargetUser({id: user.id, name: user.name});
           localStorage.setItem(
             "targetUser",
             JSON.stringify({

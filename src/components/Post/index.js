@@ -83,7 +83,13 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
   return (
     <Container>
       <PostHeader>
-        <img src={userImage} alt="User profile" />
+        <img
+          src={userImage}
+          alt="User profile"
+          onClick={() => {
+            getPostsDataByUserId();
+          }}
+        />
         <LikeButton userId={userData.id} postId={postId} />
       </PostHeader>
 
