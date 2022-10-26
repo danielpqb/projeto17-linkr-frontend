@@ -1,10 +1,8 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
 import { AiOutlineComment } from "react-icons/ai";
 
-export default function CommentButton({ onClick }) {
-  const [numberOfComments, setNumberOfComments] = useState(0);
-
+export default function CommentButton({ onClick, numberOfComments }) {
   useEffect(() => {}, []);
 
   return (

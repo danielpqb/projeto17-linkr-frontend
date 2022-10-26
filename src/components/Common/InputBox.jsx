@@ -23,7 +23,7 @@ export default function InputBox({
   const [isValidPattern, setIsValidPattern] = useState(true);
 
   useEffect(() => {
-    if (value.match(regex) || value.length === 0) {
+    if (value?.match(regex) || value?.length === 0) {
       setIsValidPattern(true);
     } else {
       setIsValidPattern(false);

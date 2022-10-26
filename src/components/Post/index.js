@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { TiPencil } from "react-icons/ti";
+import { TbSend } from "react-icons/tb";
 
 import { getCommentsDataByPostId, updatePostHashtags, updatePostText } from "../../services/linkrAPI";
 import UserContext from "../../contexts/userContext";
@@ -19,6 +20,7 @@ import {
   PostUserName,
   Input,
   PostComments,
+  PostNewComment,
 } from "./style";
 import DeleteButton from "../Common/DeleteButton";
 import LikeButton from "../LikeButton";
@@ -48,7 +50,7 @@ export default function Post({
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
   const [idPromise, setIdPromise] = useState(false);
   const [commentsData, setCommentsData] = useState([]);
-  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+  const [isPostCommentsOpen, setIsPostCommentsOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -134,17 +136,18 @@ export default function Post({
             <>
               <LikeButton userId={userData.id} postId={postId} />
               <CommentButton
+                numberOfComments={commentsData.length}
                 onClick={() => {
-                  !isCommentsOpen
+                  !isPostCommentsOpen
                     ? getCommentsDataByPostId(postId)
                         .then((res) => {
                           console.log(res.response.data);
                           setCommentsData(res.response.data);
-                          setIsCommentsOpen(true);
+                          setIsPostCommentsOpen(true);
                         })
                         .catch((error) => {
                           if (error.response.status === 404) {
-                            setIsCommentsOpen(true);
+                            setIsPostCommentsOpen(true);
                             return;
                           }
 
@@ -158,7 +161,7 @@ export default function Post({
                             icon: "alert-circle",
                           });
                         })
-                    : setIsCommentsOpen(false);
+                    : setIsPostCommentsOpen(false);
                 }}
               />
             </>
@@ -239,16 +242,25 @@ export default function Post({
         </PostContent>
       </PostContainer>
 
-      {isCommentsOpen && (
-        <PostComments>
-          {commentsData.map((commentData) => {
-            return (
-              <>
-                <Comment commentData={commentData}></Comment>;
-              </>
-            );
-          })}
-        </PostComments>
+      {isPostCommentsOpen && (
+        <>
+          <PostComments>
+            {commentsData.map((commentData) => {
+              return (
+                <>
+                  <Comment commentData={commentData}></Comment>;
+                </>
+              );
+            })}
+            <PostNewComment>
+              <img src={userData.imageUrl} alt=""></img>
+              <div>
+                <input placeholder="write a comment..." />
+                <TbSend />
+              </div>
+            </PostNewComment>
+          </PostComments>
+        </>
       )}
     </Container>
   );

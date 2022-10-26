@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 const Container = styled.div`
   & {
-    background-color: red;
+    background-color: #1e1e1e;
 
     border-radius: 30px 30px 16px 16px;
     margin-bottom: 16px;
@@ -62,6 +62,63 @@ const PostContent = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+`;
+
+const PostNewComment = styled.div`
+  & {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+  }
+
+  img {
+    object-fit: cover;
+    border-radius: 50%;
+
+    width: 40px;
+    height: 40px;
+
+    margin-right: 15px;
+  }
+
+  div {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+
+    background: #252525;
+    border-radius: 8px;
+    width: 100%;
+    height: 40px;
+  }
+
+  input {
+    font-family: "Lato";
+    font-style: italic;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+    letter-spacing: 0.05em;
+    color: #afafaf;
+
+    border: none;
+    outline: none;
+    background: #252525;
+
+    padding: 0px;
+
+    width: calc(100% - 25px);
+  }
+
+  svg {
+    font-size: 20px;
+  }
+
+  input::placeholder {
+    color: #575757;
+  }
 `;
 
 const PostUserName = styled.div`
@@ -219,7 +276,6 @@ const PostComments = styled.div`
   width: 100%;
 
   padding: 20px;
-  padding-top: 0px;
 
   display: flex;
   flex-direction: column;
@@ -245,4 +301,5 @@ export {
   MetadataLink,
   MetadataText,
   Input,
+  PostNewComment,
 };
