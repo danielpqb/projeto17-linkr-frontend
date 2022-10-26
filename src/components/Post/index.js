@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { TiPencil } from "react-icons/ti";
@@ -31,10 +31,17 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
   const [consolidatedText, setConsolidatedText] = useState({ text: postText });
   const [changeableText, setChengeableText] = useState({ text: postText });
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
+  const [idPromise, setIdPromise] = useState(false);
 
   const navigate = useNavigate();
 
   const isEditable = userData.id === userId;
+
+  useEffect(() => {
+    if(userData.id !== undefined){
+      setIdPromise(true);
+    }
+  },[userData]);
 
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
@@ -95,7 +102,11 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
             }
           }}
         />
-        <LikeButton userId={userData.id} postId={postId} />
+        {idPromise ? (
+          <LikeButton userId={userData.id} postId={postId} />
+        ) : (
+          <></>
+        )}
       </PostHeader>
 
       <PostContent>
@@ -103,6 +114,13 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
           <div
             onClick={() => {
               if(isLoading === false){
+                localStorage.setItem(
+                  "targetUser",
+                  JSON.stringify({
+                    id: userId,
+                    name: userName,
+                  })
+                );
                 navigate(`/user/${userId}`);
               }
             }}

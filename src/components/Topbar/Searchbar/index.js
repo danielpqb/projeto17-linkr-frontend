@@ -49,7 +49,12 @@ export default function SearchBar() {
           }
         }}
       >
-        <img src={user.imageUrl} alt="" />
+        <img src={user.imageUrl} alt="" 
+          onError={({ currentTarget }) => {
+            currentTarget.onerror = null; 
+            currentTarget.src="https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-gr%C3%A1tis-vetor.jpg";
+          }} 
+        />
         <h2>{user.name}</h2>
       </StyledResult>
     );
