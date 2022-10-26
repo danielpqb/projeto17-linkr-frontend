@@ -70,6 +70,10 @@ function getPostDataById(id) {
   return axios.get(`${BASE_URL}/posts/post/${id}`, config);
 }
 
+function getCommentsDataByPostId(postId) {
+  return axios.get(`${BASE_URL}/comments/${postId}`, config);
+}
+
 function getPosts() {
   return axios.get(`${BASE_URL}/posts`, config);
 }
@@ -100,6 +104,7 @@ export {
   createHeader,
   createPostsHashtags,
   getPostDataById,
+  getCommentsDataByPostId,
   getPosts,
   getAllPosts,
   getUserPosts,

@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-import { RiHeartLine, RiHeartFill } from 'react-icons/ri';
+import { RiHeartLine, RiHeartFill } from "react-icons/ri";
 
 export const StyledLikeButton = styled.button`
   outline: none;
@@ -10,7 +10,7 @@ export const StyledLikeButton = styled.button`
 
   .toolTip {
     color: #505050 !important;
-    font-family: 'Lato', sans-serif !important;
+    font-family: "Lato", sans-serif !important;
     font-weight: 700 !important;
     font-size: 0.685rem !important;
 
@@ -21,7 +21,7 @@ export const StyledLikeButton = styled.button`
 
   p {
     color: #fff;
-    font-family: 'Lato', sans-serif;
+    font-family: "Lato", sans-serif;
     font-weight: 400;
     font-size: 0.685rem;
     line-height: 0.83rem;
@@ -31,7 +31,7 @@ export const StyledLikeButton = styled.button`
 
 export const HeartLine = styled(RiHeartLine)`
   color: #fff;
-  font-size: 1.125rem;
+  font-size: 25px;
 
   &:hover {
     cursor: pointer;
@@ -39,8 +39,8 @@ export const HeartLine = styled(RiHeartLine)`
 `;
 
 export const HeartFill = styled(RiHeartFill)`
-  color: red !important;
-  font-size: 1.125rem;
+  color: #ac0000 !important;
+  font-size: 25px;
 
   &:hover {
     cursor: pointer;

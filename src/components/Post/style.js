@@ -1,10 +1,17 @@
 import styled from "styled-components";
 
 const Container = styled.div`
+  & {
+    background-color: red;
+
+    border-radius: 30px 30px 16px 16px;
+    margin-bottom: 16px;
+  }
+`;
+const PostContainer = styled.div`
   width: 100%;
   background-color: var(--box-grey);
   border-radius: 16px;
-  margin-bottom: 16px;
   box-sizing: border-box;
   padding: 20px;
 
@@ -36,7 +43,8 @@ const PostHeader = styled.div`
   }
 
   button {
-    margin-top: 20px;
+    margin-top: 15px;
+    padding: 0px;
   }
 
   @media (max-width: 620px) {
@@ -207,10 +215,28 @@ const Input = styled.textarea`
   }
 `;
 
+const PostComments = styled.div`
+  width: 100%;
+
+  padding: 20px;
+  padding-top: 0px;
+
+  display: flex;
+  flex-direction: column;
+
+  svg:hover,
+  img:hover {
+    cursor: pointer;
+    filter: brightness(0.6);
+  }
+`;
+
 export {
   Container,
+  PostContainer,
   PostHeader,
   PostContent,
+  PostComments,
   PostUserName,
   PostText,
   MetadataDiv,
