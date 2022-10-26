@@ -120,12 +120,19 @@ export default function Feed({ type }) {
                 onError={({ currentTarget }) => {
                   currentTarget.onerror = null; 
                   currentTarget.src="https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-gr%C3%A1tis-vetor.jpg";
-                }} />
+                }}
+              />
               :
               <></>}
             <h1>{title}</h1>
           </div>
-          {type === "user"? <FollowButton userPageData={userPageData}/> : <></>}
+          {type === "user"?
+            <FollowButton
+              userPageData={userPageData}
+              setIsError={setIsError}
+            />
+            :
+            <></>}
         </Header>
         <div>
           <Container>
@@ -135,7 +142,12 @@ export default function Feed({ type }) {
             ) : (
               <>
                 {isError ? (
-                  <Loading>An error occured while trying to fetch the posts, please refresh the page</Loading>
+                  <Loading>
+                    <p>
+                      An error occured while trying to fetch the posts, <br />
+                      please refresh the page or go back to timeline
+                    </p>
+                  </Loading>
                 ) : (
                   <>
                     {isEmpty ? (

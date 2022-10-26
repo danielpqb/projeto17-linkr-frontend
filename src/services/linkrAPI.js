@@ -94,6 +94,18 @@ function updatePostHashtags(postId, hashtags) {
   return axios.put(`${BASE_URL}/posts/${postId}/hashtags`, hashtags, config);
 }
 
+function isFollowed(id) {
+  return axios.get(`${BASE_URL}/follow/${id}`, config);
+}
+
+function followUser(id) {
+  return axios.post(`${BASE_URL}/follow/${id}`, {}, config);
+}
+
+function unfollowUser(id) {
+  return axios.delete(`${BASE_URL}/follow/${id}`, config);
+}
+
 export {
   postSignUp,
   postSignIn,
@@ -114,4 +126,7 @@ export {
   getHashtagPosts,
   updatePostText,
   updatePostHashtags,
+  isFollowed,
+  followUser,
+  unfollowUser,
 };
