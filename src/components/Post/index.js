@@ -80,13 +80,6 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
     setChengeableText({ text: e.target.value });
   }
 
-  /* PostHeader.onError = handleError();
-
-  function handleError() {
-    alert('oie');
-    userImage = 'https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-gr%C3%A1tis-vetor.jpg';
-  } */
-
   return (
     <Container>
       <PostHeader>
