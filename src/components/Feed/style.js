@@ -29,6 +29,7 @@ const Header = styled.div`
     height: 50px;
     border-radius: 50%;
     object-fit: cover;
+    margin-right: 20px;
     }
 
     h1 {
@@ -36,7 +37,6 @@ const Header = styled.div`
     font-weight: 700;
     font-size: 43px;
     color: var(--text-emphasis);
-    margin-left: 20px;
     margin-top: 80px; 
     }
 

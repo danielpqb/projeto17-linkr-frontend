@@ -113,7 +113,7 @@ export default function Feed({ type }) {
       <Content>
         <Header>
           <div>
-            {userPageData.hasInfo?
+            {type === "user"?
               <img
                 src={userPageData.imageUrl}
                 alt="user"
@@ -125,7 +125,7 @@ export default function Feed({ type }) {
               <></>}
             <h1>{title}</h1>
           </div>
-          {userPageData.hasInfo? <FollowButton userPageData={userPageData}/> : <></>}
+          {type === "user"? <FollowButton userPageData={userPageData}/> : <></>}
         </Header>
         <div>
           <Container>
