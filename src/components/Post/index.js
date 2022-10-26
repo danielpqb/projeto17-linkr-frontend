@@ -3,7 +3,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { TiPencil } from "react-icons/ti";
 
-import { getPostDataById, updatePostHashtags, updatePostText } from "../../services/linkrAPI";
+import { updatePostHashtags, updatePostText } from "../../services/linkrAPI";
 import UserContext from "../../contexts/userContext";
 import {
   Container,
@@ -23,7 +23,6 @@ import LikeButton from "../LikeButton";
 import checkHashtags from "../functions/checkHashtags";
 import { ReactTagify } from "react-tagify";
 import PostsContext from "../../contexts/postsContext";
-import createErrorMessage from "../functions/createErrorMessage";
 
 export default function Post({ userId, userImage, userName, postText, metadata, postLink, postId }) {
   const { userData, setAlert } = useContext(UserContext);
@@ -71,33 +70,6 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
     }
   }
 
-  function getPostsDataByUserId() {
-    getPostDataById(postId)
-      .then((res) => {
-        navigate(`/user/${res.data.postData.userId}`);
-        localStorage.setItem(
-          "targetUser",
-          JSON.stringify({
-            id: res.data.user.id,
-            name: res.data.user.name,
-          })
-        );
-      })
-      .catch((error) => {
-        const message = createErrorMessage(error);
-
-        setAlert({
-          show: true,
-          message: message,
-          type: 0,
-          doThis: () => {},
-          color: "rgba(200,0,0)",
-          icon: "alert-circle",
-        });
-        return;
-      });
-  }
-
   function handleForm(e) {
     if (e.nativeEvent.inputType === "insertLineBreak") {
       setLoading(true);
@@ -125,7 +97,7 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
         <PostUserName>
           <div
             onClick={() => {
-              getPostsDataByUserId();
+              navigate(`/user/${userId}`);
             }}
           >
             {userName}
