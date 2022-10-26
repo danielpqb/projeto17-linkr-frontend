@@ -27,7 +27,7 @@ import PostsContext from "../../contexts/postsContext";
 export default function Post({ userId, userImage, userName, postText, metadata, postLink, postId, updateTrending, setUpdateTrending }) {
   const { userData, setAlert } = useContext(UserContext);
   const [isEditing, setIsEditing] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const { isLoading, setIsLoading } = React.useContext(PostsContext);
   const [consolidatedText, setConsolidatedText] = useState({ text: postText });
   const [changeableText, setChengeableText] = useState({ text: postText });
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
@@ -73,9 +73,9 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
 
   function handleForm(e) {
     if (e.nativeEvent.inputType === "insertLineBreak") {
-      setLoading(true);
+      setIsLoading(true);
       updatePost();
-      setLoading(false);
+      setIsLoading(false);
       return;
     }
     setChengeableText({ text: e.target.value });
@@ -84,11 +84,15 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
   return (
     <Container>
       <PostHeader>
-        <img
-          src={userImage}
-          alt="User profile"
+        <img src={userImage} alt="User profile" 
+          onError={({ currentTarget }) => {
+            currentTarget.onerror = null; 
+            currentTarget.src="https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-gr%C3%A1tis-vetor.jpg";
+          }} 
           onClick={() => {
-            navigate(`/user/${userId}`);
+            if(isLoading === false){
+              navigate(`/user/${userId}`);
+            }
           }}
         />
         <LikeButton userId={userData.id} postId={postId} />
@@ -98,7 +102,9 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
         <PostUserName>
           <div
             onClick={() => {
-              navigate(`/user/${userId}`);
+              if(isLoading === false){
+                navigate(`/user/${userId}`);
+              }
             }}
           >
             {userName}
@@ -118,7 +124,7 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
             name="text"
             type="text"
             autoFocus={true}
-            disabled={loading}
+            disabled={isLoading}
             value={changeableText.text}
             onChange={handleForm}
             required
@@ -132,8 +138,10 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
                 cursor: "pointer",
               }}
               tagClicked={(tag) => {
-                navigate(`/hashtag/${tag.substring(1)}`);
-                setRefreshFeed(!refreshFeed);
+                if(isLoading === false){
+                  navigate(`/hashtag/${tag.substring(1)}`);
+                  setRefreshFeed(!refreshFeed);
+                }
               }}
             >
               {consolidatedText.text}
