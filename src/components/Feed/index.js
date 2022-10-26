@@ -155,7 +155,7 @@ export default function Feed({ type }) {
                           userName={post.user.name}
                           postText={post.text}
                           metadata={post.metadata}
-                          postLink={post.link}
+                          postLink={post.metadata.link}
                           postId={post.id}
                         />
                       ))}
