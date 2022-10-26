@@ -25,6 +25,7 @@ export default function App() {
   const [arrPosts, setArrPosts] = useState([]);
   const [arrTrendingHashtags, setArrTrendingHashtags] = useState(["There are no hashtags yet"]);
   const [refreshFeed, setRefreshFeed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const localToken = localStorage.getItem("userToken");
@@ -79,6 +80,8 @@ export default function App() {
               setArrTrendingHashtags,
               refreshFeed,
               setRefreshFeed,
+              isLoading,
+              setIsLoading
             }}
           >
             <Container>

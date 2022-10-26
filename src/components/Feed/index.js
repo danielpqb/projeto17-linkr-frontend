@@ -13,7 +13,6 @@ export default function Feed({ type }) {
   const navigate = useNavigate();
   const { hashtag } = useParams();
   const [title, setTitle] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [isTimeline, setIsTimeline] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
@@ -21,6 +20,7 @@ export default function Feed({ type }) {
   const { arrTrendingHashtags, setArrTrendingHashtags } = React.useContext(PostsContext);
   const { userData, setUserData, setAlert } = React.useContext(UserContext);
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
+  const { isLoading, setIsLoading } = React.useContext(PostsContext);
   const [thisUserId, setThisUserId] = useState(-1);
 
   useEffect(() => {

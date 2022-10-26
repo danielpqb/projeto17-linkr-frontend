@@ -13,6 +13,7 @@ export default function SearchBar() {
 
   const [searchTag, setSearchTag] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const { isLoading, setIsLoading } = React.useContext(PostsContext);
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
 
   async function handleSearch(e) {
@@ -33,17 +34,19 @@ export default function SearchBar() {
     return (
       <StyledResult
         onClick={() => {
-          navigate(`/user/${user.id}`);
-          localStorage.setItem(
-            "targetUser",
-            JSON.stringify({
-              id: user.id,
-              name: user.name,
-            })
-          );
-          setRefreshFeed(!refreshFeed);
-          setSearchTag("");
-          setSearchResults([]);
+          if(isLoading === false){
+            navigate(`/user/${user.id}`);
+            localStorage.setItem(
+              "targetUser",
+              JSON.stringify({
+                id: user.id,
+                name: user.name,
+              })
+            );
+            setRefreshFeed(!refreshFeed);
+            setSearchTag("");
+            setSearchResults([]);
+          }
         }}
       >
         <img src={user.imageUrl} alt="" />
