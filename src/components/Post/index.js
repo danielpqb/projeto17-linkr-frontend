@@ -87,7 +87,7 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
           src={userImage}
           alt="User profile"
           onClick={() => {
-            getPostsDataByUserId();
+            navigate(`/user/${userId}`);
           }}
         />
         <LikeButton userId={userData.id} postId={postId} />
