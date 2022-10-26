@@ -16,6 +16,7 @@ export default function Feed({ type }) {
   const [isError, setIsError] = useState(false);
   const [isTimeline, setIsTimeline] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
+  const [updateTrending, setUpdateTrending] = useState(false);
   const { arrPosts, setArrPosts } = React.useContext(PostsContext);
   const { arrTrendingHashtags, setArrTrendingHashtags } = React.useContext(PostsContext);
   const { userData, setUserData, setAlert } = React.useContext(UserContext);
@@ -24,84 +25,56 @@ export default function Feed({ type }) {
   const [thisUserId, setThisUserId] = useState(-1);
 
   useEffect(() => {
+    setIsLoading(true);
+
     if (type === "timeline") {
-      setIsLoading(true);
       setIsTimeline(true);
       setTitle("timeline");
       getTimelinePosts()
         .then((answer) => {
           setArrPosts(answer.data[0]);
-          setIsLoading(false);
           if (answer.data.length === 0) {
             setIsEmpty(true);
           }
         })
         .catch((error) => {
-          setIsLoading(false);
           setIsError(true);
-        });
-      getTrendingHashtags()
-        .then((answer) => {
-          setArrTrendingHashtags(answer.data[0]);
-        })
-        .catch((error) => {
-          console.log(error);
         });
     }
     if (type === "hashtag") {
       setIsTimeline(false);
-      setIsLoading(true);
       setTitle(`# ${hashtag}`);
       getHashtagPosts(hashtag)
         .then((answer) => {
           setArrPosts(answer.data[0]);
-          setIsLoading(false);
           if (answer.data.length === 0) {
             setIsEmpty(true);
           }
         })
         .catch(() => {
-          setIsLoading(false);
           setIsError(true);
           if (thisUserId === -1) {
             setThisUserId(userData.id);
           }
         });
-      getTrendingHashtags()
-        .then((answer) => {
-          setArrTrendingHashtags(answer.data[0]);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
     }
     if (type === "user") {
-      setIsLoading(true);
       setIsTimeline(false);
-
       const localTargetUser = JSON.parse(localStorage.getItem("targetUser"));
-
       setTitle(`${localTargetUser.name}'s page`);
       getUserPosts(localTargetUser.id)
         .then((answer) => {
           setArrPosts(answer.data[0]);
-          setIsLoading(false);
           if (answer.data.length === 0) {
             setIsEmpty(true);
           }
         })
         .catch(() => {
-          setIsLoading(false);
           setIsError(true);
         });
-      getTrendingHashtags()
-        .then((answer) => {
-          setArrTrendingHashtags(answer.data[0]);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
     }
+
+    setIsLoading(false);
   }, [
     refreshFeed,
     thisUserId,
@@ -109,9 +82,22 @@ export default function Feed({ type }) {
     hashtag,
     setArrPosts,
     setUserData,
+    setIsLoading,
     type,
+    userData.id,
+  ]);
+
+  useEffect(() => {
+    getTrendingHashtags()
+    .then((answer) => {
+      setArrTrendingHashtags(answer.data[0]);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }, [
     setArrTrendingHashtags,
-    // userData,
+    updateTrending
   ]);
 
   function goHashtag(hashtag) {
@@ -150,6 +136,8 @@ export default function Feed({ type }) {
                           metadata={post.metadata}
                           postLink={post.metadata.link}
                           postId={post.id}
+                          updateTrending={updateTrending}
+                          setUpdateTrending={setUpdateTrending}
                         />
                       ))}
                     </>

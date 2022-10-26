@@ -24,7 +24,7 @@ import checkHashtags from "../functions/checkHashtags";
 import { ReactTagify } from "react-tagify";
 import PostsContext from "../../contexts/postsContext";
 
-export default function Post({ userId, userImage, userName, postText, metadata, postLink, postId }) {
+export default function Post({ userId, userImage, userName, postText, metadata, postLink, postId, updateTrending, setUpdateTrending }) {
   const { userData, setAlert } = useContext(UserContext);
   const [isEditing, setIsEditing] = useState(false);
   const { isLoading, setIsLoading } = React.useContext(PostsContext);
@@ -54,6 +54,7 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
       await updatePostHashtags(postId, checkHashtags(changeableText.text));
       setConsolidatedText(changeableText);
       setIsEditing(false);
+      setTimeout(() => setUpdateTrending(!updateTrending), 200);
     } catch (error) {
       let err = error;
       if (error.response?.data.message) {
