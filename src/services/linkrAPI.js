@@ -41,6 +41,10 @@ function getUserDataByToken(token) {
   });
 }
 
+function getUserById(id) {
+  return axios.get(`${BASE_URL}/user/${id}`, config)
+}
+
 function getSearchUsers(filter) {
   const auth2 = localStorage.getItem("userToken");
   const config2 = `Bearer ${auth2}`;
@@ -94,6 +98,7 @@ export {
   postSignUp,
   postSignIn,
   getUserDataByToken,
+  getUserById,
   getSearchUsers,
   createPost,
   createHashtag,

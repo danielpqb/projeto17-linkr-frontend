@@ -93,7 +93,7 @@ export default function App() {
                   <Route element={<ProtectedRoute token={localStorage.getItem("userToken")} setAlert={setAlert} />}>
                     <Route path="/timeline" element={<Feed type={"timeline"} />} />
                     <Route path="/hashtag/:hashtag" element={<Feed type={"hashtag"} />} />
-                    <Route path="/user/:id" element={<Feed type={"user"} />} />
+                    <Route path="/user/:userPageId" element={<Feed type={"user"} />} />
                     <Route path="*" element={<Navigate to="/" />} />
                   </Route>
                 </Routes>
