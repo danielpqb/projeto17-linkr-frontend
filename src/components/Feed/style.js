@@ -50,6 +50,45 @@ const Loading = styled.div`
     }
 `
 
+const RefreshNewPosts = styled.div`
+    width: 100%;
+    min-height: 61px;
+    background: #1877F2;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 16px;
+    margin-bottom: 26px;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+
+    color: #FFFFFF;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    :hover{
+        filter: brightness(0.6);
+        cursor: pointer;
+    }
+
+    @media (max-width: 620px) {
+        border-radius: 0;
+        height: 232px;
+    }
+`
+
+const RefreshIcon = styled.div`
+    
+    margin-left: 4px;
+    margin-top: 2px;
+    font-size: 20px;
+    line-height: 21px;
+
+`
+
 const Trending = styled.div`
     width: 300px;
     height: 406px;
@@ -112,5 +151,7 @@ export {
     Trending,
     TrendingLine,
     TrendingTitle,
-    TrendingHashtags
+    TrendingHashtags,
+    RefreshNewPosts,
+    RefreshIcon
 }

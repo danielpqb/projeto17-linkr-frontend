@@ -2,12 +2,14 @@ import React from "react";
 import TopBar from "../Topbar";
 import Publish from "../Publish";
 import Post from "../Post";
-import { Container, Content, Loading, Trending, TrendingHashtags, TrendingLine, TrendingTitle } from "./style";
+import { Container, Content, Loading, RefreshIcon, RefreshNewPosts, Trending, TrendingHashtags, TrendingLine, TrendingTitle } from "./style";
 import { getHashtagPosts, getTimelinePosts, getTrendingHashtags, getUserPosts } from "../../services/linkrAPI";
 import { useState, useEffect } from "react";
 import UserContext from "../../contexts/userContext";
 import PostsContext from "../../contexts/postsContext";
 import { useNavigate, useParams } from "react-router-dom";
+import useInterval from 'use-interval';
+import { MdCached } from 'react-icons/md';
 
 export default function Feed({ type }) {
   const navigate = useNavigate();
@@ -23,11 +25,16 @@ export default function Feed({ type }) {
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
   const { isLoading, setIsLoading } = React.useContext(PostsContext);
   const [thisUserId, setThisUserId] = useState(-1);
+  const [idLastPost, setIdLastPost] = useState(0);
+  const [newPostsNumber, setNewPostsNumber] = useState(0);
+  const [haveNewPosts, setHaveNewPosts] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
 
     if (type === "timeline") {
+      setNewPostsNumber(0);
+      setHaveNewPosts(false);
       setIsTimeline(true);
       setTitle("timeline");
       getTimelinePosts()
@@ -35,6 +42,8 @@ export default function Feed({ type }) {
           setArrPosts(answer.data[0]);
           if (answer.data.length === 0) {
             setIsEmpty(true);
+          }else{
+            setIdLastPost(answer.data[0][0].id);
           }
         })
         .catch((error) => {
@@ -107,6 +116,37 @@ export default function Feed({ type }) {
     }
   }
 
+  
+  useInterval(() => {
+    if(idLastPost > 0){
+      getTimelinePosts()
+        .then((answer) => {
+          const arrPostsUpdate = answer.data[0];
+          for(let i=0; i<arrPostsUpdate.length; i++){
+            if(arrPostsUpdate[i].id > idLastPost){
+              setIdLastPost(arrPostsUpdate[i].id);
+              setNewPostsNumber(newPostsNumber+1);
+            }
+          }
+          if(newPostsNumber > 0){
+            setHaveNewPosts(true);
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        });
+  }
+  }, 15000);
+  
+  function refreshNewPosts() {
+    if (isLoading === false) {
+      setArrPosts([]);
+      setRefreshFeed(!refreshFeed);
+    }
+  }
+
+  
+
   return (
     <>
       <TopBar />
@@ -114,6 +154,13 @@ export default function Feed({ type }) {
         <Container>
           <h1>{title}</h1>
           {isTimeline ? <Publish /> : <></>}
+          {haveNewPosts ? (
+            <RefreshNewPosts onClick={refreshNewPosts}>
+              {newPostsNumber} new posts, load more! <RefreshIcon><MdCached/></RefreshIcon> 
+            </RefreshNewPosts>
+          ) : (
+            <></>
+          )}
           {isLoading ? (
             <Loading>Loading...</Loading>
           ) : (
