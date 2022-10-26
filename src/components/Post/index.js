@@ -3,7 +3,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { TiPencil } from "react-icons/ti";
 
-import { getPostDataById, updatePostHashtags, updatePostText } from "../../services/linkrAPI";
+import { updatePostHashtags, updatePostText } from "../../services/linkrAPI";
 import UserContext from "../../contexts/userContext";
 import {
   Container,
@@ -23,7 +23,6 @@ import LikeButton from "../LikeButton";
 import checkHashtags from "../functions/checkHashtags";
 import { ReactTagify } from "react-tagify";
 import PostsContext from "../../contexts/postsContext";
-import createErrorMessage from "../functions/createErrorMessage";
 
 export default function Post({ userId, userImage, userName, postText, metadata, postLink, postId }) {
   const { userData, setAlert } = useContext(UserContext);
@@ -91,10 +90,16 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
   return (
     <Container>
       <PostHeader>
-        <img src={userImage} alt="User profile" onError={({ currentTarget }) => {
+        <img src={userImage} alt="User profile" 
+          onError={({ currentTarget }) => {
             currentTarget.onerror = null; 
             currentTarget.src="https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-gr%C3%A1tis-vetor.jpg";
           }} 
+          onClick={() => {
+            if(isLoading === false){
+              navigate(`/user/${userId}`);
+            }
+          }}
         />
         <LikeButton userId={userData.id} postId={postId} />
       </PostHeader>
@@ -103,26 +108,9 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
         <PostUserName>
           <div
             onClick={() => {
-              getPostDataById(postId)
-                .then((res) => {
-                  if(isLoading === false){
-                    navigate(`/user/${res.data.postData.userId}`);
-                    setRefreshFeed(!refreshFeed);
-                  }
-                })
-                .catch((error) => {
-                  const message = createErrorMessage(error);
-
-                  setAlert({
-                    show: true,
-                    message: message,
-                    type: 0,
-                    doThis: () => {},
-                    color: "rgba(200,0,0)",
-                    icon: "alert-circle",
-                  });
-                  return;
-                });
+              if(isLoading === false){
+                navigate(`/user/${userId}`);
+              }
             }}
           >
             {userName}

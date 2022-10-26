@@ -18,7 +18,6 @@ export default function Feed({ type }) {
   const [isEmpty, setIsEmpty] = useState(false);
   const { arrPosts, setArrPosts } = React.useContext(PostsContext);
   const { arrTrendingHashtags, setArrTrendingHashtags } = React.useContext(PostsContext);
-  const { targetUser, setTargetUser } = React.useContext(UserContext);
   const { userData, setUserData, setAlert } = React.useContext(UserContext);
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
   const { isLoading, setIsLoading } = React.useContext(PostsContext);
@@ -82,12 +81,8 @@ export default function Feed({ type }) {
 
       const localTargetUser = JSON.parse(localStorage.getItem("targetUser"));
 
-      if (targetUser.id === -1 && localTargetUser) {
-        setTargetUser(localTargetUser);
-      }
-
-      setTitle(`${targetUser.name}'s page`);
-      getUserPosts(targetUser.id)
+      setTitle(`${localTargetUser.name}'s page`);
+      getUserPosts(localTargetUser.id)
         .then((answer) => {
           setArrPosts(answer.data[0]);
           setIsLoading(false);
@@ -109,7 +104,6 @@ export default function Feed({ type }) {
     }
   }, [
     refreshFeed,
-    targetUser,
     thisUserId,
     setAlert,
     hashtag,
@@ -118,7 +112,6 @@ export default function Feed({ type }) {
     type,
     setArrTrendingHashtags,
     // userData,
-    setTargetUser,
   ]);
 
   function goHashtag(hashtag) {
@@ -155,7 +148,7 @@ export default function Feed({ type }) {
                           userName={post.user.name}
                           postText={post.text}
                           metadata={post.metadata}
-                          postLink={post.link}
+                          postLink={post.metadata.link}
                           postId={post.id}
                         />
                       ))}
