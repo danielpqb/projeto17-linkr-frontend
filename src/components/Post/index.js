@@ -103,6 +103,13 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
           <div
             onClick={() => {
               if(isLoading === false){
+                localStorage.setItem(
+                  "targetUser",
+                  JSON.stringify({
+                    id: userId,
+                    name: userName,
+                  })
+                );
                 navigate(`/user/${userId}`);
               }
             }}
