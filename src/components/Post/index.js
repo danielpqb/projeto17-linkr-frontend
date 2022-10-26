@@ -3,7 +3,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { TiPencil } from "react-icons/ti";
 
-import { getPostDataById, updatePostHashtags, updatePostText } from "../../services/linkrAPI";
+import { updatePostHashtags, updatePostText } from "../../services/linkrAPI";
 import UserContext from "../../contexts/userContext";
 import {
   Container,
@@ -23,7 +23,6 @@ import LikeButton from "../LikeButton";
 import checkHashtags from "../functions/checkHashtags";
 import { ReactTagify } from "react-tagify";
 import PostsContext from "../../contexts/postsContext";
-import createErrorMessage from "../functions/createErrorMessage";
 
 export default function Post({ userId, userImage, userName, postText, metadata, postLink, postId }) {
   const { userData, setAlert } = useContext(UserContext);
@@ -84,7 +83,13 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
   return (
     <Container>
       <PostHeader>
-        <img src={userImage} alt="User profile" />
+        <img
+          src={userImage}
+          alt="User profile"
+          onClick={() => {
+            getPostsDataByUserId();
+          }}
+        />
         <LikeButton userId={userData.id} postId={postId} />
       </PostHeader>
 
@@ -92,23 +97,7 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
         <PostUserName>
           <div
             onClick={() => {
-              getPostDataById(postId)
-                .then((res) => {
-                  navigate(`/user/${res.data.postData.userId}`);
-                })
-                .catch((error) => {
-                  const message = createErrorMessage(error);
-
-                  setAlert({
-                    show: true,
-                    message: message,
-                    type: 0,
-                    doThis: () => {},
-                    color: "rgba(200,0,0)",
-                    icon: "alert-circle",
-                  });
-                  return;
-                });
+              navigate(`/user/${userId}`);
             }}
           >
             {userName}

@@ -20,7 +20,7 @@ export default function createErrorMessage(error, form) {
 
       case "email":
         if (!email.match(regexPatterns.email)) {
-          message = `"${email}"\n\n is not a valid email.`;
+          message = `"${email.substring(0, 100)}"\n\n is not a valid email.`;
         }
         break;
 
@@ -35,7 +35,7 @@ export default function createErrorMessage(error, form) {
 
       case "imageUrl":
         if (!imageUrl.match(regexPatterns.url)) {
-          message = `"${imageUrl}"\n\n is not a valid URL.`;
+          message = `"${imageUrl.substring(0, 100)}"\n\n is not a valid URL.`;
         }
         break;
 
