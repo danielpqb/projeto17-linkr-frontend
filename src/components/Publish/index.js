@@ -97,7 +97,11 @@ export default function Publish() {
   return (
     <Container>
       <LeftDiv>
-        <img src={userData.imageUrl} alt="profilePicture" />
+        <img src={userData.imageUrl} alt="profilePicture" onError={({ currentTarget }) => {
+            currentTarget.onerror = null; 
+            currentTarget.src="https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-gr%C3%A1tis-vetor.jpg";
+          }}
+        />
       </LeftDiv>
       <RightDiv>
         <h2>What are you going to share today?</h2>

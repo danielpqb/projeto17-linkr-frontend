@@ -12,15 +12,17 @@ export default function TopBar() {
   const { userData, setUserData } = useContext(UserContext);
   const { refreshFeed, setRefreshFeed } = useContext(PostsContext);
   const [isMenuAppering, setIsMenuAppering] = useState(false);
-
+  const { isLoading, setIsLoading } = React.useContext(PostsContext);
   const imgSrc = userData.imageUrl;
   const navigate = useNavigate();
 
   return (
     <Container>
       <h1 onClick={() => {
-        navigate("/timeline");
-        setRefreshFeed(!refreshFeed);
+        if(isLoading === false){
+          navigate("/timeline");
+          setRefreshFeed(!refreshFeed);
+        }
       }}>linkr</h1>
       <SearchBar />
       <UserLogo
@@ -29,7 +31,10 @@ export default function TopBar() {
         }}
       >
         {isMenuAppering ? <FiChevronUp /> : <FiChevronDown />}
-        <img src={imgSrc} alt="" />
+        <img src={imgSrc} alt="" onError={({ currentTarget }) => {
+            currentTarget.onerror = null; 
+            currentTarget.src="https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-gr%C3%A1tis-vetor.jpg";
+          }}/>
       </UserLogo>
       {isMenuAppering ? (
         <>
