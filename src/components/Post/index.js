@@ -23,8 +23,19 @@ import LikeButton from "../LikeButton";
 import checkHashtags from "../functions/checkHashtags";
 import { ReactTagify } from "react-tagify";
 import PostsContext from "../../contexts/postsContext";
+import Repost from "../Repost";
 
-export default function Post({ userId, userImage, userName, postText, metadata, postLink, postId, updateTrending, setUpdateTrending }) {
+export default function Post({
+  userId,
+  userImage,
+  userName,
+  postText,
+  metadata,
+  postLink,
+  postId,
+  updateTrending,
+  setUpdateTrending,
+}) {
   const { userData, setAlert } = useContext(UserContext);
   const [isEditing, setIsEditing] = useState(false);
   const { isLoading, setIsLoading } = React.useContext(PostsContext);
@@ -38,10 +49,10 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
   const isEditable = userData.id === userId;
 
   useEffect(() => {
-    if(userData.id !== undefined){
+    if (userData.id !== undefined) {
       setIdPromise(true);
     }
-  },[userData]);
+  }, [userData]);
 
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
@@ -91,13 +102,16 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
   return (
     <Container>
       <PostHeader>
-        <img src={userImage} alt="User profile" 
+        <img
+          src={userImage}
+          alt="User profile"
           onError={({ currentTarget }) => {
-            currentTarget.onerror = null; 
-            currentTarget.src="https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-gr%C3%A1tis-vetor.jpg";
-          }} 
+            currentTarget.onerror = null;
+            currentTarget.src =
+              "https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-gr%C3%A1tis-vetor.jpg";
+          }}
           onClick={() => {
-            if(isLoading === false){
+            if (isLoading === false) {
               localStorage.setItem(
                 "targetUser",
                 JSON.stringify({
@@ -109,18 +123,15 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
             }
           }}
         />
-        {idPromise ? (
-          <LikeButton userId={userData.id} postId={postId} />
-        ) : (
-          <></>
-        )}
+        {idPromise ? <LikeButton userId={userData.id} postId={postId} /> : <></>}
+        <Repost postId={postId} userId={userId} />
       </PostHeader>
 
       <PostContent>
         <PostUserName>
           <div
             onClick={() => {
-              if(isLoading === false){
+              if (isLoading === false) {
                 localStorage.setItem(
                   "targetUser",
                   JSON.stringify({
@@ -163,7 +174,7 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
                 cursor: "pointer",
               }}
               tagClicked={(tag) => {
-                if(isLoading === false){
+                if (isLoading === false) {
                   navigate(`/hashtag/${tag.substring(1)}`);
                   setRefreshFeed(!refreshFeed);
                 }

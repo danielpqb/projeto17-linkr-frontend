@@ -2,12 +2,23 @@ import React from "react";
 import TopBar from "../Topbar";
 import Publish from "../Publish";
 import Post from "../Post";
-import { Container, Content, Loading, Trending, TrendingHashtags, TrendingLine, TrendingTitle } from "./style";
+import {
+  Container,
+  Content,
+  HeaderRepost,
+  Loading,
+  Trending,
+  TrendingHashtags,
+  TrendingLine,
+  TrendingTitle,
+} from "./style";
 import { getHashtagPosts, getTimelinePosts, getTrendingHashtags, getUserPosts } from "../../services/linkrAPI";
 import { useState, useEffect } from "react";
+import { FaRetweet } from "react-icons/fa";
 import UserContext from "../../contexts/userContext";
 import PostsContext from "../../contexts/postsContext";
 import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 export default function Feed({ type }) {
   const navigate = useNavigate();
@@ -23,6 +34,8 @@ export default function Feed({ type }) {
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
   const { isLoading, setIsLoading } = React.useContext(PostsContext);
   const [thisUserId, setThisUserId] = useState(-1);
+  const [isRepost, setIsRepost] = useState(false);
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
     setIsLoading(true);
@@ -75,36 +88,36 @@ export default function Feed({ type }) {
     }
 
     setIsLoading(false);
-  }, [
-    refreshFeed,
-    thisUserId,
-    setAlert,
-    hashtag,
-    setArrPosts,
-    setUserData,
-    setIsLoading,
-    type,
-    userData.id,
-  ]);
+  }, [refreshFeed, thisUserId, setAlert, hashtag, setArrPosts, setUserData, setIsLoading, type, userData.id]);
 
   useEffect(() => {
+    repost(2); // aplicando em todos os posts. como pegar pegar o postId aqui?
     getTrendingHashtags()
-    .then((answer) => {
-      setArrTrendingHashtags(answer.data[0]);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }, [
-    setArrTrendingHashtags,
-    updateTrending
-  ]);
+      .then((answer) => {
+        setArrTrendingHashtags(answer.data[0]);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [setArrTrendingHashtags, updateTrending, isRepost]);
 
   function goHashtag(hashtag) {
     if (isLoading === false) {
       navigate(`/hashtag/${hashtag}`);
       setRefreshFeed(!refreshFeed);
     }
+  }
+
+  function repost(postId) {
+    const promise = axios.get(`${BASE_URL}/repost/${postId}`);
+    promise
+      .then((response) => {
+        if (response.data !== 0) {
+          setIsRepost(true);
+        }
+        console.log(isRepost);
+      })
+      .catch((error) => console.log(error));
   }
 
   return (
@@ -127,18 +140,29 @@ export default function Feed({ type }) {
                   ) : (
                     <>
                       {arrPosts.map((post, index) => (
-                        <Post
-                          key={index}
-                          userId={post.user.id}
-                          userImage={post.user.image}
-                          userName={post.user.name}
-                          postText={post.text}
-                          metadata={post.metadata}
-                          postLink={post.metadata.link}
-                          postId={post.id}
-                          updateTrending={updateTrending}
-                          setUpdateTrending={setUpdateTrending}
-                        />
+                        <>
+                          {isRepost ? (
+                            <HeaderRepost>
+                              <FaRetweet />
+                              <p>Re-posted by FULANO</p>
+                            </HeaderRepost>
+                          ) : (
+                            <></>
+                          )}
+
+                          <Post
+                            key={index}
+                            userId={post.user.id}
+                            userImage={post.user.image}
+                            userName={post.user.name}
+                            postText={post.text}
+                            metadata={post.metadata}
+                            postLink={post.metadata.link}
+                            postId={post.id}
+                            updateTrending={updateTrending}
+                            setUpdateTrending={setUpdateTrending}
+                          />
+                        </>
                       ))}
                     </>
                   )}
