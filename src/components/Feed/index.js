@@ -214,7 +214,12 @@ export default function Feed({ type }) {
           <Container>
             {isTimeline ? <Publish /> : <></>}
             {haveNewPosts ? (
-              <RefreshNewPosts onClick={refreshNewPosts}>
+              <RefreshNewPosts
+                onClick={() => {
+                  setInfiniteScrollIndex(0);
+                  refreshNewPosts();
+                }}
+              >
                 {newPostsNumber} new posts, load more!{" "}
                 <RefreshIcon>
                   <MdCached />
