@@ -1,9 +1,6 @@
-import { useEffect } from "react";
 import styled from "styled-components";
 
-export default function Comment(commentData) {
-  useEffect(() => {}, []);
-
+export default function Comment({ commentData }) {
   return (
     <Container>
       <Photo>
@@ -13,7 +10,7 @@ export default function Comment(commentData) {
       <Content>
         <Title>
           <Name>{commentData.userName}</Name>
-          <ExtraInfo>{commentData.extraInfo}</ExtraInfo>
+          <ExtraInfo>{commentData.userId === commentData.postUserId ? "• post’s author" : ""}</ExtraInfo>
         </Title>
 
         <Text>{commentData.text}</Text>
@@ -23,39 +20,46 @@ export default function Comment(commentData) {
 }
 
 const Container = styled.div`
-  outline: none;
-  border: none;
+  & {
+    display: flex;
 
-  background-color: transparent;
+    border-bottom: 1px solid #353535;
 
-  .toolTip {
-    color: #505050 !important;
-    font-family: "Lato", sans-serif !important;
-    font-weight: 700 !important;
-    font-size: 0.685rem !important;
-
-    span {
-      background-color: #fff !important;
-    }
+    padding: 15px 0px;
   }
 
-  p {
-    color: #fff;
-    font-family: "Lato", sans-serif;
-    font-weight: 400;
-    font-size: 0.685rem;
-    line-height: 0.83rem;
-    text-align: center;
+  div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 `;
 
 const Photo = styled.div`
   & {
   }
+
+  img {
+    object-fit: cover;
+    border-radius: 50%;
+
+    width: 40px;
+    height: 40px;
+
+    margin-right: 15px;
+  }
 `;
 
 const Content = styled.div`
   & {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+  }
+
+  div {
+    align-self: flex-start;
   }
 `;
 
@@ -66,15 +70,35 @@ const Title = styled.div`
 
 const Name = styled.div`
   & {
+    font-family: "Lato";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 17px;
+    color: #f3f3f3;
   }
 `;
 
 const ExtraInfo = styled.div`
   & {
+    font-family: "Lato";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+    color: #565656;
+
+    margin-left: 5px;
   }
 `;
 
 const Text = styled.div`
   & {
+    font-family: "Lato";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+    color: #acacac;
   }
 `;

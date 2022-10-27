@@ -71,19 +71,23 @@ const PostNewComment = styled.div`
 
     display: flex;
     align-items: center;
+
+    padding-top: 15px;
   }
 
   img {
     object-fit: cover;
     border-radius: 50%;
 
+    min-width: 40px;
+    min-height: 40px;
     width: 40px;
     height: 40px;
 
     margin-right: 15px;
   }
 
-  div {
+  form {
     display: flex;
     align-items: center;
     padding: 10px;
@@ -92,6 +96,13 @@ const PostNewComment = styled.div`
     border-radius: 8px;
     width: 100%;
     height: 40px;
+  }
+
+  button {
+    background: none;
+    padding: 0px;
+    outline: none;
+    border: none;
   }
 
   input {
@@ -114,6 +125,7 @@ const PostNewComment = styled.div`
 
   svg {
     font-size: 20px;
+    color: #f3f3f3;
   }
 
   input::placeholder {
@@ -276,6 +288,7 @@ const PostComments = styled.div`
   width: 100%;
 
   padding: 20px;
+  padding-top: 0px;
 
   display: flex;
   flex-direction: column;

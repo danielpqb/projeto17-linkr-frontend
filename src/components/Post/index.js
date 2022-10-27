@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { TiPencil } from "react-icons/ti";
 import { TbSend } from "react-icons/tb";
 
-import { getCommentsDataByPostId, updatePostHashtags, updatePostText } from "../../services/linkrAPI";
+import { getCommentsDataByPostId, postNewComment, updatePostHashtags, updatePostText } from "../../services/linkrAPI";
 import UserContext from "../../contexts/userContext";
 import {
   Container,
@@ -51,6 +51,9 @@ export default function Post({
   const [idPromise, setIdPromise] = useState(false);
   const [commentsData, setCommentsData] = useState([]);
   const [isPostCommentsOpen, setIsPostCommentsOpen] = useState(false);
+  const [newCommentText, setNewCommentText] = useState("");
+  const [reloadPost, setReloadPost] = useState(false);
+  const [maxComments] = useState(5);
 
   const navigate = useNavigate();
 
@@ -61,6 +64,26 @@ export default function Post({
       setIdPromise(true);
     }
   }, [userData]);
+
+  useEffect(() => {
+    getCommentsDataByPostId(postId)
+      .then((res) => {
+        if (res.data?.commentsData) {
+          setCommentsData(res.data.commentsData);
+        }
+      })
+      .catch((error) => {
+        const message = createErrorMessage(error);
+        setAlert({
+          show: true,
+          message: message,
+          type: 0,
+          doThis: () => {},
+          color: "rgba(200,0,0)",
+          icon: "alert-circle",
+        });
+      });
+  }, [postId, setAlert, reloadPost]);
 
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
@@ -136,32 +159,9 @@ export default function Post({
             <>
               <LikeButton userId={userData.id} postId={postId} />
               <CommentButton
-                numberOfComments={commentsData.length}
+                numberOfComments={commentsData?.length}
                 onClick={() => {
-                  !isPostCommentsOpen
-                    ? getCommentsDataByPostId(postId)
-                        .then((res) => {
-                          console.log(res.response.data);
-                          setCommentsData(res.response.data);
-                          setIsPostCommentsOpen(true);
-                        })
-                        .catch((error) => {
-                          if (error.response.status === 404) {
-                            setIsPostCommentsOpen(true);
-                            return;
-                          }
-
-                          const message = createErrorMessage(error);
-                          setAlert({
-                            show: true,
-                            message: message,
-                            type: 0,
-                            doThis: () => {},
-                            color: "rgba(200,0,0)",
-                            icon: "alert-circle",
-                          });
-                        })
-                    : setIsPostCommentsOpen(false);
+                  setIsPostCommentsOpen(!isPostCommentsOpen);
                 }}
               />
             </>
@@ -245,19 +245,53 @@ export default function Post({
       {isPostCommentsOpen && (
         <>
           <PostComments>
-            {commentsData.map((commentData) => {
+            {commentsData.map((commentData, index) => {
+              if (index >= maxComments) {
+                return <React.Fragment key={index}></React.Fragment>;
+              }
               return (
-                <>
-                  <Comment commentData={commentData}></Comment>;
-                </>
+                <React.Fragment key={index}>
+                  <Comment commentData={commentData}></Comment>
+                </React.Fragment>
               );
             })}
             <PostNewComment>
               <img src={userData.imageUrl} alt=""></img>
-              <div>
-                <input placeholder="write a comment..." />
-                <TbSend />
-              </div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+
+                  postNewComment({ postId: postId, text: newCommentText }, localStorage.getItem("userToken"))
+                    .then(() => {
+                      setNewCommentText("");
+                      setReloadPost(!reloadPost);
+                    })
+                    .catch((error) => {
+                      const message = createErrorMessage(error);
+
+                      setAlert({
+                        show: true,
+                        message: message,
+                        type: 0,
+                        doThis: () => {},
+                        color: "rgba(200,0,0)",
+                        icon: "alert-circle",
+                      });
+                    });
+                }}
+              >
+                <input
+                  placeholder="write a comment..."
+                  onChange={(e) => {
+                    setNewCommentText(e.target.value);
+                  }}
+                  value={newCommentText}
+                  required
+                />
+                <button type="submit">
+                  <TbSend />
+                </button>
+              </form>
             </PostNewComment>
           </PostComments>
         </>
