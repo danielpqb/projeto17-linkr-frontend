@@ -1,8 +1,25 @@
+import { useEffect } from "react";
 import styled from "styled-components";
+import { AiOutlineComment } from "react-icons/ai";
 
-import { RiHeartLine, RiHeartFill } from "react-icons/ri";
+export default function CommentButton({ onClick, numberOfComments }) {
+  useEffect(() => {}, []);
 
-export const StyledLikeButton = styled.button`
+  return (
+    <Container>
+      <>
+        <Comment
+          onClick={() => {
+            onClick();
+          }}
+        />
+        <p>{numberOfComments}</p>
+      </>
+    </Container>
+  );
+}
+
+const Container = styled.button`
   outline: none;
   border: none;
 
@@ -29,18 +46,11 @@ export const StyledLikeButton = styled.button`
   }
 `;
 
-export const HeartLine = styled(RiHeartLine)`
-  color: #fff;
-  font-size: 25px;
-
-  &:hover {
-    cursor: pointer;
+const Comment = styled(AiOutlineComment)`
+  & {
+    color: #fff;
+    font-size: 25px;
   }
-`;
-
-export const HeartFill = styled(RiHeartFill)`
-  color: #ac0000 !important;
-  font-size: 25px;
 
   &:hover {
     cursor: pointer;

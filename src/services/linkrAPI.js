@@ -74,6 +74,16 @@ function getPostDataById(id) {
   return axios.get(`${BASE_URL}/posts/post/${id}`, config);
 }
 
+function getCommentsDataByPostId(postId, userId) {
+  return axios.get(`${BASE_URL}/comments/data/${postId}/${userId}`);
+}
+
+function postNewComment(body, token) {
+  const _token = "Bearer " + token;
+
+  return axios.post(`${BASE_URL}/comment`, body, { headers: { Authorization: _token } });
+}
+
 function getPosts() {
   return axios.get(`${BASE_URL}/posts`, config);
 }
@@ -117,6 +127,8 @@ export {
   createHeader,
   createPostsHashtags,
   getPostDataById,
+  getCommentsDataByPostId,
+  postNewComment,
   getPosts,
   getAllPosts,
   getUserPosts,
