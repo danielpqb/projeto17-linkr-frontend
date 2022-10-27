@@ -7,13 +7,16 @@ function createHeader() {
   const config = { headers: { Authorization: `Bearer ${auth}` } };
   return config;
 }
-const config = createHeader();
 
 function getTimelinePosts() {
+  const config = createHeader();
+
   return axios.get(`${BASE_URL}/posts`, config);
 }
 
 function getHashtagPosts(hashtag) {
+  const config = createHeader();
+
   return axios.get(`${BASE_URL}/posts/hashtag/${hashtag}`, config);
 }
 
@@ -22,10 +25,14 @@ function getUserPosts(userId) {
 }
 
 function getTrendingHashtags() {
+  const config = createHeader();
+
   return axios.get(`${BASE_URL}/trending`, config);
 }
 
 function getUserFollows() {
+  const config = createHeader();
+  
   return axios.get(`${BASE_URL}/userfollows`, config);
 }
 
@@ -46,6 +53,8 @@ function getUserDataByToken(token) {
 }
 
 function getUserById(id) {
+  const config = createHeader();
+
   return axios.get(`${BASE_URL}/user/${id}`, config)
 }
 
@@ -59,6 +68,8 @@ function getSearchUsers(filter) {
 }
 
 function createPost({ userId, text, link }) {
+  const config = createHeader();
+  
   if (!text) {
     return axios.post(`${BASE_URL}/create-post`, { userId, link }, config);
   }
@@ -67,14 +78,20 @@ function createPost({ userId, text, link }) {
 }
 
 function createHashtag({ title }) {
+  const config = createHeader();
+
   return axios.post(`${BASE_URL}/create-hashtag`, { title }, config);
 }
 
 function createPostsHashtags(body) {
+  const config = createHeader();
+
   return axios.post(`${BASE_URL}/create-posts-hashtags`, body, config);
 }
 
 function getPostDataById(id) {
+  const config = createHeader();
+
   return axios.get(`${BASE_URL}/posts/post/${id}`, config);
 }
 
@@ -89,34 +106,50 @@ function postNewComment(body, token) {
 }
 
 function getPosts() {
+  const config = createHeader();
+
   return axios.get(`${BASE_URL}/posts`, config);
 }
 
 function getAllPosts() {
+  const config = createHeader();
+
   return axios.get(`${BASE_URL}/all-posts`, config);
 }
 
 function getHashtags() {
+  const config = createHeader();
+
   return axios.get(`${BASE_URL}/hashtags`, config);
 }
 
 function updatePostText(postId, text) {
+  const config = createHeader();
+
   return axios.put(`${BASE_URL}/posts/${postId}`, text, config);
 }
 
 function updatePostHashtags(postId, hashtags) {
+  const config = createHeader();
+
   return axios.put(`${BASE_URL}/posts/${postId}/hashtags`, hashtags, config);
 }
 
 function isFollowed(id) {
+  const config = createHeader();
+
   return axios.get(`${BASE_URL}/follow/${id}`, config);
 }
 
 function followUser(id) {
+  const config = createHeader();
+
   return axios.post(`${BASE_URL}/follow/${id}`, {}, config);
 }
 
 function unfollowUser(id) {
+  const config = createHeader();
+
   return axios.delete(`${BASE_URL}/follow/${id}`, config);
 }
 

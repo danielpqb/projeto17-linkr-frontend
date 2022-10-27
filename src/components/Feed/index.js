@@ -29,6 +29,7 @@ import FollowButton from "../FollowButton";
 import useInterval from "use-interval";
 import { MdCached } from "react-icons/md";
 import InfiniteScroll from "react-infinite-scroll-component";
+import promiseRetry from "promise-retry";
 
 export default function Feed({ type }) {
   const navigate = useNavigate();
@@ -73,29 +74,35 @@ export default function Feed({ type }) {
       getUserFollows()
         .then((answer) => {
           if(answer.data === true){
-            getTimelinePosts()
-              .then((answer) => {
+            promiseRetry(
+              //Function that will retry
+              (retry, number) => {
+                return getTimelinePosts().catch(retry);
+              },
+              { retries: 2, minTimeout: 1000, factor: 2 }
+            ).then(
+              //Resolved at any try
+              (answer) => {
                 setArrPosts(answer.data[0]);
-                setDisplayedPosts(answer.data[0].slice(infiniteScrollIndex, infiniteScrollIndex + 10));
-                if (answer.data[0].length < 10) {
-                  setHasMore(false);
-                }
-                setInfiniteScrollIndex(infiniteScrollIndex + 10);
-                if (answer.data[0].length === 0) {
-                  setIsEmpty(true);
-                } else {
-                  setIdLastPost(answer.data[0][0].id);
-                }
-              })
-              .catch((error) => {
+                      setDisplayedPosts(answer.data[0].slice(infiniteScrollIndex, infiniteScrollIndex + 10));
+                      if (answer.data[0].length < 10) {
+                        setHasMore(false);
+                      }
+                      setInfiniteScrollIndex(infiniteScrollIndex + 10);
+                      if (answer.data[0].length === 0) {
+                        setIsEmpty(true);
+                      } else {
+                        setIdLastPost(answer.data[0][0].id);
+                      }
+              },
+              //Couldn't resolve after all tries
+              () => {
                 setIsError(true);
-              });
+              }
+            )
           }else{
             setFollowSomeone(false);
           }
-        })
-        .catch((error) => {
-          setIsError(true);
         });
     }
     if (type === "hashtag") {
