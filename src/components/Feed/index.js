@@ -70,7 +70,7 @@ export default function Feed({ type }) {
         (retry, number) => {
           return getTimelinePosts().catch(retry);
         },
-        { retries: 4, minTimeout: 1000, factor: 2 }
+        { retries: 2, minTimeout: 1000, factor: 2 }
       ).then(
         //Resolved at any try
         (answer) => {
@@ -196,8 +196,6 @@ export default function Feed({ type }) {
       setHasMore(false);
     }
   };
-
-  console.log(displayedPosts);
 
   return (
     <>
