@@ -172,6 +172,7 @@ const Content = styled.div`
     display: flex;
   }
 `;
+
 const HeaderRepost = styled.div`
   background: #1e1e1e;
   position: relative;
@@ -196,8 +197,10 @@ const HeaderRepost = styled.div`
     margin-left: 6px;
   }
 `;
+
 export {
   Container,
+  HeaderRepost,
   Header,
   Loading,
   Content,
