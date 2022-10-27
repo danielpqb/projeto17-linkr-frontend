@@ -31,6 +31,18 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 export default function Feed({ type }) {
   const navigate = useNavigate();
+  const {
+    arrPosts,
+    setArrPosts,
+    refreshFeed,
+    setRefreshFeed,
+    isLoading,
+    setIsLoading,
+    infiniteScrollIndex,
+    setInfiniteScrollIndex,
+    arrTrendingHashtags,
+    setArrTrendingHashtags,
+  } = React.useContext(PostsContext);
   const { hashtag, userPageId } = useParams();
   const [title, setTitle] = useState("");
   const [isError, setIsError] = useState(false);
@@ -38,14 +50,9 @@ export default function Feed({ type }) {
   const [isEmpty, setIsEmpty] = useState(false);
   const [updateTrending, setUpdateTrending] = useState(false);
   const [userPageData, setUserPageData] = useState({ id: "", imageUrl: "", name: "", hasInfo: false });
-  const { arrPosts, setArrPosts } = React.useContext(PostsContext);
-  const { arrTrendingHashtags, setArrTrendingHashtags } = React.useContext(PostsContext);
-  const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
-  const { isLoading, setIsLoading } = React.useContext(PostsContext);
   const [idLastPost, setIdLastPost] = useState(0);
   const [newPostsNumber, setNewPostsNumber] = useState(0);
   const [haveNewPosts, setHaveNewPosts] = useState(false);
-  const [index, setIndex] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [displayedPosts, setDisplayedPosts] = useState([]);
 
@@ -60,12 +67,12 @@ export default function Feed({ type }) {
       getTimelinePosts()
         .then((answer) => {
           setArrPosts(answer.data[0]);
-          setDisplayedPosts(answer.data[0].slice(index, index + 10));
+          setDisplayedPosts(answer.data[0].slice(infiniteScrollIndex, infiniteScrollIndex + 10));
 
           if (answer.data[0].length < 10) {
             setHasMore(false);
           }
-          setIndex(index + 10);
+          setInfiniteScrollIndex(infiniteScrollIndex + 10);
           if (answer.data.length === 0) {
             setIsEmpty(true);
           } else {
@@ -82,11 +89,11 @@ export default function Feed({ type }) {
       getHashtagPosts(hashtag)
         .then((answer) => {
           setArrPosts(answer.data[0]);
-          setDisplayedPosts(answer.data[0].slice(index, index + 10));
+          setDisplayedPosts(answer.data[0].slice(infiniteScrollIndex, infiniteScrollIndex + 10));
           if (answer.data[0].length < 10) {
             setHasMore(false);
           }
-          setIndex(index + 10);
+          setInfiniteScrollIndex(infiniteScrollIndex + 10);
           if (answer.data.length === 0) {
             setIsEmpty(true);
           }
@@ -108,11 +115,11 @@ export default function Feed({ type }) {
       getUserPosts(userPageId)
         .then((answer) => {
           setArrPosts(answer.data[0]);
-          setDisplayedPosts(answer.data[0].slice(index, index + 10));
+          setDisplayedPosts(answer.data[0].slice(infiniteScrollIndex, infiniteScrollIndex + 10));
           if (answer.data[0].length < 10) {
             setHasMore(false);
           }
-          setIndex(index + 10);
+          setInfiniteScrollIndex(infiniteScrollIndex + 10);
           if (answer.data.length === 0) {
             setIsEmpty(true);
           }
@@ -171,8 +178,8 @@ export default function Feed({ type }) {
   }
 
   const fetchData = () => {
-    const newPosts = arrPosts.slice(index, index + 10);
-    setIndex(index + 10);
+    const newPosts = arrPosts.slice(infiniteScrollIndex, infiniteScrollIndex + 10);
+    setInfiniteScrollIndex(infiniteScrollIndex + 10);
     setDisplayedPosts([...displayedPosts, ...newPosts]);
 
     if (newPosts.length < 10) {
@@ -266,7 +273,13 @@ export default function Feed({ type }) {
             <TrendingTitle>trending</TrendingTitle>
             <TrendingLine></TrendingLine>
             {arrTrendingHashtags.map((hashtagMap, index) => (
-              <TrendingHashtags key={index} onClick={() => goHashtag(hashtagMap)}>
+              <TrendingHashtags
+                key={index}
+                onClick={() => {
+                  setInfiniteScrollIndex(0);
+                  goHashtag(hashtagMap);
+                }}
+              >
                 # {hashtagMap}
               </TrendingHashtags>
             ))}

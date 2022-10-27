@@ -26,6 +26,7 @@ export default function App() {
   const [arrTrendingHashtags, setArrTrendingHashtags] = useState(["There are no hashtags yet"]);
   const [refreshFeed, setRefreshFeed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [infiniteScrollIndex, setInfiniteScrollIndex] = useState(0);
 
   useEffect(() => {
     const localToken = localStorage.getItem("userToken");
@@ -81,7 +82,9 @@ export default function App() {
               refreshFeed,
               setRefreshFeed,
               isLoading,
-              setIsLoading
+              setIsLoading,
+              infiniteScrollIndex,
+              setInfiniteScrollIndex
             }}
           >
             <Container>

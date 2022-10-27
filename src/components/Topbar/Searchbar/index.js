@@ -14,7 +14,7 @@ export default function SearchBar() {
   const [searchTag, setSearchTag] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const { isLoading } = React.useContext(PostsContext);
-  const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
+  const { refreshFeed, setRefreshFeed, setInfiniteScrollIndex } = React.useContext(PostsContext);
 
   async function handleSearch(e) {
     const filter = e.target.value;
@@ -36,6 +36,7 @@ export default function SearchBar() {
         onClick={() => {
           if(isLoading === false){
             navigate(`/user/${user.id}`);
+            setInfiniteScrollIndex(0);
             localStorage.setItem(
               "targetUser",
               JSON.stringify({
