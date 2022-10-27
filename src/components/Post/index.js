@@ -30,7 +30,7 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
   const { isLoading, setIsLoading } = React.useContext(PostsContext);
   const [consolidatedText, setConsolidatedText] = useState({ text: postText });
   const [changeableText, setChengeableText] = useState({ text: postText });
-  const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
+  const { refreshFeed, setRefreshFeed, setInfiniteScrollIndex } = React.useContext(PostsContext);
   const [idPromise, setIdPromise] = useState(false);
 
   const navigate = useNavigate();
@@ -98,6 +98,7 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
           }} 
           onClick={() => {
             if(isLoading === false){
+              setInfiniteScrollIndex(0);
               localStorage.setItem(
                 "targetUser",
                 JSON.stringify({
@@ -121,6 +122,7 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
           <div
             onClick={() => {
               if(isLoading === false){
+                setInfiniteScrollIndex(0);
                 localStorage.setItem(
                   "targetUser",
                   JSON.stringify({
