@@ -21,6 +21,10 @@ function getUserPosts(userId) {
   return axios.get(`${BASE_URL}/posts/${userId}`);
 }
 
+function getUserFollows() {
+  return axios.get(`${BASE_URL}/userfollows`, config);
+}
+
 function getTrendingHashtags() {
   return axios.get(`${BASE_URL}/trending`, config);
 }
@@ -129,4 +133,5 @@ export {
   isFollowed,
   followUser,
   unfollowUser,
+  getUserFollows
 };

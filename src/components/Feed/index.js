@@ -19,6 +19,7 @@ import {
   getTimelinePosts,
   getTrendingHashtags,
   getUserById,
+  getUserFollows,
   getUserPosts,
 } from "../../services/linkrAPI";
 import { useState, useEffect } from "react";
@@ -55,35 +56,51 @@ export default function Feed({ type }) {
   const [haveNewPosts, setHaveNewPosts] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [displayedPosts, setDisplayedPosts] = useState([]);
+  const [hasFollows, setHasFollows] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
 
     if (type === "timeline") {
+      setHasFollows(true);
       setNewPostsNumber(0);
       setHaveNewPosts(false);
       setIsTimeline(true);
       setTitle("timeline");
       getTimelinePosts()
-        .then((answer) => {
-          setArrPosts(answer.data[0]);
-          setDisplayedPosts(answer.data[0].slice(infiniteScrollIndex, infiniteScrollIndex + 10));
+              .then((answer) => {
+                setArrPosts(answer.data[0]);
+                setDisplayedPosts(answer.data[0].slice(infiniteScrollIndex, infiniteScrollIndex + 10));
 
-          if (answer.data[0].length < 10) {
-            setHasMore(false);
-          }
-          setInfiniteScrollIndex(infiniteScrollIndex + 10);
-          if (answer.data.length === 0) {
-            setIsEmpty(true);
-          } else {
-            setIdLastPost(answer.data[0][0].id);
+                if (answer.data[0].length < 10) {
+                  setHasMore(false);
+                }
+                setInfiniteScrollIndex(infiniteScrollIndex + 10);
+                if (answer.data.length === 0) {
+                  setIsEmpty(true);
+                } else {
+                  setIdLastPost(answer.data[0][0].id);
+                }
+              })
+              .catch((error) => {
+                setIsError(true);
+              });
+
+      /* getUserFollows()
+        .then((answer) => {
+          if(answer.data === true){
+            setHasFollows(true);
+            
+          }else{
+            setHasFollows(false);
           }
         })
         .catch((error) => {
           setIsError(true);
-        });
+        }); */
     }
     if (type === "hashtag") {
+      setHasFollows(true);
       setIsTimeline(false);
       setTitle(`# ${hashtag}`);
       getHashtagPosts(hashtag)
@@ -103,6 +120,7 @@ export default function Feed({ type }) {
         });
     }
     if (type === "user") {
+      setHasFollows(true);
       setIsTimeline(false);
       getUserById(userPageId)
         .then((answer) => {
@@ -128,8 +146,9 @@ export default function Feed({ type }) {
           setIsError(true);
         });
     }
-
+    
     setIsLoading(false);
+
   }, [refreshFeed, hashtag, setIsLoading, type, navigate, userPageId]);
 
   useEffect(() => {
@@ -145,6 +164,7 @@ export default function Feed({ type }) {
   function goHashtag(hashtag) {
     if (isLoading === false) {
       navigate(`/hashtag/${hashtag}`);
+      setInfiniteScrollIndex(0);
       setRefreshFeed(!refreshFeed);
     }
   }
@@ -223,51 +243,57 @@ export default function Feed({ type }) {
             ) : (
               <></>
             )}
-            {isLoading ? (
-              <Loading>Loading...</Loading>
-            ) : (
+            {hasFollows ? (
               <>
-                {isError ? (
-                  <Loading>
-                    <p>
-                      An error occured while trying to fetch the posts, <br />
-                      please refresh the page or go back to timeline
-                    </p>
-                  </Loading>
+                {isLoading ? (
+                  <Loading>Loading...</Loading>
                 ) : (
                   <>
-                    {isEmpty ? (
-                      <Loading>No posts found from your friends</Loading>
+                    {isError ? (
+                      <Loading>
+                        <p>
+                          An error occured while trying to fetch the posts, <br />
+                          please refresh the page or go back to timeline
+                        </p>
+                      </Loading>
                     ) : (
                       <>
-                        <InfiniteScroll
-                          dataLength={displayedPosts.length}
-                          next={fetchData}
-                          hasMore={hasMore}
-                          loader={<Loading>Loading...</Loading>}
-                          endMessage={<Loading>You have seen it all!</Loading>}
-                        >
-                          {displayedPosts.map((post, index) => (
-                            <Post
-                              key={index}
-                              userId={post.user.id}
-                              userImage={post.user.image}
-                              userName={post.user.name}
-                              postText={post.text}
-                              metadata={post.metadata}
-                              postLink={post.metadata.link}
-                              postId={post.id}
-                              updateTrending={updateTrending}
-                              setUpdateTrending={setUpdateTrending}
-                            />
-                          ))}
-                        </InfiniteScroll>
+                        {isEmpty ? (
+                          <Loading>No posts found from your friends</Loading>
+                        ) : (
+                          <>
+                            <InfiniteScroll
+                              dataLength={displayedPosts.length}
+                              next={fetchData}
+                              hasMore={hasMore}
+                              loader={<Loading>Loading...</Loading>}
+                              endMessage={<Loading>You have seen it all!</Loading>}
+                            >
+                              {displayedPosts.map((post, index) => (
+                                <Post
+                                  key={index}
+                                  userId={post.user.id}
+                                  userImage={post.user.image}
+                                  userName={post.user.name}
+                                  postText={post.text}
+                                  metadata={post.metadata}
+                                  postLink={post.metadata.link}
+                                  postId={post.id}
+                                  updateTrending={updateTrending}
+                                  setUpdateTrending={setUpdateTrending}
+                                />
+                              ))}
+                            </InfiniteScroll>
+                          </>
+                        )}
                       </>
                     )}
                   </>
                 )}
-              </>
-            )}
+                </>
+                ) : (
+                  <Loading>You don't follow anyone yet. Search for new friends!</Loading>
+                )}
           </Container>
           <Trending>
             <TrendingTitle>trending</TrendingTitle>

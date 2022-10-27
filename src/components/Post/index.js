@@ -167,6 +167,7 @@ export default function Post({ userId, userImage, userName, postText, metadata, 
               tagClicked={(tag) => {
                 if(isLoading === false){
                   navigate(`/hashtag/${tag.substring(1)}`);
+                  setInfiniteScrollIndex(0);
                   setRefreshFeed(!refreshFeed);
                 }
               }}
