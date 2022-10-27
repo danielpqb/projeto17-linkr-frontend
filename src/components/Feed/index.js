@@ -2,14 +2,32 @@ import React from "react";
 import TopBar from "../Topbar";
 import Publish from "../Publish";
 import Post from "../Post";
-import { Container, Content, Loading, RefreshIcon, RefreshNewPosts, Trending, TrendingHashtags, TrendingLine, TrendingTitle, Header } from "./style";
-import { getHashtagPosts, getTimelinePosts, getTrendingHashtags, getUserById, getUserPosts } from "../../services/linkrAPI";
+import {
+  Container,
+  Content,
+  Loading,
+  RefreshIcon,
+  RefreshNewPosts,
+  Trending,
+  TrendingHashtags,
+  TrendingLine,
+  TrendingTitle,
+  Header,
+} from "./style";
+import {
+  getHashtagPosts,
+  getTimelinePosts,
+  getTrendingHashtags,
+  getUserById,
+  getUserPosts,
+} from "../../services/linkrAPI";
 import { useState, useEffect } from "react";
 import PostsContext from "../../contexts/postsContext";
 import { useNavigate, useParams } from "react-router-dom";
 import FollowButton from "../FollowButton";
-import useInterval from 'use-interval';
-import { MdCached } from 'react-icons/md';
+import useInterval from "use-interval";
+import { MdCached } from "react-icons/md";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 export default function Feed({ type }) {
   const navigate = useNavigate();
@@ -19,7 +37,7 @@ export default function Feed({ type }) {
   const [isTimeline, setIsTimeline] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
   const [updateTrending, setUpdateTrending] = useState(false);
-  const [userPageData, setUserPageData] = useState({id:"", imageUrl:"", name:"", hasInfo:false})
+  const [userPageData, setUserPageData] = useState({ id: "", imageUrl: "", name: "", hasInfo: false });
   const { arrPosts, setArrPosts } = React.useContext(PostsContext);
   const { arrTrendingHashtags, setArrTrendingHashtags } = React.useContext(PostsContext);
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
@@ -27,6 +45,9 @@ export default function Feed({ type }) {
   const [idLastPost, setIdLastPost] = useState(0);
   const [newPostsNumber, setNewPostsNumber] = useState(0);
   const [haveNewPosts, setHaveNewPosts] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [displayedPosts, setDisplayedPosts] = useState([]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -39,9 +60,15 @@ export default function Feed({ type }) {
       getTimelinePosts()
         .then((answer) => {
           setArrPosts(answer.data[0]);
+          setDisplayedPosts(answer.data[0].slice(index, index + 10));
+
+          if (answer.data[0].length < 10) {
+            setHasMore(false);
+          }
+          setIndex(index + 10);
           if (answer.data.length === 0) {
             setIsEmpty(true);
-          }else{
+          } else {
             setIdLastPost(answer.data[0][0].id);
           }
         })
@@ -55,6 +82,11 @@ export default function Feed({ type }) {
       getHashtagPosts(hashtag)
         .then((answer) => {
           setArrPosts(answer.data[0]);
+          setDisplayedPosts(answer.data[0].slice(index, index + 10));
+          if (answer.data[0].length < 10) {
+            setHasMore(false);
+          }
+          setIndex(index + 10);
           if (answer.data.length === 0) {
             setIsEmpty(true);
           }
@@ -67,7 +99,7 @@ export default function Feed({ type }) {
       setIsTimeline(false);
       getUserById(userPageId)
         .then((answer) => {
-          setUserPageData({...answer.data, hasInfo:true});
+          setUserPageData({ ...answer.data, hasInfo: true });
           setTitle(`${answer.data.name}'s page`);
         })
         .catch((error) => {
@@ -76,6 +108,11 @@ export default function Feed({ type }) {
       getUserPosts(userPageId)
         .then((answer) => {
           setArrPosts(answer.data[0]);
+          setDisplayedPosts(answer.data[0].slice(index, index + 10));
+          if (answer.data[0].length < 10) {
+            setHasMore(false);
+          }
+          setIndex(index + 10);
           if (answer.data.length === 0) {
             setIsEmpty(true);
           }
@@ -86,28 +123,17 @@ export default function Feed({ type }) {
     }
 
     setIsLoading(false);
-  }, [
-    refreshFeed,
-    hashtag,
-    setArrPosts,
-    setIsLoading,
-    type,
-    navigate,
-    userPageId
-  ]);
+  }, [refreshFeed, hashtag, setIsLoading, type, navigate, userPageId]);
 
   useEffect(() => {
     getTrendingHashtags()
-    .then((answer) => {
-      setArrTrendingHashtags(answer.data[0]);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }, [
-    setArrTrendingHashtags,
-    updateTrending
-  ]);
+      .then((answer) => {
+        setArrTrendingHashtags(answer.data[0]);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [setArrTrendingHashtags, updateTrending]);
 
   function goHashtag(hashtag) {
     if (isLoading === false) {
@@ -116,28 +142,27 @@ export default function Feed({ type }) {
     }
   }
 
-  
   useInterval(() => {
-    if(idLastPost > 0){
+    if (idLastPost > 0) {
       getTimelinePosts()
         .then((answer) => {
           const arrPostsUpdate = answer.data[0];
-          for(let i=0; i<arrPostsUpdate.length; i++){
-            if(arrPostsUpdate[i].id > idLastPost){
+          for (let i = 0; i < arrPostsUpdate.length; i++) {
+            if (arrPostsUpdate[i].id > idLastPost) {
               setIdLastPost(arrPostsUpdate[i].id);
-              setNewPostsNumber(newPostsNumber+1);
+              setNewPostsNumber(newPostsNumber + 1);
             }
           }
-          if(newPostsNumber > 0){
+          if (newPostsNumber > 0) {
             setHaveNewPosts(true);
           }
         })
         .catch((error) => {
-          console.log(error)
+          console.error(error);
         });
-  }
+    }
   }, 15000);
-  
+
   function refreshNewPosts() {
     if (isLoading === false) {
       setArrPosts([]);
@@ -145,7 +170,15 @@ export default function Feed({ type }) {
     }
   }
 
-  
+  const fetchData = () => {
+    const newPosts = arrPosts.slice(index, index + 10);
+    setIndex(index + 10);
+    setDisplayedPosts([...displayedPosts, ...newPosts]);
+
+    if (newPosts.length < 10) {
+      setHasMore(false);
+    }
+  };
 
   return (
     <>
@@ -153,33 +186,32 @@ export default function Feed({ type }) {
       <Content>
         <Header>
           <div>
-            {type === "user"?
+            {type === "user" ? (
               <img
                 src={userPageData.imageUrl}
                 alt="user"
                 onError={({ currentTarget }) => {
-                  currentTarget.onerror = null; 
-                  currentTarget.src="https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-gr%C3%A1tis-vetor.jpg";
+                  currentTarget.onerror = null;
+                  currentTarget.src =
+                    "https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-gr%C3%A1tis-vetor.jpg";
                 }}
               />
-              :
-              <></>}
+            ) : (
+              <></>
+            )}
             <h1>{title}</h1>
           </div>
-          {type === "user"?
-            <FollowButton
-              userPageData={userPageData}
-              setIsError={setIsError}
-            />
-            :
-            <></>}
+          {type === "user" ? <FollowButton userPageData={userPageData} setIsError={setIsError} /> : <></>}
         </Header>
         <div>
           <Container>
             {isTimeline ? <Publish /> : <></>}
             {haveNewPosts ? (
               <RefreshNewPosts onClick={refreshNewPosts}>
-                {newPostsNumber} new posts, load more! <RefreshIcon><MdCached/></RefreshIcon> 
+                {newPostsNumber} new posts, load more!{" "}
+                <RefreshIcon>
+                  <MdCached />
+                </RefreshIcon>
               </RefreshNewPosts>
             ) : (
               <></>
@@ -201,20 +233,28 @@ export default function Feed({ type }) {
                       <Loading>There are no posts yet</Loading>
                     ) : (
                       <>
-                        {arrPosts.map((post, index) => (
-                          <Post
-                            key={index}
-                            userId={post.user.id}
-                            userImage={post.user.image}
-                            userName={post.user.name}
-                            postText={post.text}
-                            metadata={post.metadata}
-                            postLink={post.metadata.link}
-                            postId={post.id}
-                            updateTrending={updateTrending}
-                            setUpdateTrending={setUpdateTrending}
-                          />
-                        ))}
+                        <InfiniteScroll
+                          dataLength={displayedPosts.length}
+                          next={fetchData}
+                          hasMore={hasMore}
+                          loader={<Loading>Loading...</Loading>}
+                          endMessage={<Loading>You have seen it all!</Loading>}
+                        >
+                          {displayedPosts.map((post, index) => (
+                            <Post
+                              key={index}
+                              userId={post.user.id}
+                              userImage={post.user.image}
+                              userName={post.user.name}
+                              postText={post.text}
+                              metadata={post.metadata}
+                              postLink={post.metadata.link}
+                              postId={post.id}
+                              updateTrending={updateTrending}
+                              setUpdateTrending={setUpdateTrending}
+                            />
+                          ))}
+                        </InfiniteScroll>
                       </>
                     )}
                   </>
