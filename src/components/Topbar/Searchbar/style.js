@@ -87,6 +87,12 @@ const StyledResult = styled.div`
         margin-left: 12px;
     }
 
+    h3{
+        margin-left: 7px;
+        font-size: 19px;
+        color: #C5C5C5;
+    }
+
     &:hover{
         cursor: pointer;
         background-color: #ccc9c9;

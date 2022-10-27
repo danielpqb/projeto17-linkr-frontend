@@ -31,6 +31,7 @@ export default function SearchBar() {
   }
 
   function Result({ user }) {
+    console.log(user);
     return (
       <StyledResult
         onClick={() => {
@@ -57,6 +58,8 @@ export default function SearchBar() {
           }} 
         />
         <h2>{user.name}</h2>
+        {user.me? <h3>• me</h3> : <></>}
+        {user.followed? <h3>• following</h3> : <></>}
       </StyledResult>
     );
   }
