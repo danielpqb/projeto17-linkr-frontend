@@ -7,19 +7,47 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
 
-    h1 {
-        margin-bottom: 50px;
-        font-family: 'Oswald', sans-serif;
-        font-weight: 700;
-        font-size: 43px;
-        color: var(--text-emphasis);
-        margin-top: 80px; 
-    }
-
     @media (max-width: 620px) {
         width: 100%;
         margin-top: 127px;
-        
+    }
+`
+
+const Header = styled.div`
+    display: flex;
+    padding-top: 40px;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    & > div {
+        display: flex;
+        align-items: flex-end;
+    }
+
+    img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+    }
+
+    h1 {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 43px;
+    color: var(--text-emphasis);
+    margin-top: 80px; 
+    }
+
+    @media (max-width: 620px) {
+        img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        }
+
         h1 {
             margin-top: 20px;
             margin-left: 20px;
@@ -50,6 +78,45 @@ const Loading = styled.div`
     }
 `
 
+const RefreshNewPosts = styled.div`
+    width: 100%;
+    min-height: 61px;
+    background: #1877F2;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 16px;
+    margin-bottom: 26px;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+
+    color: #FFFFFF;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    :hover{
+        filter: brightness(0.6);
+        cursor: pointer;
+    }
+
+    @media (max-width: 620px) {
+        border-radius: 0;
+        height: 232px;
+    }
+`
+
+const RefreshIcon = styled.div`
+    
+    margin-left: 4px;
+    margin-top: 2px;
+    font-size: 20px;
+    line-height: 21px;
+
+`
+
 const Trending = styled.div`
     width: 300px;
     height: 406px;
@@ -58,7 +125,7 @@ const Trending = styled.div`
     margin-left: 25px;
     box-sizing: border-box;
     padding: 10px 0px 25px 0px;
-    margin-top: 215px;
+    margin-top: 45px;
 
     @media (max-width: 980px) {
         display: none;
@@ -99,18 +166,23 @@ const TrendingHashtags = styled.div`
 
 const Content = styled.div`
     display: flex;
+    flex-direction: column;
     height: 100%;
+
+    & > div {
+        display: flex;
+    }
 `
-
-
-
 
 export {
     Container,
+    Header,
     Loading,
     Content,
     Trending,
     TrendingLine,
     TrendingTitle,
-    TrendingHashtags
+    TrendingHashtags,
+    RefreshNewPosts,
+    RefreshIcon
 }

@@ -47,7 +47,7 @@ export default function Post({
   const { isLoading, setIsLoading } = React.useContext(PostsContext);
   const [consolidatedText, setConsolidatedText] = useState({ text: postText });
   const [changeableText, setChengeableText] = useState({ text: postText });
-  const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
+  const { refreshFeed, setRefreshFeed, setInfiniteScrollIndex } = React.useContext(PostsContext);
   const [idPromise, setIdPromise] = useState(false);
   const [commentsData, setCommentsData] = useState([]);
   const [isPostCommentsOpen, setIsPostCommentsOpen] = useState(false);
@@ -146,6 +146,7 @@ export default function Post({
             }}
             onClick={() => {
               if (isLoading === false) {
+                setInfiniteScrollIndex(0);
                 localStorage.setItem(
                   "targetUser",
                   JSON.stringify({
@@ -177,6 +178,7 @@ export default function Post({
             <div
               onClick={() => {
                 if (isLoading === false) {
+                  setInfiniteScrollIndex(0);
                   localStorage.setItem(
                     "targetUser",
                     JSON.stringify({

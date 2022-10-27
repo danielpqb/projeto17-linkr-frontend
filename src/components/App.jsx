@@ -26,6 +26,7 @@ export default function App() {
   const [arrTrendingHashtags, setArrTrendingHashtags] = useState(["There are no hashtags yet"]);
   const [refreshFeed, setRefreshFeed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [infiniteScrollIndex, setInfiniteScrollIndex] = useState(0);
 
   useEffect(() => {
     const localToken = localStorage.getItem("userToken");
@@ -83,6 +84,8 @@ export default function App() {
               setRefreshFeed,
               isLoading,
               setIsLoading,
+              infiniteScrollIndex,
+              setInfiniteScrollIndex,
             }}
           >
             <Container>
@@ -94,7 +97,7 @@ export default function App() {
                   <Route element={<ProtectedRoute token={localStorage.getItem("userToken")} setAlert={setAlert} />}>
                     <Route path="/timeline" element={<Feed type={"timeline"} />} />
                     <Route path="/hashtag/:hashtag" element={<Feed type={"hashtag"} />} />
-                    <Route path="/user/:id" element={<Feed type={"user"} />} />
+                    <Route path="/user/:userPageId" element={<Feed type={"user"} />} />
                     <Route path="*" element={<Navigate to="/" />} />
                   </Route>
                 </Routes>
