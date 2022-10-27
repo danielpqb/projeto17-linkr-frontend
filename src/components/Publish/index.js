@@ -45,9 +45,10 @@ export default function Publish() {
         link: form.link,
       });
 
-      setInfiniteScrollIndex(0);
       Swal.fire("Posted!", "", "success");
       setForm({ link: "", text: "" });
+
+      setInfiniteScrollIndex(0);
 
       postId = promise.data.id;
 
