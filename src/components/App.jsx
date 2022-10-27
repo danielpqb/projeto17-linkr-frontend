@@ -42,7 +42,6 @@ export default function App() {
         //Resolved at any try
         (res) => {
           delete res.data.message;
-          console.log(res.data);
           setUserData(res.data);
         },
         //Couldn't resolve after all tries
