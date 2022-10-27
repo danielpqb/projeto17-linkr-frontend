@@ -31,7 +31,6 @@ export default function SearchBar() {
   }
 
   function Result({ user }) {
-    console.log(user);
     return (
       <StyledResult
         onClick={() => {
