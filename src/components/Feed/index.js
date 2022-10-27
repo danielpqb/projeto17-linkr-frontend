@@ -28,6 +28,7 @@ import FollowButton from "../FollowButton";
 import useInterval from "use-interval";
 import { MdCached } from "react-icons/md";
 import InfiniteScroll from "react-infinite-scroll-component";
+import promiseRetry from "promise-retry";
 
 export default function Feed({ type }) {
   const navigate = useNavigate();
@@ -64,8 +65,15 @@ export default function Feed({ type }) {
       setHaveNewPosts(false);
       setIsTimeline(true);
       setTitle("timeline");
-      getTimelinePosts()
-        .then((answer) => {
+      promiseRetry(
+        //Function that will retry
+        (retry, number) => {
+          return getTimelinePosts().catch(retry);
+        },
+        { retries: 4, minTimeout: 1000, factor: 2 }
+      ).then(
+        //Resolved at any try
+        (answer) => {
           setArrPosts(answer.data[0]);
           setDisplayedPosts(answer.data[0].slice(infiniteScrollIndex, infiniteScrollIndex + 10));
 
@@ -78,10 +86,12 @@ export default function Feed({ type }) {
           } else {
             setIdLastPost(answer.data[0][0].id);
           }
-        })
-        .catch((error) => {
+        },
+        //Couldn't resolve after all tries
+        () => {
           setIsError(true);
-        });
+        }
+      );
     }
     if (type === "hashtag") {
       setIsTimeline(false);
@@ -186,6 +196,8 @@ export default function Feed({ type }) {
       setHasMore(false);
     }
   };
+
+  console.log(displayedPosts);
 
   return (
     <>

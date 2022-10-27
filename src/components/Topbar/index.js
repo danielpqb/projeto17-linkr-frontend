@@ -45,6 +45,7 @@ export default function TopBar() {
                 localStorage.removeItem("userToken");
                 setIsMenuAppering(false);
                 setUserData({});
+                setInfiniteScrollIndex(0);
                 navigate("/");
               }}
             >
