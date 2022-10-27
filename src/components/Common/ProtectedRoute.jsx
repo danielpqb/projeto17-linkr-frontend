@@ -20,7 +20,7 @@ export default function ProtectedRoute({
         icon: "alert-circle",
       });
     }
-  }, []);
+  }, [setAlert, token]);
 
   if (!token) {
     return <Navigate to={redirectPath} replace />;

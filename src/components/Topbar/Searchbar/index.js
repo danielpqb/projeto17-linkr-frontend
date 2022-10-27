@@ -57,6 +57,8 @@ export default function SearchBar() {
           }} 
         />
         <h2>{user.name}</h2>
+        {user.me? <h3>• me</h3> : <></>}
+        {user.followed? <h3>• following</h3> : <></>}
       </StyledResult>
     );
   }
@@ -64,7 +66,7 @@ export default function SearchBar() {
   return (
     <Container>
       <DebounceInput
-        type="text"
+        type="search"
         placeholder="Search for people"
         minLength={3}
         debounceTimeout={300}
