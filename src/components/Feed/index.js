@@ -130,7 +130,7 @@ export default function Feed({ type }) {
     }
 
     setIsLoading(false);
-  }, [refreshFeed, hashtag, setIsLoading, type, navigate, userPageId]);
+  }, [refreshFeed, hashtag, setIsLoading, type, navigate, userPageId, setInfiniteScrollIndex, setArrPosts]);
 
   useEffect(() => {
     getTrendingHashtags()

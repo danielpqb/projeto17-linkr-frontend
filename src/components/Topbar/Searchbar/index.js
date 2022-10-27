@@ -64,7 +64,7 @@ export default function SearchBar() {
   return (
     <Container>
       <DebounceInput
-        type="text"
+        type="search"
         placeholder="Search for people"
         minLength={3}
         debounceTimeout={300}

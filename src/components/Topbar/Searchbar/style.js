@@ -17,7 +17,8 @@ const Container = styled.div`
     svg {
         font-size: 25px;
         position: absolute;
-        right: 20px;
+        right: 40px;
+        color: #2C4D83;
     }
 
     input {
@@ -50,6 +51,8 @@ const Container = styled.div`
 const SearchResults = styled.div`
     width: 100%;
     min-height: 100%;
+    max-height: 300px;
+    overflow-y: scroll;
     position: absolute;
     left: 0;
     top: 0;
