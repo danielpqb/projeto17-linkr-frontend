@@ -11,7 +11,7 @@ import { regexPatterns } from "../../constants/regexPatterns";
 export default function Publish() {
   const [form, setForm] = React.useState({ link: "", text: "" });
   const [isLoading, setIsLoading] = React.useState(false);
-  const { setArrPosts, setArrTrendingHashtags, refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
+  const { setArrPosts, setArrTrendingHashtags, refreshFeed, setRefreshFeed, setInfiniteScrollIndex } = React.useContext(PostsContext);
   const { userData } = React.useContext(UserContext);
 
   function validateUrl(value) {
@@ -45,6 +45,7 @@ export default function Publish() {
         link: form.link,
       });
 
+      setInfiniteScrollIndex(0);
       Swal.fire("Posted!", "", "success");
       setForm({ link: "", text: "" });
 

@@ -3,37 +3,62 @@ import TopBar from "../Topbar";
 import Publish from "../Publish";
 import Post from "../Post";
 import {
+  HeaderRepost,
   Container,
   Content,
-  HeaderRepost,
   Loading,
+  RefreshIcon,
+  RefreshNewPosts,
   Trending,
   TrendingHashtags,
   TrendingLine,
   TrendingTitle,
+  Header,
 } from "./style";
-import { getHashtagPosts, getTimelinePosts, getTrendingHashtags, getUserPosts } from "../../services/linkrAPI";
+import {
+  getHashtagPosts,
+  getTimelinePosts,
+  getTrendingHashtags,
+  getUserById,
+  getUserPosts,
+} from "../../services/linkrAPI";
 import { useState, useEffect } from "react";
 import { FaRetweet } from "react-icons/fa";
 import UserContext from "../../contexts/userContext";
 import PostsContext from "../../contexts/postsContext";
 import { useNavigate, useParams } from "react-router-dom";
+import FollowButton from "../FollowButton";
+import useInterval from "use-interval";
+import { MdCached } from "react-icons/md";
+import InfiniteScroll from "react-infinite-scroll-component";
 import axios from "axios";
 
 export default function Feed({ type }) {
   const navigate = useNavigate();
-  const { hashtag } = useParams();
+  const {
+    arrPosts,
+    setArrPosts,
+    refreshFeed,
+    setRefreshFeed,
+    isLoading,
+    setIsLoading,
+    infiniteScrollIndex,
+    setInfiniteScrollIndex,
+    arrTrendingHashtags,
+    setArrTrendingHashtags,
+  } = React.useContext(PostsContext);
+  const { hashtag, userPageId } = useParams();
   const [title, setTitle] = useState("");
   const [isError, setIsError] = useState(false);
   const [isTimeline, setIsTimeline] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
   const [updateTrending, setUpdateTrending] = useState(false);
-  const { arrPosts, setArrPosts } = React.useContext(PostsContext);
-  const { arrTrendingHashtags, setArrTrendingHashtags } = React.useContext(PostsContext);
-  const { userData, setUserData, setAlert } = React.useContext(UserContext);
-  const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
-  const { isLoading, setIsLoading } = React.useContext(PostsContext);
-  const [thisUserId, setThisUserId] = useState(-1);
+  const [userPageData, setUserPageData] = useState({ id: "", imageUrl: "", name: "", hasInfo: false });
+  const [idLastPost, setIdLastPost] = useState(0);
+  const [newPostsNumber, setNewPostsNumber] = useState(0);
+  const [haveNewPosts, setHaveNewPosts] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [displayedPosts, setDisplayedPosts] = useState([]);
   const [isRepost, setIsRepost] = useState(false);
   const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -41,13 +66,23 @@ export default function Feed({ type }) {
     setIsLoading(true);
 
     if (type === "timeline") {
+      setNewPostsNumber(0);
+      setHaveNewPosts(false);
       setIsTimeline(true);
       setTitle("timeline");
       getTimelinePosts()
         .then((answer) => {
           setArrPosts(answer.data[0]);
+          setDisplayedPosts(answer.data[0].slice(infiniteScrollIndex, infiniteScrollIndex + 10));
+
+          if (answer.data[0].length < 10) {
+            setHasMore(false);
+          }
+          setInfiniteScrollIndex(infiniteScrollIndex + 10);
           if (answer.data.length === 0) {
             setIsEmpty(true);
+          } else {
+            setIdLastPost(answer.data[0][0].id);
           }
         })
         .catch((error) => {
@@ -60,24 +95,37 @@ export default function Feed({ type }) {
       getHashtagPosts(hashtag)
         .then((answer) => {
           setArrPosts(answer.data[0]);
+          setDisplayedPosts(answer.data[0].slice(infiniteScrollIndex, infiniteScrollIndex + 10));
+          if (answer.data[0].length < 10) {
+            setHasMore(false);
+          }
+          setInfiniteScrollIndex(infiniteScrollIndex + 10);
           if (answer.data.length === 0) {
             setIsEmpty(true);
           }
         })
         .catch(() => {
           setIsError(true);
-          if (thisUserId === -1) {
-            setThisUserId(userData.id);
-          }
         });
     }
     if (type === "user") {
       setIsTimeline(false);
-      const localTargetUser = JSON.parse(localStorage.getItem("targetUser"));
-      setTitle(`${localTargetUser.name}'s page`);
-      getUserPosts(localTargetUser.id)
+      getUserById(userPageId)
+        .then((answer) => {
+          setUserPageData({ ...answer.data, hasInfo: true });
+          setTitle(`${answer.data.name}'s page`);
+        })
+        .catch((error) => {
+          setIsError(true);
+        });
+      getUserPosts(userPageId)
         .then((answer) => {
           setArrPosts(answer.data[0]);
+          setDisplayedPosts(answer.data[0].slice(infiniteScrollIndex, infiniteScrollIndex + 10));
+          if (answer.data[0].length < 10) {
+            setHasMore(false);
+          }
+          setInfiniteScrollIndex(infiniteScrollIndex + 10);
           if (answer.data.length === 0) {
             setIsEmpty(true);
           }
@@ -88,7 +136,7 @@ export default function Feed({ type }) {
     }
 
     setIsLoading(false);
-  }, [refreshFeed, thisUserId, setAlert, hashtag, setArrPosts, setUserData, setIsLoading, type, userData.id]);
+  }, [refreshFeed, hashtag, setIsLoading, type, navigate, userPageId, setInfiniteScrollIndex, setArrPosts]);
 
   useEffect(() => {
     repost(2); // aplicando em todos os posts. como pegar pegar o postId aqui?
@@ -97,9 +145,9 @@ export default function Feed({ type }) {
         setArrTrendingHashtags(answer.data[0]);
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
-  }, [setArrTrendingHashtags, updateTrending, isRepost]);
+  }, [setArrTrendingHashtags, updateTrending]);
 
   function goHashtag(hashtag) {
     if (isLoading === false) {
@@ -107,6 +155,44 @@ export default function Feed({ type }) {
       setRefreshFeed(!refreshFeed);
     }
   }
+
+  useInterval(() => {
+    if (idLastPost > 0) {
+      getTimelinePosts()
+        .then((answer) => {
+          const arrPostsUpdate = answer.data[0];
+          for (let i = 0; i < arrPostsUpdate.length; i++) {
+            if (arrPostsUpdate[i].id > idLastPost) {
+              setIdLastPost(arrPostsUpdate[i].id);
+              setNewPostsNumber(newPostsNumber + 1);
+            }
+          }
+          if (newPostsNumber > 0) {
+            setHaveNewPosts(true);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, 15000);
+
+  function refreshNewPosts() {
+    if (isLoading === false) {
+      setArrPosts([]);
+      setRefreshFeed(!refreshFeed);
+    }
+  }
+
+  const fetchData = () => {
+    const newPosts = arrPosts.slice(infiniteScrollIndex, infiniteScrollIndex + 10);
+    setInfiniteScrollIndex(infiniteScrollIndex + 10);
+    setDisplayedPosts([...displayedPosts, ...newPosts]);
+
+    if (newPosts.length < 10) {
+      setHasMore(false);
+    }
+  };
 
   function repost(postId) {
     const promise = axios.get(`${BASE_URL}/repost/${postId}`);
@@ -119,67 +205,119 @@ export default function Feed({ type }) {
       })
       .catch((error) => console.log(error));
   }
-
   return (
     <>
       <TopBar />
       <Content>
-        <Container>
-          <h1>{title}</h1>
-          {isTimeline ? <Publish /> : <></>}
-          {isLoading ? (
-            <Loading>Loading...</Loading>
-          ) : (
-            <>
-              {isError ? (
-                <Loading>An error occured while trying to fetch the posts, please refresh the page</Loading>
-              ) : (
-                <>
-                  {isEmpty ? (
-                    <Loading>There are no posts yet</Loading>
-                  ) : (
-                    <>
-                      {arrPosts.map((post, index) => (
-                        <>
-                          {isRepost ? (
-                            <HeaderRepost>
-                              <FaRetweet />
-                              <p>Re-posted by FULANO</p>
-                            </HeaderRepost>
-                          ) : (
-                            <></>
-                          )}
-
-                          <Post
-                            key={index}
-                            userId={post.user.id}
-                            userImage={post.user.image}
-                            userName={post.user.name}
-                            postText={post.text}
-                            metadata={post.metadata}
-                            postLink={post.metadata.link}
-                            postId={post.id}
-                            updateTrending={updateTrending}
-                            setUpdateTrending={setUpdateTrending}
-                          />
-                        </>
-                      ))}
-                    </>
-                  )}
-                </>
-              )}
-            </>
-          )}
-        </Container>
-        <Trending>
-          <TrendingTitle>trending</TrendingTitle>
-          <TrendingLine></TrendingLine>
-          {arrTrendingHashtags.map((hashtagMap, index) => (
-            <TrendingHashtags key={index} onClick={() => goHashtag(hashtagMap)}>
-              # {hashtagMap}
-            </TrendingHashtags>
-          ))}
-        </Trending>
+        <Header>
+          <div>
+            {type === "user" ? (
+              <img
+                src={userPageData.imageUrl}
+                alt="user"
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null;
+                  currentTarget.src =
+                    "https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-gr%C3%A1tis-vetor.jpg";
+                }}
+              />
+            ) : (
+              <></>
+            )}
+            <h1>{title}</h1>
+          </div>
+          {type === "user" ? <FollowButton userPageData={userPageData} setIsError={setIsError} /> : <></>}
+        </Header>
+        <div>
+          <Container>
+            {isTimeline ? <Publish /> : <></>}
+            {haveNewPosts ? (
+              <RefreshNewPosts
+                onClick={() => {
+                  setInfiniteScrollIndex(0);
+                  refreshNewPosts();
+                }}
+              >
+                {newPostsNumber} new posts, load more!{" "}
+                <RefreshIcon>
+                  <MdCached />
+                </RefreshIcon>
+              </RefreshNewPosts>
+            ) : (
+              <></>
+            )}
+            {isLoading ? (
+              <Loading>Loading...</Loading>
+            ) : (
+              <>
+                {isError ? (
+                  <Loading>
+                    <p>
+                      An error occured while trying to fetch the posts, <br />
+                      please refresh the page or go back to timeline
+                    </p>
+                  </Loading>
+                ) : (
+                  <>
+                    {isEmpty ? (
+                      <Loading>There are no posts yet</Loading>
+                    ) : (
+                      <>
+                        <InfiniteScroll
+                          dataLength={displayedPosts.length}
+                          next={fetchData}
+                          hasMore={hasMore}
+                          loader={<Loading>Loading...</Loading>}
+                          endMessage={<Loading>You have seen it all!</Loading>}
+                        >
+                          {displayedPosts.map((post, index) => (
+                            <>
+                              {isRepost ? (
+                                <HeaderRepost>
+                                  <FaRetweet />
+                                  <p>Re-posted by FULANO</p>
+                                </HeaderRepost>
+                              ) : (
+                                <></>
+                              )}
+                              <Post
+                                key={index}
+                                userId={post.user.id}
+                                userImage={post.user.image}
+                                userName={post.user.name}
+                                postText={post.text}
+                                metadata={post.metadata}
+                                postLink={post.metadata.link}
+                                postId={post.id}
+                                updateTrending={updateTrending}
+                                setUpdateTrending={setUpdateTrending}
+                              />
+                            </>
+                          ))}
+                        </InfiniteScroll>
+                      </>
+                    )}
+                  </>
+                )}
+              </>
+            )}
+          </Container>
+          <Trending>
+            <TrendingTitle>trending</TrendingTitle>
+            <TrendingLine></TrendingLine>
+            {arrTrendingHashtags.map((hashtagMap, index) => (
+              <TrendingHashtags
+                key={index}
+                onClick={() => {
+                  setInfiniteScrollIndex(0);
+                  goHashtag(hashtagMap);
+                }}
+              >
+                # {hashtagMap}
+              </TrendingHashtags>
+            ))}
+          </Trending>
+        </div>
       </Content>
     </>
   );

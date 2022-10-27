@@ -1,10 +1,17 @@
 import styled from "styled-components";
 
 const Container = styled.div`
+  & {
+    background-color: #1e1e1e;
+
+    border-radius: 30px 30px 16px 16px;
+    margin-bottom: 16px;
+  }
+`;
+const PostContainer = styled.div`
   width: 100%;
   background-color: var(--box-grey);
   border-radius: 16px;
-  margin-bottom: 16px;
   box-sizing: border-box;
   padding: 20px;
 
@@ -36,7 +43,8 @@ const PostHeader = styled.div`
   }
 
   button {
-    margin-top: 20px;
+    margin-top: 15px;
+    padding: 0px;
   }
 
   @media (max-width: 620px) {
@@ -54,6 +62,75 @@ const PostContent = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+`;
+
+const PostNewComment = styled.div`
+  & {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+
+    padding-top: 15px;
+  }
+
+  img {
+    object-fit: cover;
+    border-radius: 50%;
+
+    min-width: 40px;
+    min-height: 40px;
+    width: 40px;
+    height: 40px;
+
+    margin-right: 15px;
+  }
+
+  form {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+
+    background: #252525;
+    border-radius: 8px;
+    width: 100%;
+    height: 40px;
+  }
+
+  button {
+    background: none;
+    padding: 0px;
+    outline: none;
+    border: none;
+  }
+
+  input {
+    font-family: "Lato";
+    font-style: italic;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+    letter-spacing: 0.05em;
+    color: #afafaf;
+
+    border: none;
+    outline: none;
+    background: #252525;
+
+    padding: 0px;
+
+    width: calc(100% - 25px);
+  }
+
+  svg {
+    font-size: 20px;
+    color: #f3f3f3;
+  }
+
+  input::placeholder {
+    color: #575757;
+  }
 `;
 
 const PostUserName = styled.div`
@@ -207,10 +284,28 @@ const Input = styled.textarea`
   }
 `;
 
+const PostComments = styled.div`
+  width: 100%;
+
+  padding: 20px;
+  padding-top: 0px;
+
+  display: flex;
+  flex-direction: column;
+
+  svg:hover,
+  img:hover {
+    cursor: pointer;
+    filter: brightness(0.6);
+  }
+`;
+
 export {
   Container,
+  PostContainer,
   PostHeader,
   PostContent,
+  PostComments,
   PostUserName,
   PostText,
   MetadataDiv,
@@ -219,4 +314,5 @@ export {
   MetadataLink,
   MetadataText,
   Input,
+  PostNewComment,
 };

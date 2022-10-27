@@ -7,6 +7,10 @@ export default function createErrorMessage(error, form) {
   let message = `Error ${code}\n\n
     ${body}`;
 
+  if (!form) {
+    return message;
+  }
+
   //If Joi patterns not safitisfied
   if (code === 422) {
     const { name, email, password, imageUrl } = form;

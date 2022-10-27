@@ -2,11 +2,13 @@ import React, { useEffect } from "react";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { TiPencil } from "react-icons/ti";
+import { TbSend } from "react-icons/tb";
 
-import { updatePostHashtags, updatePostText } from "../../services/linkrAPI";
+import { getCommentsDataByPostId, postNewComment, updatePostHashtags, updatePostText } from "../../services/linkrAPI";
 import UserContext from "../../contexts/userContext";
 import {
   Container,
+  PostContainer,
   PostHeader,
   PostContent,
   MetadataContent,
@@ -17,12 +19,17 @@ import {
   PostText,
   PostUserName,
   Input,
+  PostComments,
+  PostNewComment,
 } from "./style";
 import DeleteButton from "../Common/DeleteButton";
 import LikeButton from "../LikeButton";
 import checkHashtags from "../functions/checkHashtags";
 import { ReactTagify } from "react-tagify";
 import PostsContext from "../../contexts/postsContext";
+import CommentButton from "../CommentButton/CommentButton";
+import Comment from "../Comment/Comment";
+import createErrorMessage from "../functions/createErrorMessage";
 import Repost from "../Repost";
 
 export default function Post({
@@ -41,8 +48,13 @@ export default function Post({
   const { isLoading, setIsLoading } = React.useContext(PostsContext);
   const [consolidatedText, setConsolidatedText] = useState({ text: postText });
   const [changeableText, setChengeableText] = useState({ text: postText });
-  const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
+  const { refreshFeed, setRefreshFeed, setInfiniteScrollIndex } = React.useContext(PostsContext);
   const [idPromise, setIdPromise] = useState(false);
+  const [commentsData, setCommentsData] = useState([]);
+  const [isPostCommentsOpen, setIsPostCommentsOpen] = useState(false);
+  const [newCommentText, setNewCommentText] = useState("");
+  const [reloadPost, setReloadPost] = useState(false);
+  const [maxComments] = useState(5);
 
   const navigate = useNavigate();
 
@@ -53,6 +65,28 @@ export default function Post({
       setIdPromise(true);
     }
   }, [userData]);
+
+  useEffect(() => {
+    if (postId && userData.id) {
+      getCommentsDataByPostId(postId, userData.id)
+        .then((res) => {
+          if (res.data?.commentsData) {
+            setCommentsData(res.data.commentsData);
+          }
+        })
+        .catch((error) => {
+          const message = createErrorMessage(error);
+          setAlert({
+            show: true,
+            message: message,
+            type: 0,
+            doThis: () => {},
+            color: "rgba(200,0,0)",
+            icon: "alert-circle",
+          });
+        });
+    }
+  }, [postId, setAlert, reloadPost, userData.id]);
 
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
@@ -101,37 +135,19 @@ export default function Post({
 
   return (
     <Container>
-      <PostHeader>
-        <img
-          src={userImage}
-          alt="User profile"
-          onError={({ currentTarget }) => {
-            currentTarget.onerror = null;
-            currentTarget.src =
-              "https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-gr%C3%A1tis-vetor.jpg";
-          }}
-          onClick={() => {
-            if (isLoading === false) {
-              localStorage.setItem(
-                "targetUser",
-                JSON.stringify({
-                  id: userId,
-                  name: userName,
-                })
-              );
-              navigate(`/user/${userId}`);
-            }
-          }}
-        />
-        {idPromise ? <LikeButton userId={userData.id} postId={postId} /> : <></>}
-        <Repost postId={postId} userId={userId} />
-      </PostHeader>
-
-      <PostContent>
-        <PostUserName>
-          <div
+      <PostContainer>
+        <PostHeader>
+          <img
+            src={userImage}
+            alt="User profile"
+            onError={({ currentTarget }) => {
+              currentTarget.onerror = null;
+              currentTarget.src =
+                "https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-gr%C3%A1tis-vetor.jpg";
+            }}
             onClick={() => {
               if (isLoading === false) {
+                setInfiniteScrollIndex(0);
                 localStorage.setItem(
                   "targetUser",
                   JSON.stringify({
@@ -142,61 +158,150 @@ export default function Post({
                 navigate(`/user/${userId}`);
               }
             }}
-          >
-            {userName}
-          </div>
-
-          {isEditable ? (
-            <div>
-              <TiPencil onClick={changeEditing} />
-              <DeleteButton postId={postId} />
-            </div>
+          />
+          {idPromise ? (
+            <>
+              <LikeButton userId={userData.id} postId={postId} />
+              <CommentButton
+                numberOfComments={commentsData?.length}
+                onClick={() => {
+                  setIsPostCommentsOpen(!isPostCommentsOpen);
+                }}
+              />
+            </>
           ) : (
             <></>
           )}
-        </PostUserName>
-        {isEditing ? (
-          <Input
-            name="text"
-            type="text"
-            autoFocus={true}
-            disabled={isLoading}
-            value={changeableText.text}
-            onChange={handleForm}
-            required
-          />
-        ) : (
-          <PostText>
-            <ReactTagify
-              tagStyle={{
-                color: "#FFFFFF",
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-              tagClicked={(tag) => {
+          <Repost postId={postId} userId={userId} />
+        </PostHeader>
+
+        <PostContent>
+          <PostUserName>
+            <div
+              onClick={() => {
                 if (isLoading === false) {
-                  navigate(`/hashtag/${tag.substring(1)}`);
-                  setRefreshFeed(!refreshFeed);
+                  setInfiniteScrollIndex(0);
+                  localStorage.setItem(
+                    "targetUser",
+                    JSON.stringify({
+                      id: userId,
+                      name: userName,
+                    })
+                  );
+                  navigate(`/user/${userId}`);
                 }
               }}
             >
-              {consolidatedText.text}
-            </ReactTagify>
-          </PostText>
-        )}
-        <MetadataDiv
-          onClick={() => {
-            window.open(postLink);
-          }}
-        >
-          <MetadataContent>
-            <MetadataTitle>{metadata.title}</MetadataTitle>
-            <MetadataText>{metadata.description}</MetadataText>
-            <MetadataLink>{postLink}</MetadataLink>
-          </MetadataContent>
-          <img src={metadata.image} alt="" />
-        </MetadataDiv>
-      </PostContent>
+              {userName}
+            </div>
+
+            {isEditable ? (
+              <div>
+                <TiPencil onClick={changeEditing} />
+                <DeleteButton postId={postId} />
+              </div>
+            ) : (
+              <></>
+            )}
+          </PostUserName>
+          {isEditing ? (
+            <Input
+              name="text"
+              type="text"
+              autoFocus={true}
+              disabled={isLoading}
+              value={changeableText.text}
+              onChange={handleForm}
+              required
+            />
+          ) : (
+            <PostText>
+              <ReactTagify
+                tagStyle={{
+                  color: "#FFFFFF",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+                tagClicked={(tag) => {
+                  if (isLoading === false) {
+                    navigate(`/hashtag/${tag.substring(1)}`);
+                    setRefreshFeed(!refreshFeed);
+                  }
+                }}
+              >
+                {consolidatedText.text}
+              </ReactTagify>
+            </PostText>
+          )}
+          <MetadataDiv
+            onClick={() => {
+              window.open(postLink);
+            }}
+          >
+            <MetadataContent>
+              <MetadataTitle>{metadata.title}</MetadataTitle>
+              <MetadataText>{metadata.description}</MetadataText>
+              <MetadataLink>{postLink}</MetadataLink>
+            </MetadataContent>
+            <img src={metadata.image} alt="" />
+          </MetadataDiv>
+        </PostContent>
+      </PostContainer>
+
+      {isPostCommentsOpen && (
+        <>
+          <PostComments>
+            {commentsData.map((commentData, index) => {
+              if (index >= maxComments) {
+                return <React.Fragment key={index}></React.Fragment>;
+              }
+              return (
+                <React.Fragment key={index}>
+                  <Comment commentData={commentData}></Comment>
+                </React.Fragment>
+              );
+            })}
+            <PostNewComment>
+              <img src={userData.imageUrl} alt=""></img>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+
+                  postNewComment({ postId: postId, text: newCommentText }, localStorage.getItem("userToken"))
+                    .then(() => {
+                      setNewCommentText("");
+                      setReloadPost(!reloadPost);
+                    })
+                    .catch((error) => {
+                      const message = createErrorMessage(error);
+
+                      setAlert({
+                        show: true,
+                        message: message,
+                        type: 0,
+                        doThis: () => {},
+                        color: "rgba(200,0,0)",
+                        icon: "alert-circle",
+                      });
+                    });
+                }}
+              >
+                <input
+                  placeholder="write a comment..."
+                  onChange={(e) => {
+                    setNewCommentText(e.target.value);
+                  }}
+                  value={newCommentText}
+                  required
+                />
+                <button type="submit">
+                  <TbSend />
+                </button>
+              </form>
+            </PostNewComment>
+          </PostComments>
+        </>
+      )}
     </Container>
   );
 }

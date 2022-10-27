@@ -14,7 +14,7 @@ export default function SearchBar() {
   const [searchTag, setSearchTag] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const { isLoading } = React.useContext(PostsContext);
-  const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
+  const { refreshFeed, setRefreshFeed, setInfiniteScrollIndex } = React.useContext(PostsContext);
 
   async function handleSearch(e) {
     const filter = e.target.value;
@@ -36,6 +36,7 @@ export default function SearchBar() {
         onClick={() => {
           if(isLoading === false){
             navigate(`/user/${user.id}`);
+            setInfiniteScrollIndex(0);
             localStorage.setItem(
               "targetUser",
               JSON.stringify({
@@ -56,6 +57,8 @@ export default function SearchBar() {
           }} 
         />
         <h2>{user.name}</h2>
+        {user.me? <h3>• me</h3> : <></>}
+        {user.followed? <h3>• following</h3> : <></>}
       </StyledResult>
     );
   }
@@ -63,7 +66,7 @@ export default function SearchBar() {
   return (
     <Container>
       <DebounceInput
-        type="text"
+        type="search"
         placeholder="Search for people"
         minLength={3}
         debounceTimeout={300}

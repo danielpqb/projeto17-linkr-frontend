@@ -41,6 +41,10 @@ function getUserDataByToken(token) {
   });
 }
 
+function getUserById(id) {
+  return axios.get(`${BASE_URL}/user/${id}`, config)
+}
+
 function getSearchUsers(filter) {
   const auth2 = localStorage.getItem("userToken");
   const config2 = `Bearer ${auth2}`;
@@ -70,6 +74,16 @@ function getPostDataById(id) {
   return axios.get(`${BASE_URL}/posts/post/${id}`, config);
 }
 
+function getCommentsDataByPostId(postId, userId) {
+  return axios.get(`${BASE_URL}/comments/data/${postId}/${userId}`);
+}
+
+function postNewComment(body, token) {
+  const _token = "Bearer " + token;
+
+  return axios.post(`${BASE_URL}/comment`, body, { headers: { Authorization: _token } });
+}
+
 function getPosts() {
   return axios.get(`${BASE_URL}/posts`, config);
 }
@@ -90,16 +104,31 @@ function updatePostHashtags(postId, hashtags) {
   return axios.put(`${BASE_URL}/posts/${postId}/hashtags`, hashtags, config);
 }
 
+function isFollowed(id) {
+  return axios.get(`${BASE_URL}/follow/${id}`, config);
+}
+
+function followUser(id) {
+  return axios.post(`${BASE_URL}/follow/${id}`, {}, config);
+}
+
+function unfollowUser(id) {
+  return axios.delete(`${BASE_URL}/follow/${id}`, config);
+}
+
 export {
   postSignUp,
   postSignIn,
   getUserDataByToken,
+  getUserById,
   getSearchUsers,
   createPost,
   createHashtag,
   createHeader,
   createPostsHashtags,
   getPostDataById,
+  getCommentsDataByPostId,
+  postNewComment,
   getPosts,
   getAllPosts,
   getUserPosts,
@@ -109,4 +138,7 @@ export {
   getHashtagPosts,
   updatePostText,
   updatePostHashtags,
+  isFollowed,
+  followUser,
+  unfollowUser,
 };
