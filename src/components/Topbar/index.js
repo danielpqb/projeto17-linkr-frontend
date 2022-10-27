@@ -12,7 +12,7 @@ export default function TopBar() {
   const { userData, setUserData } = useContext(UserContext);
   const { refreshFeed, setRefreshFeed } = useContext(PostsContext);
   const [isMenuAppering, setIsMenuAppering] = useState(false);
-  const { isLoading } = React.useContext(PostsContext);
+  const { isLoading, setInfiniteScrollIndex } = React.useContext(PostsContext);
   const imgSrc = userData.imageUrl;
   const navigate = useNavigate();
 
@@ -21,6 +21,7 @@ export default function TopBar() {
       <h1 onClick={() => {
         if(isLoading === false){
           navigate("/timeline");
+          setInfiniteScrollIndex(0);
           setRefreshFeed(!refreshFeed);
         }
       }}>linkr</h1>
