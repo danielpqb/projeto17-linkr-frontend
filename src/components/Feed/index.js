@@ -252,7 +252,7 @@ export default function Feed({ type }) {
                 ) : (
                   <>
                     {isEmpty ? (
-                      <Loading>There are no posts yet</Loading>
+                      <Loading>No posts found from your friends</Loading>
                     ) : (
                       <>
                         <InfiniteScroll
