@@ -11,7 +11,7 @@ export default function DeleteButton({ postId }) {
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const { refreshFeed, setRefreshFeed } = useContext(PostsContext);
-  const { arrPosts, setArrPosts } = useContext(PostsContext);
+  const { setArrPosts } = useContext(PostsContext);
 
   function createHeader() {
     const auth = localStorage.getItem("userToken");

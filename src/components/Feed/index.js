@@ -2,29 +2,28 @@ import React from "react";
 import TopBar from "../Topbar";
 import Publish from "../Publish";
 import Post from "../Post";
-import { Container, Content, Loading, RefreshIcon, RefreshNewPosts, Trending, TrendingHashtags, TrendingLine, TrendingTitle } from "./style";
-import { getHashtagPosts, getTimelinePosts, getTrendingHashtags, getUserPosts } from "../../services/linkrAPI";
+import { Container, Content, Loading, RefreshIcon, RefreshNewPosts, Trending, TrendingHashtags, TrendingLine, TrendingTitle, Header } from "./style";
+import { getHashtagPosts, getTimelinePosts, getTrendingHashtags, getUserById, getUserPosts } from "../../services/linkrAPI";
 import { useState, useEffect } from "react";
-import UserContext from "../../contexts/userContext";
 import PostsContext from "../../contexts/postsContext";
 import { useNavigate, useParams } from "react-router-dom";
+import FollowButton from "../FollowButton";
 import useInterval from 'use-interval';
 import { MdCached } from 'react-icons/md';
 
 export default function Feed({ type }) {
   const navigate = useNavigate();
-  const { hashtag } = useParams();
+  const { hashtag, userPageId } = useParams();
   const [title, setTitle] = useState("");
   const [isError, setIsError] = useState(false);
   const [isTimeline, setIsTimeline] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
   const [updateTrending, setUpdateTrending] = useState(false);
+  const [userPageData, setUserPageData] = useState({id:"", imageUrl:"", name:"", hasInfo:false})
   const { arrPosts, setArrPosts } = React.useContext(PostsContext);
   const { arrTrendingHashtags, setArrTrendingHashtags } = React.useContext(PostsContext);
-  const { userData, setUserData, setAlert } = React.useContext(UserContext);
   const { refreshFeed, setRefreshFeed } = React.useContext(PostsContext);
   const { isLoading, setIsLoading } = React.useContext(PostsContext);
-  const [thisUserId, setThisUserId] = useState(-1);
   const [idLastPost, setIdLastPost] = useState(0);
   const [newPostsNumber, setNewPostsNumber] = useState(0);
   const [haveNewPosts, setHaveNewPosts] = useState(false);
@@ -62,16 +61,19 @@ export default function Feed({ type }) {
         })
         .catch(() => {
           setIsError(true);
-          if (thisUserId === -1) {
-            setThisUserId(userData.id);
-          }
         });
     }
     if (type === "user") {
       setIsTimeline(false);
-      const localTargetUser = JSON.parse(localStorage.getItem("targetUser"));
-      setTitle(`${localTargetUser.name}'s page`);
-      getUserPosts(localTargetUser.id)
+      getUserById(userPageId)
+        .then((answer) => {
+          setUserPageData({...answer.data, hasInfo:true});
+          setTitle(`${answer.data.name}'s page`);
+        })
+        .catch((error) => {
+          setIsError(true);
+        });
+      getUserPosts(userPageId)
         .then((answer) => {
           setArrPosts(answer.data[0]);
           if (answer.data.length === 0) {
@@ -86,14 +88,12 @@ export default function Feed({ type }) {
     setIsLoading(false);
   }, [
     refreshFeed,
-    thisUserId,
-    setAlert,
     hashtag,
     setArrPosts,
-    setUserData,
     setIsLoading,
     type,
-    userData.id,
+    navigate,
+    userPageId
   ]);
 
   useEffect(() => {
@@ -151,58 +151,87 @@ export default function Feed({ type }) {
     <>
       <TopBar />
       <Content>
-        <Container>
-          <h1>{title}</h1>
-          {isTimeline ? <Publish /> : <></>}
-          {haveNewPosts ? (
-            <RefreshNewPosts onClick={refreshNewPosts}>
-              {newPostsNumber} new posts, load more! <RefreshIcon><MdCached/></RefreshIcon> 
-            </RefreshNewPosts>
-          ) : (
-            <></>
-          )}
-          {isLoading ? (
-            <Loading>Loading...</Loading>
-          ) : (
-            <>
-              {isError ? (
-                <Loading>An error occured while trying to fetch the posts, please refresh the page</Loading>
-              ) : (
-                <>
-                  {isEmpty ? (
-                    <Loading>There are no posts yet</Loading>
-                  ) : (
-                    <>
-                      {arrPosts.map((post, index) => (
-                        <Post
-                          key={index}
-                          userId={post.user.id}
-                          userImage={post.user.image}
-                          userName={post.user.name}
-                          postText={post.text}
-                          metadata={post.metadata}
-                          postLink={post.metadata.link}
-                          postId={post.id}
-                          updateTrending={updateTrending}
-                          setUpdateTrending={setUpdateTrending}
-                        />
-                      ))}
-                    </>
-                  )}
-                </>
-              )}
-            </>
-          )}
-        </Container>
-        <Trending>
-          <TrendingTitle>trending</TrendingTitle>
-          <TrendingLine></TrendingLine>
-          {arrTrendingHashtags.map((hashtagMap, index) => (
-            <TrendingHashtags key={index} onClick={() => goHashtag(hashtagMap)}>
-              # {hashtagMap}
-            </TrendingHashtags>
-          ))}
-        </Trending>
+        <Header>
+          <div>
+            {type === "user"?
+              <img
+                src={userPageData.imageUrl}
+                alt="user"
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null; 
+                  currentTarget.src="https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-gr%C3%A1tis-vetor.jpg";
+                }}
+              />
+              :
+              <></>}
+            <h1>{title}</h1>
+          </div>
+          {type === "user"?
+            <FollowButton
+              userPageData={userPageData}
+              setIsError={setIsError}
+            />
+            :
+            <></>}
+        </Header>
+        <div>
+          <Container>
+            {isTimeline ? <Publish /> : <></>}
+            {haveNewPosts ? (
+              <RefreshNewPosts onClick={refreshNewPosts}>
+                {newPostsNumber} new posts, load more! <RefreshIcon><MdCached/></RefreshIcon> 
+              </RefreshNewPosts>
+            ) : (
+              <></>
+            )}
+            {isLoading ? (
+              <Loading>Loading...</Loading>
+            ) : (
+              <>
+                {isError ? (
+                  <Loading>
+                    <p>
+                      An error occured while trying to fetch the posts, <br />
+                      please refresh the page or go back to timeline
+                    </p>
+                  </Loading>
+                ) : (
+                  <>
+                    {isEmpty ? (
+                      <Loading>There are no posts yet</Loading>
+                    ) : (
+                      <>
+                        {arrPosts.map((post, index) => (
+                          <Post
+                            key={index}
+                            userId={post.user.id}
+                            userImage={post.user.image}
+                            userName={post.user.name}
+                            postText={post.text}
+                            metadata={post.metadata}
+                            postLink={post.metadata.link}
+                            postId={post.id}
+                            updateTrending={updateTrending}
+                            setUpdateTrending={setUpdateTrending}
+                          />
+                        ))}
+                      </>
+                    )}
+                  </>
+                )}
+              </>
+            )}
+          </Container>
+          <Trending>
+            <TrendingTitle>trending</TrendingTitle>
+            <TrendingLine></TrendingLine>
+            {arrTrendingHashtags.map((hashtagMap, index) => (
+              <TrendingHashtags key={index} onClick={() => goHashtag(hashtagMap)}>
+                # {hashtagMap}
+              </TrendingHashtags>
+            ))}
+          </Trending>
+        </div>
       </Content>
     </>
   );

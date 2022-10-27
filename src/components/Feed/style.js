@@ -7,19 +7,47 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
 
-    h1 {
-        margin-bottom: 50px;
-        font-family: 'Oswald', sans-serif;
-        font-weight: 700;
-        font-size: 43px;
-        color: var(--text-emphasis);
-        margin-top: 80px; 
-    }
-
     @media (max-width: 620px) {
         width: 100%;
         margin-top: 127px;
-        
+    }
+`
+
+const Header = styled.div`
+    display: flex;
+    padding-top: 40px;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    & > div {
+        display: flex;
+        align-items: flex-end;
+    }
+
+    img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+    }
+
+    h1 {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 43px;
+    color: var(--text-emphasis);
+    margin-top: 80px; 
+    }
+
+    @media (max-width: 620px) {
+        img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        }
+
         h1 {
             margin-top: 20px;
             margin-left: 20px;
@@ -97,7 +125,7 @@ const Trending = styled.div`
     margin-left: 25px;
     box-sizing: border-box;
     padding: 10px 0px 25px 0px;
-    margin-top: 215px;
+    margin-top: 45px;
 
     @media (max-width: 980px) {
         display: none;
@@ -138,14 +166,17 @@ const TrendingHashtags = styled.div`
 
 const Content = styled.div`
     display: flex;
+    flex-direction: column;
     height: 100%;
+
+    & > div {
+        display: flex;
+    }
 `
-
-
-
 
 export {
     Container,
+    Header,
     Loading,
     Content,
     Trending,
