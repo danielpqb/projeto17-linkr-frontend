@@ -10,7 +10,8 @@ export default function Comment({ commentData }) {
       <Content>
         <Title>
           <Name>{commentData.userName}</Name>
-          <ExtraInfo>{commentData.userId === commentData.postUserId ? "• post’s author" : ""}</ExtraInfo>
+          <ExtraInfo>{commentData.userId === commentData.postUserId && "• post’s author"}</ExtraInfo>
+          <ExtraInfo>{commentData.following && "• following"}</ExtraInfo>
         </Title>
 
         <Text>{commentData.text}</Text>

@@ -66,24 +66,26 @@ export default function Post({
   }, [userData]);
 
   useEffect(() => {
-    getCommentsDataByPostId(postId)
-      .then((res) => {
-        if (res.data?.commentsData) {
-          setCommentsData(res.data.commentsData);
-        }
-      })
-      .catch((error) => {
-        const message = createErrorMessage(error);
-        setAlert({
-          show: true,
-          message: message,
-          type: 0,
-          doThis: () => {},
-          color: "rgba(200,0,0)",
-          icon: "alert-circle",
+    if (postId && userData.id) {
+      getCommentsDataByPostId(postId, userData.id)
+        .then((res) => {
+          if (res.data?.commentsData) {
+            setCommentsData(res.data.commentsData);
+          }
+        })
+        .catch((error) => {
+          const message = createErrorMessage(error);
+          setAlert({
+            show: true,
+            message: message,
+            type: 0,
+            doThis: () => {},
+            color: "rgba(200,0,0)",
+            icon: "alert-circle",
+          });
         });
-      });
-  }, [postId, setAlert, reloadPost]);
+    }
+  }, [postId, setAlert, reloadPost, userData.id]);
 
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {

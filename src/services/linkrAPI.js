@@ -70,8 +70,8 @@ function getPostDataById(id) {
   return axios.get(`${BASE_URL}/posts/post/${id}`, config);
 }
 
-function getCommentsDataByPostId(postId) {
-  return axios.get(`${BASE_URL}/comments/${postId}`);
+function getCommentsDataByPostId(postId, userId) {
+  return axios.get(`${BASE_URL}/comments/data/${postId}/${userId}`);
 }
 
 function postNewComment(body, token) {
