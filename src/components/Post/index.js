@@ -224,6 +224,7 @@ export default function Post({
                 }}
                 tagClicked={(tag) => {
                   if (isLoading === false) {
+                    setInfiniteScrollIndex(0);
                     navigate(`/hashtag/${tag.substring(1)}`);
                     setRefreshFeed(!refreshFeed);
                   }

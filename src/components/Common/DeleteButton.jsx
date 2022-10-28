@@ -10,7 +10,7 @@ const API_URL = process.env.REACT_APP_API_BASE_URL;
 export default function DeleteButton({ postId }) {
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const { refreshFeed, setRefreshFeed } = useContext(PostsContext);
+  const { refreshFeed, setRefreshFeed, setInfiniteScrollIndex } = useContext(PostsContext);
   const { setArrPosts } = useContext(PostsContext);
 
   function createHeader() {
@@ -47,6 +47,7 @@ export default function DeleteButton({ postId }) {
       .then((response) => {
         setLoadingDelete(false);
         setModalOpen(false);
+        setInfiniteScrollIndex(0);
         setRefreshFeed(!refreshFeed);
         setArrPosts([]);
       })

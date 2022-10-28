@@ -21,6 +21,7 @@ import {
   getTimelinePosts,
   getTrendingHashtags,
   getUserById,
+  getUserFollows,
   getUserPosts,
 } from "../../services/linkrAPI";
 import { useState, useEffect } from "react";
@@ -31,6 +32,7 @@ import FollowButton from "../FollowButton";
 import useInterval from "use-interval";
 import { MdCached } from "react-icons/md";
 import InfiniteScroll from "react-infinite-scroll-component";
+import promiseRetry from "promise-retry";
 
 export default function Feed({ type }) {
   const navigate = useNavigate();
@@ -60,32 +62,52 @@ export default function Feed({ type }) {
   const [displayedPosts, setDisplayedPosts] = useState([]);
   const [isRepost, setIsRepost] = useState(false);
   const [respostArr, setRepostArr] = useState([]); // array que contem os reposts
+  const [followSomeone, setFollowSomeone] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
+    setIsEmpty(false);
+    setIsError(false);
+    setDisplayedPosts([]);
+    setFollowSomeone(true);
 
     if (type === "timeline") {
       setNewPostsNumber(0);
       setHaveNewPosts(false);
       setIsTimeline(true);
       setTitle("timeline");
-      getTimelinePosts()
+      getUserFollows()
         .then((answer) => {
-          setArrPosts(answer.data[0]);
-          setDisplayedPosts(answer.data[0].slice(infiniteScrollIndex, infiniteScrollIndex + 10));
-
-          if (answer.data[0].length < 10) {
-            setHasMore(false);
+          if(answer.data === true){
+            promiseRetry(
+              //Function that will retry
+              (retry, number) => {
+                return getTimelinePosts().catch(retry);
+              },
+              { retries: 2, minTimeout: 1000, factor: 2 }
+            ).then(
+              //Resolved at any try
+              (answer) => {
+                setArrPosts(answer.data[0]);
+                      setDisplayedPosts(answer.data[0].slice(infiniteScrollIndex, infiniteScrollIndex + 10));
+                      if (answer.data[0].length < 10) {
+                        setHasMore(false);
+                      }
+                      setInfiniteScrollIndex(infiniteScrollIndex + 10);
+                      if (answer.data[0].length === 0) {
+                        setIsEmpty(true);
+                      } else {
+                        setIdLastPost(answer.data[0][0].id);
+                      }
+              },
+              //Couldn't resolve after all tries
+              () => {
+                setIsError(true);
+              }
+            )
+          }else{
+            setFollowSomeone(false);
           }
-          setInfiniteScrollIndex(infiniteScrollIndex + 10);
-          if (answer.data.length === 0) {
-            setIsEmpty(true);
-          } else {
-            setIdLastPost(answer.data[0][0].id);
-          }
-        })
-        .catch((error) => {
-          setIsError(true);
         });
     }
     if (type === "hashtag") {
@@ -99,7 +121,7 @@ export default function Feed({ type }) {
             setHasMore(false);
           }
           setInfiniteScrollIndex(infiniteScrollIndex + 10);
-          if (answer.data.length === 0) {
+          if (answer.data[0].length === 0) {
             setIsEmpty(true);
           }
         })
@@ -125,7 +147,7 @@ export default function Feed({ type }) {
             setHasMore(false);
           }
           setInfiniteScrollIndex(infiniteScrollIndex + 10);
-          if (answer.data.length === 0) {
+          if (answer.data[0].length === 0) {
             setIsEmpty(true);
           }
         })
@@ -148,12 +170,7 @@ export default function Feed({ type }) {
       });
   }, [setArrTrendingHashtags, updateTrending]);
 
-  function goHashtag(hashtag) {
-    if (isLoading === false) {
-      navigate(`/hashtag/${hashtag}`);
-      setRefreshFeed(!refreshFeed);
-    }
-  }
+  
 
   useInterval(() => {
     if (idLastPost > 0) {
@@ -245,60 +262,78 @@ export default function Feed({ type }) {
             ) : (
               <></>
             )}
-            {isLoading ? (
-              <Loading>Loading...</Loading>
-            ) : (
+            {followSomeone ? (
               <>
-                {isError ? (
-                  <Loading>
-                    <p>
-                      An error occured while trying to fetch the posts, <br />
-                      please refresh the page or go back to timeline
-                    </p>
-                  </Loading>
+                {isLoading ? (
+                  <Loading>Loading...</Loading>
                 ) : (
                   <>
-                    {isEmpty ? (
-                      <Loading>There are no posts yet</Loading>
+                    {isError ? (
+                      <Loading>
+                        <p>
+                          An error occured while trying to fetch the posts, <br />
+                          please refresh the page or go back to timeline
+                        </p>
+                      </Loading>
                     ) : (
                       <>
-                        <InfiniteScroll
-                          dataLength={displayedPosts.length}
-                          next={fetchData}
-                          hasMore={hasMore}
-                          loader={<Loading>Loading...</Loading>}
-                          endMessage={<Loading>You have seen it all!</Loading>}
-                        >
-                          {displayedPosts.map((post, index) => (
-                            <>
-                              {isRepost ? (
-                                <HeaderRepost>
-                                  <FaRetweet />
-                                  <p>Re-posted by FULANO</p>
-                                </HeaderRepost>
-                              ) : (
-                                <></>
-                              )}
-                              <Post
-                                key={index}
-                                userId={post.user.id}
-                                userImage={post.user.image}
-                                userName={post.user.name}
-                                postText={post.text}
-                                metadata={post.metadata}
-                                postLink={post.metadata.link}
-                                postId={post.id}
-                                updateTrending={updateTrending}
-                                setUpdateTrending={setUpdateTrending}
-                              />
-                            </>
-                          ))}
-                        </InfiniteScroll>
+                        {isEmpty ? (
+                          <Loading>No posts found from your friends</Loading>
+                        ) : (
+                          <>
+                            <InfiniteScroll
+                              dataLength={displayedPosts.length}
+                              next={fetchData}
+                              hasMore={hasMore}
+                              loader={<Loading>Loading...</Loading>}
+                              endMessage={<Loading>You have seen it all!</Loading>}
+                            >
+                              {displayedPosts.map((post, index) => (
+                                <>
+                                {isRepost ? (
+                                  <HeaderRepost>
+                                    <FaRetweet />
+                                    <p>Re-posted by FULANO</p>
+                                  </HeaderRepost>
+                                ) : (
+                                  <></>
+                                )}
+                                <Post
+                                  key={index}
+                                  userId={post.user.id}
+                                  userImage={post.user.image}
+                                  userName={post.user.name}
+                                  postText={post.text}
+                                  metadata={post.metadata}
+                                  postLink={post.metadata.link}
+                                  postId={post.id}
+                                  updateTrending={updateTrending}
+                                  setUpdateTrending={setUpdateTrending}
+                                />
+                              </>
+                                <Post
+                                  key={index}
+                                  userId={post.user.id}
+                                  userImage={post.user.image}
+                                  userName={post.user.name}
+                                  postText={post.text}
+                                  metadata={post.metadata}
+                                  postLink={post.metadata.link}
+                                  postId={post.id}
+                                  updateTrending={updateTrending}
+                                  setUpdateTrending={setUpdateTrending}
+                                />
+                              ))}
+                            </InfiniteScroll>
+                          </>
+                        )}
                       </>
                     )}
                   </>
                 )}
               </>
+            ) : (
+               <Loading>You don't follow anyone yet. Search for new friends!</Loading>
             )}
           </Container>
           <Trending>
@@ -308,8 +343,12 @@ export default function Feed({ type }) {
               <TrendingHashtags
                 key={index}
                 onClick={() => {
-                  setInfiniteScrollIndex(0);
-                  goHashtag(hashtagMap);
+                  if (isLoading === false) {
+                    setInfiniteScrollIndex(0);
+                    navigate(`/hashtag/${hashtagMap}`);
+                    setRefreshFeed(!refreshFeed);
+                    refreshNewPosts();
+                  }
                 }}
               >
                 # {hashtagMap}
