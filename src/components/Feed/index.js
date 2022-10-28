@@ -61,7 +61,7 @@ export default function Feed({ type }) {
   const [hasMore, setHasMore] = useState(true);
   const [displayedPosts, setDisplayedPosts] = useState([]);
   const [isRepost, setIsRepost] = useState(false);
-  const [setRepostArr] = useState([]); // array que contem os reposts
+  const [repostArr, setRepostArr] = useState([]); // array que contem os reposts
   const [followSomeone, setFollowSomeone] = useState(true);
 
   useEffect(() => {
@@ -70,6 +70,13 @@ export default function Feed({ type }) {
     setIsError(false);
     setDisplayedPosts([]);
     setFollowSomeone(true);
+
+    getAllReposts()
+    .then((response) => {
+      setRepostArr(response.data.filter((repost) => repost.reposterId));
+      //setIsRepost(true); // tá colocando o header de repost em todos os posts
+    })
+    .catch((error) => console.log(error));
 
     if (type === "timeline") {
       setNewPostsNumber(0);
@@ -165,17 +172,10 @@ export default function Feed({ type }) {
     userPageId,
     setInfiniteScrollIndex,
     setArrPosts,
-    infiniteScrollIndex,
+    setRepostArr
   ]);
 
   useEffect(() => {
-    getAllReposts()
-      .then((response) => {
-        setIsRepost(true); // tá colocando o header de repost em todos os posts
-        setRepostArr(response.data);
-        console.log(response.data);
-      })
-      .catch((error) => console.log(error));
     getTrendingHashtags()
       .then((answer) => {
         setArrTrendingHashtags(answer.data[0]);
@@ -183,7 +183,7 @@ export default function Feed({ type }) {
       .catch((error) => {
         console.error(error);
       });
-  }, [setArrTrendingHashtags, setRepostArr, updateTrending]);
+  }, [setArrTrendingHashtags, updateTrending]);
 
   useInterval(() => {
     if (idLastPost > 0) {
@@ -222,6 +222,9 @@ export default function Feed({ type }) {
       setHasMore(false);
     }
   };
+
+  console.log(repostArr);
+  console.log(arrPosts);
 
   return (
     <>
