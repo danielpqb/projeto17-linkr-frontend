@@ -211,7 +211,7 @@ const MetadataDiv = styled.div`
     justify-content: space-between;
     img {
       width: 100px;
-      height: 115px;
+      height: auto;
       object-fit: cover;
       object-position: center;
       margin-right: 0px;
