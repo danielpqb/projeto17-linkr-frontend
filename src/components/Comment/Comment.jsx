@@ -1,15 +1,45 @@
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import PostsContext from "../../contexts/postsContext";
+import React from "react";
 
 export default function Comment({ commentData }) {
+  const navigate = useNavigate();
+  const { isLoading, setInfiniteScrollIndex } = React.useContext(PostsContext);
   return (
     <Container>
       <Photo>
-        <img src={commentData.userPhoto} alt="" />
+        <img src={commentData.userPhoto} alt="" onClick={() => {
+                if (isLoading === false) {
+                  setInfiniteScrollIndex(0);
+                  localStorage.setItem(
+                    "targetUser",
+                    JSON.stringify({
+                      id: commentData.userId,
+                      name: commentData.userName,
+                    })
+                  );
+                  navigate(`/user/${commentData.userId}`);
+                }
+              }}/>
       </Photo>
 
       <Content>
         <Title>
-          <Name>{commentData.userName}</Name>
+          <Name onClick={() => {
+                if (isLoading === false) {
+                  setInfiniteScrollIndex(0);
+                  localStorage.setItem(
+                    "targetUser",
+                    JSON.stringify({
+                      id: commentData.userId,
+                      name: commentData.userName,
+                    })
+                  );
+                  navigate(`/user/${commentData.userId}`);
+                }
+              }}
+              >{commentData.userName}</Name>
           <ExtraInfo>{commentData.userId === commentData.postUserId && "• post’s author"}</ExtraInfo>
           <ExtraInfo>{commentData.following && "• following"}</ExtraInfo>
         </Title>
@@ -77,6 +107,10 @@ const Name = styled.div`
     font-size: 14px;
     line-height: 17px;
     color: #f3f3f3;
+  }
+  :hover {
+    cursor: pointer;
+    filter: brightness(0.6);
   }
 `;
 
