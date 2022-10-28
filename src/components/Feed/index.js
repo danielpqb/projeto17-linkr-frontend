@@ -61,7 +61,7 @@ export default function Feed({ type }) {
   const [hasMore, setHasMore] = useState(true);
   const [displayedPosts, setDisplayedPosts] = useState([]);
   const [isRepost, setIsRepost] = useState(false);
-  const [respostArr, setRepostArr] = useState([]); // array que contem os reposts
+  const [setRepostArr] = useState([]); // array que contem os reposts
   const [followSomeone, setFollowSomeone] = useState(true);
 
   useEffect(() => {
@@ -76,39 +76,38 @@ export default function Feed({ type }) {
       setHaveNewPosts(false);
       setIsTimeline(true);
       setTitle("timeline");
-      getUserFollows()
-        .then((answer) => {
-          if(answer.data === true){
-            promiseRetry(
-              //Function that will retry
-              (retry, number) => {
-                return getTimelinePosts().catch(retry);
-              },
-              { retries: 2, minTimeout: 1000, factor: 2 }
-            ).then(
-              //Resolved at any try
-              (answer) => {
-                setArrPosts(answer.data[0]);
-                      setDisplayedPosts(answer.data[0].slice(infiniteScrollIndex, infiniteScrollIndex + 10));
-                      if (answer.data[0].length < 10) {
-                        setHasMore(false);
-                      }
-                      setInfiniteScrollIndex(infiniteScrollIndex + 10);
-                      if (answer.data[0].length === 0) {
-                        setIsEmpty(true);
-                      } else {
-                        setIdLastPost(answer.data[0][0].id);
-                      }
-              },
-              //Couldn't resolve after all tries
-              () => {
-                setIsError(true);
+      getUserFollows().then((answer) => {
+        if (answer.data === true) {
+          promiseRetry(
+            //Function that will retry
+            (retry, number) => {
+              return getTimelinePosts().catch(retry);
+            },
+            { retries: 2, minTimeout: 1000, factor: 2 }
+          ).then(
+            //Resolved at any try
+            (answer) => {
+              setArrPosts(answer.data[0]);
+              setDisplayedPosts(answer.data[0].slice(infiniteScrollIndex, infiniteScrollIndex + 10));
+              if (answer.data[0].length < 10) {
+                setHasMore(false);
               }
-            )
-          }else{
-            setFollowSomeone(false);
-          }
-        });
+              setInfiniteScrollIndex(infiniteScrollIndex + 10);
+              if (answer.data[0].length === 0) {
+                setIsEmpty(true);
+              } else {
+                setIdLastPost(answer.data[0][0].id);
+              }
+            },
+            //Couldn't resolve after all tries
+            () => {
+              setIsError(true);
+            }
+          );
+        } else {
+          setFollowSomeone(false);
+        }
+      });
     }
     if (type === "hashtag") {
       setIsTimeline(false);
@@ -157,10 +156,26 @@ export default function Feed({ type }) {
     }
 
     setIsLoading(false);
-  }, [refreshFeed, hashtag, setIsLoading, type, navigate, userPageId, setInfiniteScrollIndex, setArrPosts]);
+  }, [
+    refreshFeed,
+    hashtag,
+    setIsLoading,
+    type,
+    navigate,
+    userPageId,
+    setInfiniteScrollIndex,
+    setArrPosts,
+    infiniteScrollIndex,
+  ]);
 
   useEffect(() => {
-    repost();
+    getAllReposts()
+      .then((response) => {
+        setIsRepost(true); // tá colocando o header de repost em todos os posts
+        setRepostArr(response.data);
+        console.log(response.data);
+      })
+      .catch((error) => console.log(error));
     getTrendingHashtags()
       .then((answer) => {
         setArrTrendingHashtags(answer.data[0]);
@@ -168,9 +183,7 @@ export default function Feed({ type }) {
       .catch((error) => {
         console.error(error);
       });
-  }, [setArrTrendingHashtags, updateTrending]);
-
-  
+  }, [setArrTrendingHashtags, setRepostArr, updateTrending]);
 
   useInterval(() => {
     if (idLastPost > 0) {
@@ -209,17 +222,6 @@ export default function Feed({ type }) {
       setHasMore(false);
     }
   };
-
-  // pega os reposts do banco
-  function repost() {
-    getAllReposts()
-      .then((response) => {
-        setIsRepost(true); // tá colocando o header de repost em todos os posts
-        setRepostArr(response.data);
-        console.log(response.data);
-      })
-      .catch((error) => console.log(error));
-  }
 
   return (
     <>
@@ -290,39 +292,30 @@ export default function Feed({ type }) {
                             >
                               {displayedPosts.map((post, index) => (
                                 <>
-                                {isRepost ? (
-                                  <HeaderRepost>
-                                    <FaRetweet />
-                                    <p>Re-posted by FULANO</p>
-                                  </HeaderRepost>
-                                ) : (
-                                  <></>
-                                )}
-                                <Post
-                                  key={index}
-                                  userId={post.user.id}
-                                  userImage={post.user.image}
-                                  userName={post.user.name}
-                                  postText={post.text}
-                                  metadata={post.metadata}
-                                  postLink={post.metadata.link}
-                                  postId={post.id}
-                                  updateTrending={updateTrending}
-                                  setUpdateTrending={setUpdateTrending}
-                                />
-                              </>
-                                <Post
-                                  key={index}
-                                  userId={post.user.id}
-                                  userImage={post.user.image}
-                                  userName={post.user.name}
-                                  postText={post.text}
-                                  metadata={post.metadata}
-                                  postLink={post.metadata.link}
-                                  postId={post.id}
-                                  updateTrending={updateTrending}
-                                  setUpdateTrending={setUpdateTrending}
-                                />
+                                  {isRepost ? (
+                                    <>
+                                      <HeaderRepost>
+                                        <FaRetweet />
+                                        <p>Re-posted by FULANO</p>
+                                      </HeaderRepost>
+                                    </>
+                                  ) : (
+                                    <></>
+                                  )}
+
+                                  <Post
+                                    key={index}
+                                    userId={post.user.id}
+                                    userImage={post.user.image}
+                                    userName={post.user.name}
+                                    postText={post.text}
+                                    metadata={post.metadata}
+                                    postLink={post.metadata.link}
+                                    postId={post.id}
+                                    updateTrending={updateTrending}
+                                    setUpdateTrending={setUpdateTrending}
+                                  />
+                                </>
                               ))}
                             </InfiniteScroll>
                           </>
@@ -333,7 +326,7 @@ export default function Feed({ type }) {
                 )}
               </>
             ) : (
-               <Loading>You don't follow anyone yet. Search for new friends!</Loading>
+              <Loading>You don't follow anyone yet. Search for new friends!</Loading>
             )}
           </Container>
           <Trending>

@@ -154,6 +154,7 @@ function unfollowUser(id) {
 }
 
 function getAllReposts() {
+  const config = createHeader();
   return axios.get(`${BASE_URL}/repostdata`, config);
 }
 
