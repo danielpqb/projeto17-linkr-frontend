@@ -9,7 +9,8 @@ export const Container = styled.div`
   display: flex;
 
   @media (max-width: 620px) {
-    height: 170px;
+    max-width: 100vw;
+    min-height: 220px;
     border-radius: 0;
     margin: 25px 0 16px 0;
   }
@@ -27,6 +28,11 @@ export const LeftDiv = styled.div`
     max-height: 50px;
     border-radius: 26.5px;
   }
+
+  @media (max-width: 620px) {
+    height: 100%;
+    margin-left: 10px;
+  }
 `;
 
 export const RightDiv = styled.div`
@@ -40,6 +46,11 @@ export const RightDiv = styled.div`
     width: 100%;
     font-size: 20px;
     color: rgba(112, 112, 112, 1);
+  }
+
+  @media (max-width: 620px) {
+    margin-left: 20px;
+    width: 75vw;
   }
 `;
 

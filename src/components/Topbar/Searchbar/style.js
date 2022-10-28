@@ -41,7 +41,7 @@ const Container = styled.div`
 
     @media (max-width: 620px) {
         position: fixed;
-        top: 85px;
+        top: 80px;
         left: 0;
         width: calc(100VW - 20px);
         margin: 0 10px;

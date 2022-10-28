@@ -9,7 +9,6 @@ const Container = styled.div`
   }
 `;
 const PostContainer = styled.div`
-  width: 100%;
   background-color: var(--box-grey);
   border-radius: 16px;
   box-sizing: border-box;
@@ -48,6 +47,9 @@ const PostHeader = styled.div`
   }
 
   @media (max-width: 620px) {
+    max-width: 15px;
+    margin-left: 5px;
+
     img {
       width: 40px;
       height: 40px;
@@ -62,6 +64,11 @@ const PostContent = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 620px) {
+    max-width: 80vw;
+    margin-left: 10px;
+  }
 `;
 
 const PostNewComment = styled.div`
