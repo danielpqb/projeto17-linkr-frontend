@@ -16,6 +16,7 @@ import {
   Header,
 } from "./style";
 import {
+  getAllReposts,
   getHashtagPosts,
   getTimelinePosts,
   getTrendingHashtags,
@@ -24,14 +25,12 @@ import {
 } from "../../services/linkrAPI";
 import { useState, useEffect } from "react";
 import { FaRetweet } from "react-icons/fa";
-import UserContext from "../../contexts/userContext";
 import PostsContext from "../../contexts/postsContext";
 import { useNavigate, useParams } from "react-router-dom";
 import FollowButton from "../FollowButton";
 import useInterval from "use-interval";
 import { MdCached } from "react-icons/md";
 import InfiniteScroll from "react-infinite-scroll-component";
-import axios from "axios";
 
 export default function Feed({ type }) {
   const navigate = useNavigate();
@@ -60,7 +59,7 @@ export default function Feed({ type }) {
   const [hasMore, setHasMore] = useState(true);
   const [displayedPosts, setDisplayedPosts] = useState([]);
   const [isRepost, setIsRepost] = useState(false);
-  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  const [respostArr, setRepostArr] = useState([]); // array que contem os reposts
 
   useEffect(() => {
     setIsLoading(true);
@@ -139,7 +138,7 @@ export default function Feed({ type }) {
   }, [refreshFeed, hashtag, setIsLoading, type, navigate, userPageId, setInfiniteScrollIndex, setArrPosts]);
 
   useEffect(() => {
-    repost(2); // aplicando em todos os posts. como pegar pegar o postId aqui?
+    repost();
     getTrendingHashtags()
       .then((answer) => {
         setArrTrendingHashtags(answer.data[0]);
@@ -194,17 +193,17 @@ export default function Feed({ type }) {
     }
   };
 
-  function repost(postId) {
-    const promise = axios.get(`${BASE_URL}/repost/${postId}`);
-    promise
+  // pega os reposts do banco
+  function repost() {
+    getAllReposts()
       .then((response) => {
-        if (response.data !== 0) {
-          setIsRepost(true);
-        }
-        console.log(isRepost);
+        setIsRepost(true); // tá colocando o header de repost em todos os posts
+        setRepostArr(response.data);
+        console.log(response.data);
       })
       .catch((error) => console.log(error));
   }
+
   return (
     <>
       <TopBar />

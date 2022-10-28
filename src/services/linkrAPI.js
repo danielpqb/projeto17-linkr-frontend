@@ -42,7 +42,7 @@ function getUserDataByToken(token) {
 }
 
 function getUserById(id) {
-  return axios.get(`${BASE_URL}/user/${id}`, config)
+  return axios.get(`${BASE_URL}/user/${id}`, config);
 }
 
 function getSearchUsers(filter) {
@@ -116,6 +116,10 @@ function unfollowUser(id) {
   return axios.delete(`${BASE_URL}/follow/${id}`, config);
 }
 
+function getAllReposts() {
+  return axios.get(`${BASE_URL}/repostdata`, config);
+}
+
 export {
   postSignUp,
   postSignIn,
@@ -141,4 +145,5 @@ export {
   isFollowed,
   followUser,
   unfollowUser,
+  getAllReposts,
 };

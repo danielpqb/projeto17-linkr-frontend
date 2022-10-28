@@ -107,7 +107,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-top: 40px;
+  margin-top: 0px;
   p {
     color: var(--color-white);
     font-size: 10px;
