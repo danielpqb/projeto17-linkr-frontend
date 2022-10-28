@@ -24,6 +24,8 @@ const PostContainer = styled.div`
 
   @media (max-width: 620px) {
     border-radius: 0;
+    display: flex;
+    justify-content: center;
   }
 `;
 
@@ -206,10 +208,15 @@ const MetadataDiv = styled.div`
     width: 100%;
     margin-right: 20px;
     min-height: 115px;
+    justify-content: space-between;
     img {
       width: 100px;
       height: 115px;
       object-fit: cover;
+      object-position: center;
+      margin-right: 0px;
+      border-top-right-radius: 11px;
+      border-bottom-right-radius: 11px;
     }
   }
 `;
